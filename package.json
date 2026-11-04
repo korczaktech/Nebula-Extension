@@ -1,9 +1,9 @@
 {
   "name": "nebula-language",
-  "displayName": "Nebula Language Support",
+  "displayName": "Suporte à Linguagem Nebula",
   "description": "Suporte oficial à linguagem Nebula no Visual Studio Code.",
   "version": "0.0.1",
-  "publisher": "korczak-technologies",
+  "publisher": "KorczakTechnologiesBR",
   "author": "Korczak Technologies",
   "license": "SEE LICENSE IN LICENSE",
   "homepage": "https://github.com/korczaktech/Nebula-Extension#readme",
