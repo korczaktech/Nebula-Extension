@@ -1,15 +1,16 @@
 import * as vscode from 'vscode';
-import {LanguageClient,LanguageClientOptions,ServerOptions,TransportKind,Trace} from 'vscode-languageclient/node';
+import {LanguageClient,LanguageClientOptions,ServerOptions,Trace} from 'vscode-languageclient/node';
 import {getNebulaLanguageServerConfiguration} from './configuration';
 import {createNebulaInitializationOptions} from '../protocol/capabilities';
 let client:LanguageClient|undefined,output:vscode.OutputChannel|undefined,starting=false;
 function log(message:string):void{output?.appendLine('[LSP] '+message);}
 function serverOptions():ServerOptions{
  const c=getNebulaLanguageServerConfiguration();
- return {command:c.serverPath,args:c.args,transport:TransportKind.stdio,options:{cwd:vscode.workspace.workspaceFolders?.[0]?.uri.fsPath,env:process.env}};
+ return {command:c.serverPath,args:c.args,options:{cwd:vscode.workspace.workspaceFolders?.[0]?.uri.fsPath,env:process.env}};
 }
-function clientOptions():LanguageClientOptions{
+function clientOptions(context:vscode.ExtensionContext):LanguageClientOptions{
  const watcher=vscode.workspace.createFileSystemWatcher('**/*.nbx');
+ context.subscriptions.push(watcher);
  return {documentSelector:[{scheme:'file',language:'nebula'}],synchronize:{fileEvents:watcher},initializationOptions:createNebulaInitializationOptions(),outputChannel:output,traceOutputChannel:output};
 }
 export async function startNebulaLanguageClient(context:vscode.ExtensionContext):Promise<void>{
@@ -20,7 +21,7 @@ export async function startNebulaLanguageClient(context:vscode.ExtensionContext)
  starting=true;
  try{
   output??=vscode.window.createOutputChannel('Nebula Language Server');
-  const instance=new LanguageClient('nebulaLanguageServer','Nebula Language Server',serverOptions(),clientOptions());
+  const instance=new LanguageClient('nebulaLanguageServer','Nebula Language Server',serverOptions(),clientOptions(context));
   instance.setTrace(c.trace==='verbose'?Trace.Verbose:c.trace==='messages'?Trace.Messages:Trace.Off);
   client=instance;context.subscriptions.push(instance);await instance.start();log('Conectado ao servidor: '+c.serverPath);
  }catch(error){
