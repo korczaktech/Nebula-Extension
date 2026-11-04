@@ -102,10 +102,6 @@
     "numbers": {
       "patterns": [
         {
-          "name": "invalid.illegal.numeric.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(?:0[xX](?:_?[0-9A-Fa-f])*_?|0[bB](?:_?[01])*_?|0[oO](?:_?[0-7])*_?)(?![\\\\p{XID_Continue}_])"
-        },
-        {
           "name": "constant.numeric.hex.nebula",
           "match": "(?<![\\\\p{XID_Continue}_])0[xX][0-9A-Fa-f](?:_?[0-9A-Fa-f])*(?![\\\\p{XID_Continue}_])"
         },
@@ -254,8 +250,8 @@
           "match": "(?<![\\\\p{XID_Continue}_])([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)(?=\\\\s*:)"
         },
         {
-          "name": "variable.other.member.nebula",
-          "match": "(?<=[.]{1}|::)\\\\s*([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
+          "name": "meta.member-access.nebula",
+          "match": "(?:\\\\.|::)\\\\s*([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
           "captures": {
             "1": {
               "name": "variable.other.member.nebula"
