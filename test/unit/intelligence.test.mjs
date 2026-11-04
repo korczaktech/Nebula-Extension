@@ -3,38 +3,37 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 const require=createRequire(import.meta.url);
 const engine=require('../../src/providers/intelligence/engine.js');
+const nl=String.fromCharCode(10);
 
 test('coleta declarações de variáveis, funções, parâmetros e tipos',()=>{
- const source='tipo Codigo = inteiro\nestrutura Pessoa { nome: texto }\nenumeracao Estado { Ativo }\nvariavel pessoa: Pessoa = nulo\nconstante limite: inteiro = 10\nfuncao saudar(nome: texto, vezes: inteiro): vazio { }';
+ const source=['tipo Codigo = inteiro','estrutura Pessoa { nome: texto }','enumeracao Estado { Ativo }','variavel pessoa: Pessoa = nulo','constante limite: inteiro = 10','funcao saudar(nome: texto, vezes: inteiro): vazio { }'].join(nl);
  const symbols=engine.collectSymbols(source);
  for(const name of ['Codigo','Pessoa','Estado','pessoa','limite','saudar','nome','vezes'])assert.ok(symbols.some(s=>s.name===name),'Símbolo ausente: '+name);
  assert.equal(symbols.find(s=>s.name==='saudar').parameters.length,2);
 });
 
 test('ignora identificadores dentro de strings e comentários',()=>{
- const source='// fantasma\nvariavel real: texto = "fantasma" /* oculto */';
- const names=engine.collectSymbols(source).map(s=>s.name);
- assert.deepEqual(names,['real']);
+ const source=['// fantasma','variavel real: texto = "fantasma" /* oculto */'].join(nl);
+ assert.deepEqual(engine.collectSymbols(source).map(s=>s.name),['real']);
  assert.equal(engine.findReferences(source,'fantasma').length,0);
 });
 
 test('encontra todas as referências e a definição local',()=>{
- const source='variavel contador: inteiro = 0\ncontador = contador + 1';
- const refs=engine.findReferences(source,'contador');
- assert.equal(refs.length,3);
+ const source=['variavel contador: inteiro = 0','contador = contador + 1'].join(nl);
+ assert.equal(engine.findReferences(source,'contador').length,3);
  assert.equal(engine.findWord(source,source.lastIndexOf('contador')).text,'contador');
 });
 
 test('detecta delimitadores não fechados, excedentes e declarações duplicadas',()=>{
- const result=engine.getDiagnostics('variavel x: inteiro = (1\nvariavel x: inteiro = 2\n)');
+ const source=['variavel x: inteiro = (1','variavel x: inteiro = 2'].join(nl);
+ const result=engine.getDiagnostics(source);
  assert.ok(result.some(d=>d.code==='unclosed-delimiter'));
  assert.ok(result.some(d=>d.code==='duplicate-declaration'));
- const extra=engine.getDiagnostics('exibir(1))');
- assert.ok(extra.some(d=>d.code==='unmatched-delimiter'));
+ assert.ok(engine.getDiagnostics('exibir(1))').some(d=>d.code==='unmatched-delimiter'));
 });
 
 test('resolve assinatura e parâmetro ativo de chamada',()=>{
- const source='funcao somar(a: inteiro, b: inteiro): inteiro { devolver a + b }\nsomar(1, ';
+ const source=['funcao somar(a: inteiro, b: inteiro): inteiro { devolver a + b }','somar(1, '].join(nl);
  const call=engine.findFunctionAtCall(source,source.length);
  assert.equal(call.name,'somar');
  assert.equal(call.parameters.length,2);
@@ -49,8 +48,8 @@ test('gera símbolos de documento e tokens semânticos',()=>{
 });
 
 test('formata recuo básico de blocos sem alterar o conteúdo',()=>{
- const source='funcao teste() {\nexibir("ok")\n}';
- assert.equal(engine.formatDocument(source,2,true),'funcao teste() {\n  exibir("ok")\n}');
+ const source=['funcao teste() {','exibir("ok")','}'].join(nl);
+ assert.equal(engine.formatDocument(source,2,true),['funcao teste() {','  exibir("ok")','}'].join(nl));
 });
 
 test('registra todos os provedores da etapa 5 na ativação',async()=>{
