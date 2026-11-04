@@ -326,7 +326,7 @@
     "typeAnnotations": {
       "name": "meta.type.annotation.nebula",
       "begin": ":(?!:)\\s*",
-      "end": "(?=[,)=;{}\\r\\n=])",
+      "end": "(?=(?:,\\s*(?:[\\p{XID_Start}_][\\p{XID_Continue}_]*\\s*:|\\})|[)=;{}\\r\\n=]))",
       "beginCaptures": {
         "0": {
           "name": "punctuation.separator.type-annotation.nebula"
@@ -335,6 +335,9 @@
       "patterns": [
         {
           "include": "#types"
+        },
+        {
+          "include": "#keywords"
         },
         {
           "name": "entity.name.type.reference.nebula",
