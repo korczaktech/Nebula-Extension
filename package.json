@@ -129,6 +129,13 @@
         "command": "nebula.languageServerStatus",
         "title": "Nebula: Estado do Language Server"
       }
+    ],
+    "themes": [
+      {
+        "label": "Nebula Vibrante",
+        "uiTheme": "vs-dark",
+        "path": "./themes/nebula-vibrante-color-theme.json"
+      }
     ]
   },
   "scripts": {
