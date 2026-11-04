@@ -22,7 +22,7 @@ test('snippets cobrem construções da gramática e comandos do runtime', () => 
   const prefixes = Object.values(snippets).flatMap(item =>
     Array.isArray(item.prefix) ? item.prefix : [item.prefix]);
   for (const prefix of [
-    'variavel', 'mutável', 'constante', 'funcao', 'funcaogen', 'quando',
+    'variavel', 'mutável', 'constante', 'funcao', 'funcaogen', 'tipofuncao', 'enumpayload', 'quando',
     'escolha', 'avaliar', 'enquanto', 'repetir', 'cada', 'para', 'pulso',
     'estrutura', 'enumeracao', 'incluir', 'funcaofim', 'quandofim',
     'parar', 'encerrar', 'seguir', 'lertexto', 'aguardar', 'dormir',
