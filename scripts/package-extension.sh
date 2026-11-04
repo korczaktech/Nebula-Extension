@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-npm ci
-npm run compile
-npx @vscode/vsce package
+
+npm install
+npm run vscode:prepublish
+npx @vscode/vsce package --no-dependencies
