@@ -4,7 +4,9 @@
     "target": "ES2022",
     "outDir": "out",
     "rootDir": "src",
-    "lib": ["ES2022"],
+    "lib": [
+      "ES2022"
+    ],
     "sourceMap": true,
     "strict": true,
     "noImplicitReturns": true,
@@ -12,7 +14,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowJs": true
   },
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts"
+  ]
 }
