@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { Registry, parseRawGrammar } from 'vscode-textmate';
+import textmate from 'vscode-textmate';
+const { Registry, parseRawGrammar } = textmate;
 import oniguruma from 'vscode-oniguruma';
 
 const require = createRequire(import.meta.url);
