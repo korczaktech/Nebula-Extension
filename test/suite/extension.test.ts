@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 suite('Nebula — integração com o VS Code', () => {
-  const extensionId = 'korczak-technologies.nebula-language';
+  const extensionId = 'KorczakTechnologiesBR.nebula-language';
 
   test('a extensão é localizada e ativada', async () => {
     const extension = vscode.extensions.getExtension(extensionId);
