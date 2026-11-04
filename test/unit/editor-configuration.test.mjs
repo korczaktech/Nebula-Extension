@@ -23,9 +23,11 @@ test('pares automáticos incluem delimitadores e aspas sem atuar em strings/come
   for (const [open, close] of [['{', '}'], ['[', ']'], ['(', ')'], ['"', '"'], ["'", "'"]]) {
     assert.ok(pairs.some(pair => pair.open === open && pair.close === close), 'Par ausente: ' + open + close);
   }
-  for (const pair of pairs.filter(pair => pair.open === '"' || pair.open === "'")) {
+  for (const pair of pairs.filter(pair => pair.open !== '/*')) {
     assert.deepEqual(pair.notIn, ['string', 'comment']);
   }
+  const blockCommentPair = pairs.find(pair => pair.open === '/*');
+  assert.deepEqual(blockCommentPair.notIn, ['string', 'comment']);
 });
 
 test('regras de indentação são expressões válidas e reconhecem blocos', () => {
@@ -39,17 +41,31 @@ test('regras de indentação são expressões válidas e reconhecem blocos', () 
     'estrutura Pessoa {',
     'cada item em itens {',
     'chamar( ',
-    'valores = ['
+    'valores = [',
+    'funcao principal()',
+    'função principal()',
+    'publico funcao principal()',
+    'público função principal()',
+    'quando ativo',
+    'senao',
+    'senão quando ativo',
+    'enquanto ativo',
+    'durante ativo',
+    'repetir ativo',
+    'cada item em itens',
+    'pulso(10)',
+    'para(i = 0; i < 10; i = i + 1)',
+    'caso Resultado::Ok'
   ]) assert.ok(increase.test(line), 'Não aumenta indentação: ' + line);
 
-  for (const line of ['}', '    }', '    )', '    ]']) {
+  for (const line of ['}', '    }', '    )', '    ]', 'fim', '    fim', 'senao', 'senão']) {
     assert.ok(decrease.test(line), 'Não reduz indentação: ' + line);
   }
 });
 
 test('regras ao pressionar Enter possuem padrões válidos e ações reconhecidas', () => {
   assert.ok(Array.isArray(configuration.onEnterRules));
-  assert.ok(configuration.onEnterRules.length >= 5);
+  assert.ok(configuration.onEnterRules.length >= 6);
   const allowedIndentActions = new Set(['none', 'indent', 'outdent', 'indentOutdent']);
 
   for (const rule of configuration.onEnterRules) {
@@ -59,6 +75,60 @@ test('regras ao pressionar Enter possuem padrões válidos e ações reconhecida
     assert.ok(allowedIndentActions.has(rule.action.indent));
     if (rule.action.appendText !== undefined) assert.equal(typeof rule.action.appendText, 'string');
   }
+});
+
+test('regras de Enter indentam blocos terminados por fim e continuam comentários', () => {
+  const rules = configuration.onEnterRules;
+  const headers = rules.find(rule => rule.beforeText.includes('funcao|função'));
+  assert.ok(headers);
+  const pattern = new RegExp(headers.beforeText);
+
+  for (const line of [
+    'funcao principal()',
+    'função principal()',
+    'quando ativo',
+    'senão',
+    'enquanto ativo',
+    'durante ativo',
+    'repetir ativo',
+    'cada item em itens',
+    'pulso(10)',
+    'para(i = 0; i < 10; i = i + 1)',
+    'caso Resultado::Ok'
+  ]) assert.ok(pattern.test(line), 'Não indentou bloco encerrado por fim: ' + line);
+  assert.equal(headers.action.indent, 'indent');
+
+  const blockComment = rules.find(rule => rule.beforeText === '^\\\\s*/\\\\*.*
+  const keys = configuration.autoClosingPairs.map(pair => pair.open + '\0' + pair.close);
+  assert.equal(new Set(keys).size, keys.length);
+  assert.equal(configuration.comments.lineComment, '//');
+  assert.ok(configuration.autoCloseBefore.includes('\n'));
+  assert.ok(configuration.autoCloseBefore.includes('\t'));
+});
+
+test('VS Code recebe padrões de edição específicos para Nebula', () => {
+  const packageJson = JSON.parse(
+    readFileSync(new URL('../../package.json', import.meta.url), 'utf8')
+  );
+  const defaults = packageJson.contributes.configurationDefaults['[nebula]'];
+
+  assert.equal(defaults['editor.insertSpaces'], true);
+  assert.equal(defaults['editor.tabSize'], 4);
+  assert.equal(defaults['editor.detectIndentation'], false);
+  assert.equal(defaults['editor.autoIndent'], 'full');
+  assert.equal(defaults['editor.bracketPairColorization.enabled'], true);
+  assert.equal(defaults['editor.guides.bracketPairs'], true);
+  assert.equal(defaults['editor.guides.indentation'], true);
+  assert.equal(defaults['editor.matchBrackets'], 'always');
+  assert.equal(defaults['editor.autoClosingBrackets'], 'languageDefined');
+  assert.equal(defaults['editor.autoClosingQuotes'], 'languageDefined');
+  assert.equal(defaults['editor.autoSurround'], 'languageDefined');
+});
+);
+  assert.ok(blockComment);
+  assert.equal(blockComment.action.appendText, ' * ');
+  assert.equal(blockComment.action.indent, 'indent');
+  assert.ok(rules.some(rule => rule.action.appendText === '// '));
 });
 
 test('configuração não declara pares ou comentários duplicados', () => {
