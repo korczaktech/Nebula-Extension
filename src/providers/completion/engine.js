@@ -41,36 +41,36 @@ function splitTopLevelBy(source,separators){
 function splitTopLevel(source,separator){return splitTopLevelBy(source,[separator]);}
 function collectSymbols(source){
  const code=maskNonCode(source),symbols=[],variables=new Map(),structures=new Map(),enums=new Map();
- const add=(label,kind,detail,documentation,extra={})=>{if(label&&!symbols.some(x=>x.label===label&&x.kind===kind))symbols.push({label,kind,detail,documentation,...extra});};
- const varRe=/(?<![\p{L}\p{N}_])(?:variavel|definir|mutavel|mutável|constante)\s+([\p{L}_][\p{L}\p{N}_]*)(?:\s*:\s*([\p{L}_][\p{L}\p{N}_]*))?/gu;
- for(const m of code.matchAll(varRe)){variables.set(m[1],m[2]||'');add(m[1],'variable',m[2]?'Variável · '+m[2]:'Variável','Símbolo declarado neste arquivo.');}
- const fnStart=/(?<![\p{L}\p{N}_])(?:(?:publico|público|privado)\s+)?(?:funcao|função)\s+([\p{L}_][\p{L}\p{N}_]*)(?:\s*<[^>]*>)?\s*\(/gu;
+ const add=(label,kind,detail,documentation,extra={})=>{if(label&&!symbols.some(x=>x.label.normalize('NFC')===label.normalize('NFC')&&x.kind===kind))symbols.push({label,kind,detail,documentation,...extra});};
+ const varRe=/(?<![\p{XID_Continue}_])(?:variavel|definir|mutavel|mutável|constante)\s+([\p{XID_Start}_][\p{XID_Continue}_]*)(?:\s*:\s*([\p{XID_Start}_][\p{XID_Continue}_]*))?/gu;
+ for(const m of code.matchAll(varRe)){variables.set(m[1].normalize('NFC'),(m[2]||'').normalize('NFC'));add(m[1],'variable',m[2]?'Variável · '+m[2]:'Variável','Símbolo declarado neste arquivo.');}
+ const fnStart=/(?<![\p{XID_Continue}_])(?:(?:publico|público|privado)\s+)?(?:funcao|função)\s+([\p{XID_Start}_][\p{XID_Continue}_]*)(?:\s*<[^>]*>)?\s*\(/gu;
  for(const m of code.matchAll(fnStart)){
   const open=m.index+m[0].lastIndexOf('(');let depth=1,end=open+1;
   for(;end<code.length&&depth>0;end++){if(code[end]==='(')depth++;else if(code[end]===')')depth--;}
   if(depth!==0)continue;
   const close=end-1,paramsText=code.slice(open+1,close);
-  const params=splitTopLevel(paramsText,',').map(part=>part.trim().match(/^([\p{L}_][\p{L}\p{N}_]*)\s*:\s*(.+)$/u)).filter(Boolean);
+  const params=splitTopLevel(paramsText,',').map(part=>part.trim().match(/^([\p{XID_Start}_][\p{XID_Continue}_]*)\s*:\s*(.+)$/u)).filter(Boolean);
   const returnType=code.slice(close+1).match(/^\s*:\s*([^\n;{}]+)/u)?.[1]?.trim();
   add(m[1],'function','('+params.map(p=>p[1]+': '+p[2].trim()).join(', ')+')'+(returnType?': '+returnType:''),'Função declarada neste arquivo.');
   for(const p of params)add(p[1],'variable','Parâmetro · '+p[2].trim(),'Parâmetro da função '+m[1]+'.');
  }
- for(const m of code.matchAll(/(?<![\p{L}\p{N}_])tipo\s+([\p{L}_][\p{L}\p{N}_]*)/gu))add(m[1],'type','Alias de tipo','Tipo definido neste arquivo.');
- const structs=/(?<![\p{L}\p{N}_])estrutura\s+([\p{L}_][\p{L}\p{N}_]*)\s*\{/gu;
+ for(const m of code.matchAll(/(?<![\p{XID_Continue}_])tipo\s+([\p{XID_Start}_][\p{XID_Continue}_]*)/gu))add(m[1],'type','Alias de tipo','Tipo definido neste arquivo.');
+ const structs=/(?<![\p{XID_Continue}_])estrutura\s+([\p{XID_Start}_][\p{XID_Continue}_]*)\s*\{/gu;
  for(const m of code.matchAll(structs)){
   const open=m.index+m[0].lastIndexOf('{');let depth=1,end=open+1;
   for(;end<code.length&&depth>0;end++){if(code[end]==='{')depth++;else if(code[end]==='}')depth--;}
   const body=code.slice(open+1,Math.max(open+1,end-1));
-  const fields=splitTopLevelBy(body,[',',';','\n']).map(part=>part.trim().match(/^([\p{L}_][\p{L}\p{N}_]*)\s*:\s*(.+)$/u)).filter(Boolean).map(x=>({label:x[1],type:x[2].trim()}));
-  structures.set(m[1],fields);add(m[1],'struct','Estrutura','Estrutura declarada neste arquivo.',{fields});
+  const fields=splitTopLevelBy(body,[',',';','\n']).map(part=>part.trim().match(/^([\p{XID_Start}_][\p{XID_Continue}_]*)\s*:\s*(.+)$/u)).filter(Boolean).map(x=>({label:x[1],type:x[2].trim()}));
+  structures.set(m[1].normalize('NFC'),fields);add(m[1],'struct','Estrutura','Estrutura declarada neste arquivo.',{fields});
  }
- const enumsRe=/(?<![\p{L}\p{N}_])(?:enumeracao|enumeração)\s+([\p{L}_][\p{L}\p{N}_]*)\s*\{/gu;
+ const enumsRe=/(?<![\p{XID_Continue}_])(?:enumeracao|enumeração)\s+([\p{XID_Start}_][\p{XID_Continue}_]*)\s*\{/gu;
  for(const m of code.matchAll(enumsRe)){
   const open=m.index+m[0].lastIndexOf('{'),close=code.indexOf('}',open+1),body=code.slice(open+1,close<0?code.length:close);
-  const variants=splitTopLevelBy(body,[',',';','\n']).map(part=>part.trim().match(/^([\p{L}_][\p{L}\p{N}_]*)/u)).filter(Boolean).map(x=>x[1]);
-  enums.set(m[1],variants);add(m[1],'enum','Enumeração','Enumeração declarada neste arquivo.',{variants});
+  const variants=splitTopLevelBy(body,[',',';','\n']).map(part=>part.trim().match(/^([\p{XID_Start}_][\p{XID_Continue}_]*)/u)).filter(Boolean).map(x=>x[1]);
+  enums.set(m[1].normalize('NFC'),variants);add(m[1],'enum','Enumeração','Enumeração declarada neste arquivo.',{variants});
  }
- for(const m of code.matchAll(/(?<![\p{L}\p{N}_])incluir\s+([\p{L}_][\p{L}\p{N}_]*(?:::\s*[\p{L}_][\p{L}\p{N}_]*)*)(?:\s+como\s+([\p{L}_][\p{L}\p{N}_]*))?/gu)){
+ for(const m of code.matchAll(/(?<![\p{XID_Continue}_])incluir\s+([\p{XID_Start}_][\p{XID_Continue}_]*(?:::\s*[\p{XID_Start}_][\p{XID_Continue}_]*)*)(?:\s+como\s+([\p{XID_Start}_][\p{XID_Continue}_]*))?/gu)){
   const path=m[1].replace(/\s/g,''),alias=m[2]||path.split('::').at(-1);add(alias,'module','Módulo · '+path,'Módulo incluído neste arquivo.');
  }
  return {symbols,variables,structures,enums};
@@ -79,11 +79,11 @@ function getCompletionCandidates(source,cursorOffset){
  const safeOffset=Math.max(0,Math.min(cursorOffset,source.length)),before=source.slice(0,safeOffset);
  if(!isCodePosition(source,safeOffset))return {candidates:[],wordStart:safeOffset,context:'general'};
  const masked=maskNonCode(before),lineStart=masked.lastIndexOf('\n')+1,line=masked.slice(lineStart);
- const current=line.match(/[\p{L}_][\p{L}\p{N}_]*$/u)?.[0]||'',wordStart=safeOffset-current.length;
+ const current=line.match(/[\p{XID_Start}_][\p{XID_Continue}_]*$/u)?.[0]||'',wordStart=safeOffset-current.length;
  const symbols=collectSymbols(source),trimmed=line.trimEnd();
- const member=trimmed.match(/([\p{L}_][\p{L}\p{N}_]*)\s*(::|\.)\s*[\p{L}\p{N}_]*$/u);
+ const member=trimmed.match(/([\p{XID_Start}_][\p{XID_Continue}_]*)\s*(::|\.)\s*[\p{XID_Continue}_]*$/u);
  if(member){
-  const receiver=member[1],operator=member[2],items=[];
+  const receiver=member[1].normalize('NFC'),operator=member[2],items=[];
   if(operator==='::'&&symbols.enums.has(receiver))for(const label of symbols.enums.get(receiver))items.push({label,kind:'enumMember',detail:'Variante de '+receiver,documentation:'Variante da enumeração '+receiver+'.'});
   if(operator==='.'&&symbols.variables.has(receiver)){const type=symbols.variables.get(receiver);for(const field of symbols.structures.get(type)||[])items.push({label:field.label,kind:'field',detail:'Campo · '+field.type,documentation:'Campo da estrutura '+type+'.'});}
   const prefix=current.normalize('NFC').toLocaleLowerCase();
