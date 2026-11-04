@@ -7,7 +7,7 @@ const NEBULA_REPOSITORY = 'https://github.com/korczaktech/Nebula';
 
 export function getNebulaLanguageServerPath(context: vscode.ExtensionContext, configuredPath = ''): string {
   const override = configuredPath.trim();
-  if (override) return override;
+  if (override && fs.existsSync(override)) return override;
   const executable = process.platform === 'win32' ? 'nebula-lsp.exe' : 'nebula-lsp';
   return path.join(context.globalStorageUri.fsPath, 'bin', executable);
 }
