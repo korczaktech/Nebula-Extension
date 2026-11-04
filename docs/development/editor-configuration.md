@@ -24,6 +24,18 @@ A configuração reconhece abertura de blocos com chaves, colchetes e parêntese
 
 As regras são heurísticas de editor baseadas no texto da linha. Elas não substituem o parser e não tentam interpretar estruturas semanticamente.
 
+## Padrões do editor
+
+Para arquivos Nebula, a extensão fornece estes padrões iniciais:
+
+- Recuo com quatro espaços, sem tabulações e sem detecção automática de recuo existente.
+- Indentação automática completa.
+- Colorização de pares e guias de chaves, colchetes, parênteses e indentação.
+- Realce de delimitadores correspondentes.
+- Fechamento automático e envolvimento de seleções conforme os pares declarados pela linguagem.
+
+Esses valores são padrões do VS Code para Nebula; configurações pessoais do usuário podem substituí-los.
+
 ## Validação
 
 \`npm test\` verifica os pares, comentários, padrões de indentação e regras de Enter, incluindo a compilação das expressões regulares. O comportamento final de edição deve também ser conferido em uma janela de desenvolvimento do VS Code.
