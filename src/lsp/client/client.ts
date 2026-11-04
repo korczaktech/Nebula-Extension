@@ -147,6 +147,7 @@ export function registerNebulaLanguageClient(context: vscode.ExtensionContext): 
     'nebula.installLanguageServer',
     async () => {
       try {
+        await stopNebulaLanguageClient();
         const executable = await installNebulaLanguageServer(context, output!);
         installationPrompted = true;
         void vscode.window.showInformationMessage('Servidor LSP instalado: ' + executable);
