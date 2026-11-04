@@ -73,6 +73,17 @@ test('preserva tipos genéricos em campos e payloads de enumeração', () => {
   assert.deepEqual(result.enums.get('Resposta'), ['Algum', 'Nenhum']);
 });
 
+test('reconhece parâmetros com tipos de função aninhados', () => {
+  const source = 'funcao executar(callback: funcao(inteiro): vazio, resultado: Resultado<inteiro, texto>): vazio { }';
+  const labels = engine.collectSymbols(source).symbols.map(item => item.label);
+  assert.ok(labels.includes('executar'));
+  assert.ok(labels.includes('callback'));
+  assert.ok(labels.includes('resultado'));
+  assert.ok(!labels.includes('inteiro'));
+  assert.ok(!labels.includes('texto'));
+  assert.ok(!labels.includes('vazio'));
+});
+
 test('reconhece funções genéricas e módulos sem alias explícito', () => {
   const source = 'funcao transformar<T>(valor: T): T { }\nincluir sistema::texto';
   const labels = engine.collectSymbols(source).symbols.map(item => item.label);
@@ -120,7 +131,7 @@ test('sugere tipos após anotação', () => {
   const result = engine.getCompletionCandidates(source, source.length);
   assert.equal(result.context, 'type');
   assert.ok(result.candidates.some(item => item.label === 'inteiro'));
-  const allTypes = engine.getCompletionCandidates('variavel idade: ', 17);
+  const typeSource = 'variavel idade: ';\n  const allTypes = engine.getCompletionCandidates(typeSource, typeSource.length);
   assert.ok(allTypes.candidates.some(item => item.label === 'Resultado'));
   assert.ok(!result.candidates.some(item => item.label === 'variavel'));
 });
