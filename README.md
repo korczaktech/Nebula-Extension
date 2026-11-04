@@ -14,7 +14,7 @@ Desenvolvida pela **Korczak Technologies**. Este repositório contém somente a 
 - Configuração de aspas, delimitadores, comentários automáticos e recuo integrada ao editor do VS Code.
 - Realce TextMate abrangente para palavras reservadas, declarações, funções internas, tipos, literais, operadores, comentários e delimitadores, com cobertura lexical mantida neste repositório.
 - Snippets para declarações, funções, condicionais, laços, estruturas, enumerações, módulos, tipos e funções internas, incluindo blocos com `fim`.
-- Autocomplete contextual de palavras reservadas, literais, tipos, funções internas e símbolos declarados no arquivo.
+- Autocomplete contextual alinhado ao inventário de palavras reservadas, literais, tipos, funções internas, declarações e parâmetros, incluindo tipos genéricos e de função.
 - Sugestões de campos de estruturas e variantes de enumerações após `.` e `::`.
 - Canal de saída para confirmar a ativação e o registro do autocomplete.
 
