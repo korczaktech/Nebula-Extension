@@ -13,8 +13,10 @@ Desenvolvida pela **Korczak Technologies**. Este repositório contém somente a 
 - Fechamento automático, seleção por pares e colorização de chaves, colchetes e parênteses.
 - Configuração de aspas, delimitadores, comentários automáticos e recuo integrada ao editor do VS Code.
 - Realce TextMate abrangente para palavras reservadas, declarações, funções internas, tipos, literais, operadores, comentários e delimitadores, com cobertura lexical mantida neste repositório.
-- Snippets para declarações, funções, condicionais, laços, estruturas, enumerações e escolha.
-- Canal de saída para confirmar a ativação da extensão.
+- Snippets para declarações, funções, condicionais, laços, estruturas, enumerações, módulos, tipos e funções internas, incluindo blocos com `fim`.
+- Autocomplete contextual de palavras reservadas, tipos, funções internas e símbolos declarados no arquivo.
+- Sugestões de campos de estruturas e variantes de enumerações após `.` e `::`.
+- Canal de saída para confirmar a ativação e o registro do autocomplete.
 
 ## Instalação para desenvolvimento
 
@@ -49,7 +51,7 @@ O empacotamento gera um arquivo `.vsix`.
 
 ## Escopo
 
-Esta versão-base prepara o reconhecimento e a experiência de edição. Recursos dependentes de análise do compilador — diagnósticos semânticos, autocomplete contextual, navegação, refatorações e integração LSP — serão implementados nas próximas etapas.
+Esta versão-base prepara o reconhecimento e a experiência de edição. O autocomplete desta etapa é local ao arquivo e baseado em análise textual leve; não substitui o parser nem o sistema de tipos do compilador. Diagnósticos semânticos, resolução entre arquivos, navegação, refatorações e integração LSP permanecem fora do escopo desta etapa.
 
 ## Licença
 
