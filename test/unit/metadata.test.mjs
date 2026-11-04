@@ -9,7 +9,7 @@ const readJson = async (relativePath) => JSON.parse(await readFile(path.join(roo
 
 test('package.json identifica Nebula e associa arquivos .nbx', async () => {
   const manifest = await readJson('package.json');
-  assert.equal(manifest.name, 'nebula-language');
+  assert.equal(manifest.name, 'nbx-language');
   assert.ok(manifest.contributes.languages.some((language) =>
     language.id === 'nebula' && language.extensions.includes('.nbx')
   ));
