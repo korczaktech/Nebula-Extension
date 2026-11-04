@@ -68,3 +68,22 @@ test('configuração não declara pares ou comentários duplicados', () => {
   assert.ok(configuration.autoCloseBefore.includes('\n'));
   assert.ok(configuration.autoCloseBefore.includes('\t'));
 });
+
+test('VS Code recebe padrões de edição específicos para Nebula', () => {
+  const packageJson = JSON.parse(
+    readFileSync(new URL('../../package.json', import.meta.url), 'utf8')
+  );
+  const defaults = packageJson.contributes.configurationDefaults['[nebula]'];
+
+  assert.equal(defaults['editor.insertSpaces'], true);
+  assert.equal(defaults['editor.tabSize'], 4);
+  assert.equal(defaults['editor.detectIndentation'], false);
+  assert.equal(defaults['editor.autoIndent'], 'full');
+  assert.equal(defaults['editor.bracketPairColorization.enabled'], true);
+  assert.equal(defaults['editor.guides.bracketPairs'], true);
+  assert.equal(defaults['editor.guides.indentation'], true);
+  assert.equal(defaults['editor.matchBrackets'], 'always');
+  assert.equal(defaults['editor.autoClosingBrackets'], 'languageDefined');
+  assert.equal(defaults['editor.autoClosingQuotes'], 'languageDefined');
+  assert.equal(defaults['editor.autoSurround'], 'languageDefined');
+});
