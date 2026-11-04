@@ -1,7 +1,8 @@
 'use strict';
-const KEYWORDS=['variavel','definir','mutavel','mutável','alterar','constante','funcao','função','quando','senao','senão','avaliar','escolha','caso','para','cada','em','enquanto','durante','repetir','pulso','devolver','incluir','como','fim','parar','encerrar','seguir','e','ou','nao','não','publico','público','privado','tipo','estrutura','enumeracao','enumeração'];
+const KEYWORDS=['variavel','definir','mutavel','mutável','alterar','constante','verdadeiro','falso','nulo','funcao','função','quando','senao','senão','avaliar','escolha','caso','para','cada','em','enquanto','durante','repetir','pulso','devolver','incluir','como','fim','parar','encerrar','seguir','e','ou','nao','não','publico','público','privado','tipo','estrutura','enumeracao','enumeração'];
 const BUILTINS=['exibir','receber','perguntar','ler_texto','aguardar','dormir','gerar','em_paralelo'];
-const TYPES=['vazio','logico','lógico','inteiro','inteiro8','inteiro16','inteiro32','inteiro64','inteiro128','inteiro_u8','inteiro_u16','inteiro_u32','inteiro_u64','inteiro_u128','decimal','decimal32','decimal64','texto','caractere','byte','vetor','matriz','Tupla','Opcional','Resultado'];
+const CONSTANTS=['verdadeiro','falso','nulo'];
+const TYPES=['vazio','logico','lógico','inteiro','inteiro8','inteiro16','inteiro32','inteiro64','inteiro128','inteiro_u8','inteiro_u16','inteiro_u32','inteiro_u64','inteiro_u128','decimal','decimal32','decimal64','texto','caractere','byte','vetor','matriz','Tupla','Opcional','Resultado','funcao'];
 function maskNonCode(source){
  const chars=source.split(''); let state='code',quote='';
  for(let i=0;i<chars.length;i++){const c=chars[i],n=chars[i+1];
@@ -56,7 +57,7 @@ function getCompletionCandidates(source,cursorOffset){
  const expectsType=/:\s*[\p{L}_\p{N}]*$/u.test(trimmed),items=[];
  const add=(label,kind,detail,documentation,extra={})=>items.push({label,kind,detail,documentation,...extra});
  if(expectsType){for(const t of TYPES)add(t,'type','Tipo Nebula','Tipo primitivo ou composto da linguagem.');for(const s of symbols.symbols.filter(x=>['type','struct','enum'].includes(x.kind)))add(s.label,'type',s.detail,s.documentation);}
- else{for(const k of KEYWORDS)add(k,'keyword','Palavra reservada','Palavra reservada da linguagem Nebula.');for(const b of BUILTINS)add(b,'function','Função interna','Função integrada da biblioteca padrão Nebula.',{insertText:b+'($0)'});for(const t of TYPES)add(t,'type','Tipo Nebula','Tipo primitivo ou composto da linguagem.');for(const s of symbols.symbols)add(s.label,s.kind,s.detail,s.documentation);}
+ else{for(const c of CONSTANTS)add(c,'constant','Literal lógico ou nulo','Valor literal da linguagem Nebula.');for(const k of KEYWORDS)add(k,'keyword','Palavra reservada','Palavra reservada da linguagem Nebula.');for(const b of BUILTINS)add(b,'function','Função interna','Função integrada da biblioteca padrão Nebula.',{insertText:b+'($0)'});for(const t of TYPES)add(t,'type','Tipo Nebula','Tipo primitivo ou composto da linguagem.');for(const s of symbols.symbols)add(s.label,s.kind,s.detail,s.documentation);}
  const unique=new Map();for(const item of items){const key=item.label.normalize('NFC');if(!unique.has(key))unique.set(key,item);}
  return {candidates:[...unique.values()].filter(x=>x.label.toLocaleLowerCase().startsWith(current.toLocaleLowerCase())),wordStart,context:expectsType?'type':'general'};
 }
