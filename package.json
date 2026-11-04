@@ -93,12 +93,12 @@
         "nebula.languageServer.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Ativa a conexão com o servidor LSP externo da Nebula."
+          "description": "Ativa o servidor LSP local da Nebula (padrão: ativado)."
         },
         "nebula.languageServer.serverPath": {
           "type": "string",
           "default": "",
-          "description": "Caminho opcional para um executável já instalado. Vazio utiliza o servidor instalado pela extensão."
+          "description": "Caminho opcional para substituir o executável LSP instalado pela extensão."
         },
         "nebula.languageServer.args": {
           "type": "array",
