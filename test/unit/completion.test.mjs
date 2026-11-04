@@ -98,7 +98,8 @@ test('inclui o motor JavaScript no build distribuído', () => {
   assert.equal(tsconfig.compilerOptions.allowJs, true);
   assert.ok(tsconfig.include.includes('src/**/*.js'));
   assert.ok(packageJson.scripts['check-output'].includes('out/providers/completion/engine.js'));
-  assert.ok(packageJson.files.includes('out/**'));
+  assert.equal(packageJson.main, './out/extension.js');
+  assert.ok(!readFileSync(new URL('../../.vscodeignore', import.meta.url), 'utf8').includes('out/**'));
 });
 
 test('registra snippets e autocomplete com gatilhos de membro e escopo', () => {
