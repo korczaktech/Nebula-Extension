@@ -3,6 +3,7 @@ import { collectSymbols, findWord, findReferences, findFunctionAtCall, getDiagno
 import { isNebulaLanguageServerReady, onNebulaLanguageServerReady } from '../../lsp/client/state';
 const selector: vscode.DocumentSelector = { language: 'nebula' };
 const legend = new vscode.SemanticTokensLegend(['keyword','type','function','variable','parameter','number','string','comment'],['declaration','defaultLibrary']);
+const semanticTypes=['keyword','type','function','variable','parameter','number','string','comment'];
 const semanticModifiers=['declaration','defaultLibrary'];
 function modifierBits(modifiers:string[]|undefined):number{return (modifiers||[]).reduce((bits,name)=>{const index=semanticModifiers.indexOf(name);return index<0?bits:bits|(1<<index);},0);}
 function wordRange(d:vscode.TextDocument,s:number,e:number):vscode.Range{return new vscode.Range(d.positionAt(s),d.positionAt(e));}
@@ -20,12 +21,13 @@ class Semantic implements vscode.DocumentSemanticTokensProvider{
    if(!type&&['keyword','type','number','string','comment'].includes(t.type))type=t.type;
    if(!type)continue;
    const p=d.positionAt(t.start),e=d.positionAt(t.end);
-   if(p.line===e.line){b.push(p.line,p.character,Math.max(1,e.character-p.character),type,modifierBits(t.modifiers));continue;}
+   const tokenType=semanticTypes.indexOf(type);if(tokenType<0)continue;
+   if(p.line===e.line){b.push(p.line,p.character,Math.max(1,e.character-p.character),tokenType,modifierBits(t.modifiers));continue;}
    if(t.type==='comment'||t.type==='string'){
     for(let line=p.line;line<=e.line;line++){
      const start=line===p.line?p.character:0;
      const end=line===e.line?e.character:d.lineAt(line).text.length;
-     if(end>start)b.push(line,start,end-start,type,modifierBits(t.modifiers));
+     if(end>start)b.push(line,start,end-start,tokenType,modifierBits(t.modifiers));
     }
    }
   }
