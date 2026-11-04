@@ -9,6 +9,7 @@ const snippets = JSON.parse(readFileSync(new URL('../../snippets/nebula.json', i
 const packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
 const tsconfig = JSON.parse(readFileSync(new URL('../../tsconfig.json', import.meta.url), 'utf8'));
 const providerSource = readFileSync(new URL('../../src/providers/completion/provider.ts', import.meta.url), 'utf8');
+const extensionSource = readFileSync(new URL('../../src/extension.ts', import.meta.url), 'utf8');
 
 test('snippets possuem prefixo, corpo e descrição válidos', () => {
   assert.ok(Object.keys(snippets).length >= 30);
@@ -104,6 +105,7 @@ test('registra snippets e autocomplete com gatilhos de membro e escopo', () => {
   assert.deepEqual(packageJson.contributes.snippets, [
     { language: 'nebula', path: './snippets/nebula.json' }
   ]);
+  assert.ok(extensionSource.includes('registerNebulaCompletions(context)'));
   assert.ok(providerSource.includes("registerCompletionItemProvider({language:'nebula'}"));
   assert.ok(providerSource.includes("new NebulaCompletionProvider(),'.',':'"));
   assert.ok(providerSource.includes('new vscode.SnippetString(candidate.insertText)'));
