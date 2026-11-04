@@ -1,21 +1,83 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
-const read=path=>readFileSync(new URL('../../'+path,import.meta.url),'utf8');
-const pkg=JSON.parse(read('package.json'));
-test('declara dependencia oficial do cliente LSP',()=>{assert.ok(pkg.dependencies['vscode-languageclient']);assert.equal(pkg.engines.vscode,'^1.85.0');});
-test('configura servidor externo desativado por padrão',()=>{const p=pkg.contributes.configuration.properties;assert.equal(p['nebula.languageServer.enabled'].default,false);assert.equal(p['nebula.languageServer.serverPath'].default,'nebula-lsp');assert.deepEqual(p['nebula.languageServer.args'].default,[]);assert.deepEqual(p['nebula.languageServer.trace'].enum,['off','messages','verbose']);});
-test('publica comandos de estado e reinício',()=>{const c=pkg.contributes.commands.map(x=>x.command);assert.ok(c.includes('nebula.restartLanguageServer'));assert.ok(c.includes('nebula.languageServerStatus'));});
-test('cliente observa documentos e oferece ciclo de vida',()=>{const c=read('src/lsp/client/client.ts');for(const x of ['new LanguageClient(','language:\'nebula\'','**/*.nbx','createNebulaInitializationOptions()','restartNebulaLanguageClient','stopNebulaLanguageClient'])assert.ok(c.includes(x),x);});
-test('declara recursos e versão do protocolo',()=>{const c=read('src/lsp/protocol/capabilities.ts');for(const x of ['diagnostics','completion','hover','definition','references','rename','signatureHelp','documentSymbols','semanticTokens','formatting','codeActions','workspaceFolders'])assert.ok(c.includes(x),x);assert.ok(c.includes('3.17'));});
-test('registra cliente durante a ativação',()=>assert.ok(read('src/extension.ts').includes('registerNebulaLanguageClient(context)')));
-test('verifica artefatos LSP compilados',()=>{const s=pkg.scripts['check-output'];for(const x of ['out/lsp/client/client.js','out/lsp/client/configuration.js','out/lsp/protocol/capabilities.js'])assert.ok(s.includes(x),x);});
+import { readFileSync } from 'node:fs';
 
-test('desativa provedores locais ao habilitar o LSP e os restaura ao desabilitar',()=>{
- const completion=read('src/providers/completion/provider.ts');
- const intelligence=read('src/providers/intelligence/provider.ts');
- assert.ok(completion.includes('onNebulaLanguageServerReady(sync)'));
- assert.ok(completion.includes('isNebulaLanguageServerReady()'));
- assert.ok(intelligence.includes('onNebulaLanguageServerReady(sync)'));
- assert.ok(intelligence.includes('isNebulaLanguageServerReady()'));
+const read = path => readFileSync(new URL('../../' + path, import.meta.url), 'utf8');
+const pkg = JSON.parse(read('package.json'));
+
+test('declara cliente LSP compatível com a versão mínima do VS Code', () => {
+  assert.ok(pkg.dependencies['vscode-languageclient']);
+  assert.equal(pkg.engines.vscode, '^1.85.0');
+});
+
+test('ativa a integração por padrão e permite caminho externo', () => {
+  const properties = pkg.contributes.configuration.properties;
+  assert.equal(properties['nebula.languageServer.enabled'].default, true);
+  assert.equal(properties['nebula.languageServer.serverPath'].default, '');
+  assert.deepEqual(properties['nebula.languageServer.args'].default, []);
+  assert.deepEqual(properties['nebula.languageServer.trace'].enum, ['off', 'messages', 'verbose']);
+});
+
+test('publica comandos para instalar, reiniciar e consultar o servidor', () => {
+  const commands = pkg.contributes.commands.map(item => item.command);
+  assert.ok(commands.includes('nebula.installLanguageServer'));
+  assert.ok(commands.includes('nebula.restartLanguageServer'));
+  assert.ok(commands.includes('nebula.languageServerStatus'));
+});
+
+test('cliente inicia o processo local e observa arquivos Nebula', () => {
+  const client = read('src/lsp/client/client.ts');
+  for (const value of [
+    'new LanguageClient(',
+    'getNebulaLanguageServerPath(context',
+    'ensureServerInstalled(context)',
+    "language: 'nebula'",
+    '**/*.nbx',
+    'restartNebulaLanguageClient',
+    'stopNebulaLanguageClient'
+  ]) assert.ok(client.includes(value), value);
+});
+
+test('instalador compila a versão oficial sem redistribuir binários', () => {
+  const installer = read('src/lsp/client/installer.ts');
+  assert.ok(installer.includes('https://github.com/korczaktech/Nebula'));
+  assert.ok(installer.includes("'--locked'"));
+  assert.ok(installer.includes("'--root', root"));
+  assert.ok(installer.includes("'nebula-lsp'"));
+  assert.ok(installer.includes('globalStorageUri'));
+});
+
+test('anuncia somente recursos realmente suportados pelo servidor Rust', () => {
+  const capabilities = read('src/lsp/protocol/capabilities.ts');
+  for (const feature of ['diagnostics', 'completion', 'hover', 'definition', 'references', 'signatureHelp', 'documentSymbols']) {
+    assert.ok(capabilities.includes(feature), feature);
+  }
+  for (const unsupported of ['semanticTokens', 'formatting', 'codeActions', 'rename', 'workspaceFolders']) {
+    assert.ok(!capabilities.includes(unsupported), unsupported);
+  }
+  assert.ok(capabilities.includes('3.17'));
+});
+
+test('registra o cliente durante a ativação da extensão', () => {
+  assert.ok(read('src/extension.ts').includes('registerNebulaLanguageClient(context)'));
+});
+
+test('mantém provedores locais para recursos ainda não oferecidos pelo servidor', () => {
+  const provider = read('src/providers/intelligence/provider.ts');
+  assert.ok(provider.includes("const next=isNebulaLanguageServerReady()?'lsp':'local'"));
+  assert.ok(provider.includes('registerDocumentSemanticTokensProvider'));
+  assert.ok(provider.includes('registerDocumentFormattingEditProvider'));
+  assert.ok(provider.includes('registerCodeActionsProvider'));
+  assert.ok(provider.includes('registerRenameProvider'));
+});
+
+test('verifica o cliente e o instalador nos artefatos compilados', () => {
+  const script = pkg.scripts['check-output'];
+  for (const artifact of [
+    'out/lsp/client/client.js',
+    'out/lsp/client/configuration.js',
+    'out/lsp/client/installer.js',
+    'out/lsp/client/state.js',
+    'out/lsp/protocol/capabilities.js'
+  ]) assert.ok(script.includes(artifact), artifact);
 });
