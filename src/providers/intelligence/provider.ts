@@ -17,7 +17,7 @@ class Semantic implements vscode.DocumentSemanticTokensProvider{
    if(!type&&['keyword','type','number','string','comment'].includes(t.type))type=t.type;
    if(!type)continue;
    const p=d.positionAt(t.start),e=d.positionAt(t.end);
-   if(p.line===e.line){b.push(p.line,p.character,Math.max(1,e.character-p.character),type,t.modifiers||[]);continue;}
+   if(p.line===e.line){b.push(p.line,p.character,Math.max(1,e.character-p.character),type,modifierBits(t.modifiers));continue;}
    if(t.type==='comment'||t.type==='string'){
     for(let line=p.line;line<=e.line;line++){
      const start=line===p.line?p.character:0;
