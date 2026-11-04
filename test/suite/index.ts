@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { suite, test } from 'mocha';
 
 suite('Nebula — integração com o VS Code', () => {
   const extensionId = 'korczak-technologies.nebula-language';
