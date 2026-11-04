@@ -63,6 +63,16 @@ test('reconhece parâmetros com tipos genéricos sem criar símbolos falsos', ()
   assert.ok(!labels.includes('T'));
 });
 
+test('preserva tipos genéricos em campos e payloads de enumeração', () => {
+  const source = 'estrutura Caixa { resultado: Resultado<inteiro, texto>; nome: texto }\nenumeracao Resposta { Algum(inteiro, texto), Nenhum }';
+  const result = engine.collectSymbols(source);
+  assert.deepEqual(result.structures.get('Caixa'), [
+    { label: 'resultado', type: 'Resultado<inteiro, texto>' },
+    { label: 'nome', type: 'texto' }
+  ]);
+  assert.deepEqual(result.enums.get('Resposta'), ['Algum', 'Nenhum']);
+});
+
 test('reconhece funções genéricas e módulos sem alias explícito', () => {
   const source = 'funcao transformar<T>(valor: T): T { }\nincluir sistema::texto';
   const labels = engine.collectSymbols(source).symbols.map(item => item.label);
