@@ -7,5 +7,6 @@ export const TYPES:string[];
 export function maskNonCode(source:string):string;
 export function isCodePosition(source:string,offset:number):boolean;
 export function splitTopLevel(source:string,separator:string):string[];
+export function splitTopLevelBy(source:string,separators:string[]):string[];
 export function collectSymbols(source:string):{symbols:NebulaSymbol[];variables:Map<string,string>;structures:Map<string,Array<{label:string;type:string}>>;enums:Map<string,string[]>};
 export function getCompletionCandidates(source:string,cursorOffset:number):CompletionResult;
