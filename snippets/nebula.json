@@ -47,7 +47,7 @@
       "fn"
     ],
     "body": [
-      "funcao ${1:nome}<${2:T}>(${3:parametros}): ${4:vazio} {",
+      "funcao ${1:nome}(${2:parametros}): ${3:vazio} {",
       "\t${0}",
       "}"
     ],
@@ -56,7 +56,7 @@
   "Função pública": {
     "prefix": "funcaop",
     "body": [
-      "publico funcao ${1:nome}<${2:T}>(${3:parametros}): ${4:vazio} {",
+      "publico funcao ${1:nome}(${2:parametros}): ${3:vazio} {",
       "\t${0}",
       "}"
     ],
@@ -371,5 +371,14 @@
       "seguir"
     ],
     "description": "Avança para a próxima iteração"
+  },
+  "Função genérica": {
+    "prefix": "funcaogen",
+    "body": [
+      "funcao ${1:nome}<${2:T}>(${3:valor}: ${2:T}): ${2:T} {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Declara uma função genérica"
   }
 }
