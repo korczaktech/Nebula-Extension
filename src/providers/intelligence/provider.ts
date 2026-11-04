@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { collectSymbols, findWord, findReferences, findFunctionAtCall, getDiagnostics, getDocumentSymbols, getSemanticTokens, formatDocument } from './engine';
+import { isNebulaLanguageServerReady, onNebulaLanguageServerReady } from '../../lsp/client/state';
 const selector: vscode.DocumentSelector = { language: 'nebula' };
 const legend = new vscode.SemanticTokensLegend(['keyword','type','function','variable','parameter','number','string','comment'],['declaration','defaultLibrary']);
 const semanticModifiers=['declaration','defaultLibrary'];
@@ -39,8 +40,8 @@ export function registerNebulaIntelligence(context:vscode.ExtensionContext):void
  let registrations:vscode.Disposable[]=[];
  const disposeLocal=()=>{for(const item of registrations)item.dispose();registrations=[];};
  const sync=()=>{
-  const enabled=vscode.workspace.getConfiguration('nebula.languageServer').get<boolean>('enabled',false);
-  if(enabled){disposeLocal();return;}
+  const ready=isNebulaLanguageServerReady();
+  if(ready){disposeLocal();return;}
   if(registrations.length)return;
   registrations=[
    vscode.languages.registerHoverProvider(selector,new Hover()),
@@ -63,6 +64,6 @@ export function registerNebulaIntelligence(context:vscode.ExtensionContext):void
   );
  };
  sync();
- context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e=>{if(e.affectsConfiguration('nebula.languageServer.enabled'))sync();}));
+ context.subscriptions.push(onNebulaLanguageServerReady(sync));
  context.subscriptions.push(new vscode.Disposable(disposeLocal));
 }
