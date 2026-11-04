@@ -21,7 +21,7 @@ test('delimitadores possuem pares completos e colorização correspondente', () 
 test('pares automáticos incluem delimitadores e aspas sem atuar em strings/comentários', () => {
   const pairs = configuration.autoClosingPairs;
   for (const [open, close] of [['{', '}'], ['[', ']'], ['(', ')'], ['"', '"'], ["'", "'"]]) {
-    assert.ok(pairs.some(pair => pair.open === open && pair.close === close), \`Par ausente: \${open}\${close}\`);
+    assert.ok(pairs.some(pair => pair.open === open && pair.close === close), 'Par ausente: ' + open + close);
   }
   for (const pair of pairs.filter(pair => pair.open === '"' || pair.open === "'")) {
     assert.deepEqual(pair.notIn, ['string', 'comment']);
@@ -40,10 +40,10 @@ test('regras de indentação são expressões válidas e reconhecem blocos', () 
     'cada item em itens {',
     'chamar( ',
     'valores = ['
-  ]) assert.ok(increase.test(line), \`Não aumenta indentação: \${line}\`);
+  ]) assert.ok(increase.test(line), 'Não aumenta indentação: ' + line);
 
   for (const line of ['}', '    }', '    )', '    ]']) {
-    assert.ok(decrease.test(line), \`Não reduz indentação: \${line}\`);
+    assert.ok(decrease.test(line), 'Não reduz indentação: ' + line);
   }
 });
 
@@ -62,7 +62,9 @@ test('regras ao pressionar Enter possuem padrões válidos e ações reconhecida
 });
 
 test('configuração não declara pares ou comentários duplicados', () => {
-  const keys = configuration.autoClosingPairs.map(pair => \`\${pair.open}\\0\${pair.close}\`);
+  const keys = configuration.autoClosingPairs.map(pair => pair.open + '\0' + pair.close);
   assert.equal(new Set(keys).size, keys.length);
   assert.equal(configuration.comments.lineComment, '//');
+  assert.ok(configuration.autoCloseBefore.includes('\n'));
+  assert.ok(configuration.autoCloseBefore.includes('\t'));
 });
