@@ -86,7 +86,50 @@
         "editor.tabCompletion": "on",
         "editor.suggest.snippetsPreventQuickSuggestions": false
       }
-    }
+    },
+    "configuration": {
+      "title": "Nebula",
+      "properties": {
+        "nebula.languageServer.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Ativa a conexão com o servidor LSP externo da Nebula."
+        },
+        "nebula.languageServer.serverPath": {
+          "type": "string",
+          "default": "nebula-lsp",
+          "description": "Caminho do executável do servidor Language Server da Nebula."
+        },
+        "nebula.languageServer.args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Argumentos adicionais passados ao executável do servidor LSP."
+        },
+        "nebula.languageServer.trace": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Nível de rastreamento da comunicação LSP."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "nebula.restartLanguageServer",
+        "title": "Nebula: Reiniciar Language Server"
+      },
+      {
+        "command": "nebula.languageServerStatus",
+        "title": "Nebula: Estado do Language Server"
+      }
+    ]
   },
   "scripts": {
     "compile": "tsc -p ./",
@@ -95,7 +138,7 @@
     "test": "node --test",
     "vscode:prepublish": "npm run compile",
     "package": "vsce package",
-    "check-output": "node -e \"const fs=require('node:fs'); for (const file of ['out/extension.js','out/providers/completion/provider.js','out/providers/completion/engine.js','out/providers/intelligence/provider.js','out/providers/intelligence/engine.js']) fs.accessSync(file); console.log('Artefatos da extensão presentes.');\""
+    "check-output": "node -e \"const fs=require('node:fs'); for (const file of ['out/extension.js','out/providers/completion/provider.js','out/providers/completion/engine.js','out/providers/intelligence/provider.js','out/providers/intelligence/engine.js','out/lsp/client/client.js','out/lsp/client/configuration.js','out/lsp/protocol/capabilities.js']) fs.accessSync(file); console.log('Artefatos da extensão e LSP presentes.');\""
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
@@ -114,5 +157,8 @@
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
-  ]
+  ],
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
 }
