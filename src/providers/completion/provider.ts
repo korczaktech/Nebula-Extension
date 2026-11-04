@@ -14,5 +14,9 @@ export class NebulaCompletionProvider implements vscode.CompletionItemProvider {
  }
 }
 export function registerNebulaCompletions(context:vscode.ExtensionContext):void{
- context.subscriptions.push(vscode.languages.registerCompletionItemProvider({language:'nebula'},new NebulaCompletionProvider(),'.',':'));
+ let registration:vscode.Disposable|undefined;
+ const sync=()=>{const enabled=vscode.workspace.getConfiguration('nebula.languageServer').get<boolean>('enabled',false);if(enabled){registration?.dispose();registration=undefined;}else if(!registration){registration=vscode.languages.registerCompletionItemProvider({language:'nebula'},new NebulaCompletionProvider(),'.',':');}};
+ sync();
+ context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e=>{if(e.affectsConfiguration('nebula.languageServer.enabled'))sync();}));
+ context.subscriptions.push(new vscode.Disposable(()=>registration?.dispose()));
 }
