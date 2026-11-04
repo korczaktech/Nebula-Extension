@@ -10,7 +10,7 @@ test('configura testes reais no host do VS Code', () => {
   assert.ok(manifest.devDependencies.mocha);
   assert.ok(manifest.scripts['test:integration'].includes('out-test/test/runTest.js'));
   assert.ok(manifest.scripts['compile-tests'].includes('tsconfig.test.json'));
-  assert.ok(read('test/suite/index.ts').includes('openTextDocument'));
+  assert.ok(read('test/suite/extension.test.ts').includes('openTextDocument'));
 });
 
 test('o pipeline valida e publica o VSIX gerado', () => {
