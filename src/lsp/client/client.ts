@@ -36,8 +36,7 @@ function clientOptions(context: vscode.ExtensionContext): LanguageClientOptions 
     synchronize: { fileEvents: fileWatcher },
     initializationOptions: createNebulaInitializationOptions(),
     outputChannel: output,
-    traceOutputChannel: output,
-    revealOutputChannelOn: 4
+    traceOutputChannel: output
   };
 }
 
