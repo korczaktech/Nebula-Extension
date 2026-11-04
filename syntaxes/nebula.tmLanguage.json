@@ -56,8 +56,8 @@
         },
         {
           "name": "comment.block.nebula",
-          "begin": "/\\\\*",
-          "end": "\\\\*/"
+          "begin": "/\\*",
+          "end": "\\*/"
         }
       ]
     },
@@ -68,11 +68,11 @@
       "patterns": [
         {
           "name": "constant.character.escape.nebula",
-          "match": "\\\\\\\\(?:[\\\\\\\\\\\"'nrt0]|u\\\\{[0-9A-Fa-f]+\\\\})"
+          "match": "\\\\(?:[\\\\\\\"'nrt0]|u\\{[0-9A-Fa-f]+\\})"
         },
         {
           "name": "invalid.illegal.escape.nebula",
-          "match": "\\\\\\\\."
+          "match": "\\\\."
         }
       ]
     },
@@ -83,11 +83,11 @@
       "patterns": [
         {
           "name": "constant.character.escape.nebula",
-          "match": "\\\\\\\\(?:[\\\\\\\\\\\"'nrt0]|u\\\\{[0-9A-Fa-f]+\\\\})"
+          "match": "\\\\(?:[\\\\\\\"'nrt0]|u\\{[0-9A-Fa-f]+\\})"
         },
         {
           "name": "invalid.illegal.escape.nebula",
-          "match": "\\\\\\\\."
+          "match": "\\\\."
         }
       ]
     },
@@ -95,7 +95,7 @@
       "patterns": [
         {
           "name": "invalid.illegal.reserved-future.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(?:tentar|capturar|finalmente|assinc)(?![\\\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])(?:tentar|capturar|finalmente|assinc)(?![\\p{XID_Continue}_])"
         }
       ]
     },
@@ -103,19 +103,19 @@
       "patterns": [
         {
           "name": "constant.numeric.hex.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])0[xX][0-9A-Fa-f](?:_?[0-9A-Fa-f])*(?![\\\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])0[xX][0-9A-Fa-f](?:_?[0-9A-Fa-f])*(?![\\p{XID_Continue}_])"
         },
         {
           "name": "constant.numeric.binary.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])0[bB][01](?:_?[01])*(?![\\\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])0[bB][01](?:_?[01])*(?![\\p{XID_Continue}_])"
         },
         {
           "name": "constant.numeric.octal.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])0[oO][0-7](?:_?[0-7])*(?![\\\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])0[oO][0-7](?:_?[0-7])*(?![\\p{XID_Continue}_])"
         },
         {
           "name": "constant.numeric.decimal.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])[0-9](?:_?[0-9])*(?:\\\\.[0-9](?:_?[0-9])*)?(?:[eE][+-]?[0-9](?:_?[0-9])*)?(?![\\\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])[0-9](?:_?[0-9])*(?:\\.[0-9](?:_?[0-9])*)?(?:[eE][+-]?[0-9](?:_?[0-9])*)?(?![\\p{XID_Continue}_])"
         }
       ]
     },
@@ -123,11 +123,11 @@
       "patterns": [
         {
           "name": "constant.language.boolean.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(?:verdadeiro|falso)(?![\\\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])(?:verdadeiro|falso)(?![\\p{XID_Continue}_])"
         },
         {
           "name": "constant.language.null.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])nulo(?![\\\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])nulo(?![\\p{XID_Continue}_])"
         }
       ]
     },
@@ -135,7 +135,7 @@
       "patterns": [
         {
           "name": "meta.declaration.variable.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(variavel|definir|mutavel|mutável|constante)(\\\\s+)([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
+          "match": "(?<![\\p{XID_Continue}_])(variavel|definir|mutavel|mutável|constante)(\\s+)([\\p{XID_Start}_][\\p{XID_Continue}_]*)",
           "captures": {
             "1": {
               "name": "storage.type.variable.nebula"
@@ -147,7 +147,7 @@
         },
         {
           "name": "meta.declaration.function.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(publico|público|privado)?\\\\s*(funcao|função)(\\\\s+)([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
+          "match": "(?<![\\p{XID_Continue}_])(publico|público|privado)?\\s*(funcao|função)(\\s+)([\\p{XID_Start}_][\\p{XID_Continue}_]*)",
           "captures": {
             "1": {
               "name": "storage.modifier.visibility.nebula"
@@ -162,7 +162,7 @@
         },
         {
           "name": "meta.declaration.type.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(tipo)(\\\\s+)([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
+          "match": "(?<![\\p{XID_Continue}_])(tipo)(\\s+)([\\p{XID_Start}_][\\p{XID_Continue}_]*)",
           "captures": {
             "1": {
               "name": "storage.type.type-alias.nebula"
@@ -174,7 +174,7 @@
         },
         {
           "name": "meta.declaration.structure.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(estrutura)(\\\\s+)([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
+          "match": "(?<![\\p{XID_Continue}_])(estrutura)(\\s+)([\\p{XID_Start}_][\\p{XID_Continue}_]*)",
           "captures": {
             "1": {
               "name": "storage.type.structure.nebula"
@@ -186,7 +186,7 @@
         },
         {
           "name": "meta.declaration.enum.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(enumeracao|enumeração)(\\\\s+)([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
+          "match": "(?<![\\p{XID_Continue}_])(enumeracao|enumeração)(\\s+)([\\p{XID_Start}_][\\p{XID_Continue}_]*)",
           "captures": {
             "1": {
               "name": "storage.type.enum.nebula"
@@ -202,11 +202,11 @@
       "patterns": [
         {
           "name": "keyword.control.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(?:variavel|definir|mutavel|mutável|alterar|constante|funcao|função|quando|senao|senão|avaliar|escolha|caso|para|cada|em|enquanto|durante|repetir|pulso|devolver|incluir|como|fim|parar|encerrar|seguir|publico|público|privado|tipo|estrutura|enumeracao|enumeração)(?![\\\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])(?:variavel|definir|mutavel|mutável|alterar|constante|funcao|função|quando|senao|senão|avaliar|escolha|caso|para|cada|em|enquanto|durante|repetir|pulso|devolver|incluir|como|fim|parar|encerrar|seguir|publico|público|privado|tipo|estrutura|enumeracao|enumeração)(?![\\p{XID_Continue}_])"
         },
         {
           "name": "keyword.operator.logical.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(?:e|ou|nao|não)(?![\\\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])(?:e|ou|nao|não)(?![\\p{XID_Continue}_])"
         }
       ]
     },
@@ -214,7 +214,7 @@
       "patterns": [
         {
           "name": "support.function.builtin.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(?:exibir|receber|perguntar|ler_texto|aguardar|dormir|gerar|em_paralelo)(?![\\\\p{XID_Continue}_])(?=\\\\s*\\\\()"
+          "match": "(?<![\\p{XID_Continue}_])(?:exibir|receber|perguntar|ler_texto|aguardar|dormir|gerar|em_paralelo)(?![\\p{XID_Continue}_])(?=\\s*\\()"
         }
       ]
     },
@@ -222,11 +222,11 @@
       "patterns": [
         {
           "name": "storage.type.primitive.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(?:vazio|logico|lógico|inteiro(?:8|16|32|64|128)?|inteiro_u(?:8|16|32|64|128)|decimal(?:32|64)?|texto|caractere|byte)(?![\\\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])(?:vazio|logico|lógico|inteiro(?:8|16|32|64|128)?|inteiro_u(?:8|16|32|64|128)|decimal(?:32|64)?|texto|caractere|byte)(?![\\p{XID_Continue}_])"
         },
         {
           "name": "support.type.container.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])(?:vetor|matriz|Tupla|Opcional|Resultado)(?![\\\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])(?:vetor|matriz|Tupla|Opcional|Resultado)(?![\\p{XID_Continue}_])"
         }
       ]
     },
@@ -234,7 +234,7 @@
       "patterns": [
         {
           "name": "meta.function-call.nebula",
-          "match": "([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)(\\\\s*)(?=\\\\()",
+          "match": "([\\p{XID_Start}_][\\p{XID_Continue}_]*)(\\s*)(?=\\()",
           "captures": {
             "1": {
               "name": "entity.name.function.call.nebula"
@@ -247,11 +247,11 @@
       "patterns": [
         {
           "name": "variable.parameter.nebula",
-          "match": "(?<![\\\\p{XID_Continue}_])([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)(?=\\\\s*:)"
+          "match": "(?<![\\p{XID_Continue}_])([\\p{XID_Start}_][\\p{XID_Continue}_]*)(?=\\s*:)"
         },
         {
           "name": "meta.member-access.nebula",
-          "match": "(?:\\\\.|::)\\\\s*([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
+          "match": "(?:\\.|::)\\s*([\\p{XID_Start}_][\\p{XID_Continue}_]*)",
           "captures": {
             "1": {
               "name": "variable.other.member.nebula"
@@ -272,15 +272,15 @@
         },
         {
           "name": "keyword.operator.arithmetic.nebula",
-          "match": "\\\\*\\\\*|[+*/%-]"
+          "match": "\\*\\*|[+*/%-]"
         },
         {
           "name": "keyword.operator.range.nebula",
-          "match": "\\\\.\\\\."
+          "match": "\\.\\."
         },
         {
           "name": "keyword.operator.access.nebula",
-          "match": "::|\\\\."
+          "match": "::|\\."
         },
         {
           "name": "keyword.operator.logical.nebula",
@@ -304,11 +304,11 @@
         },
         {
           "name": "punctuation.section.group.begin.nebula",
-          "match": "[({\\\\[]"
+          "match": "[({\\[]"
         },
         {
           "name": "punctuation.section.group.end.nebula",
-          "match": "[)}\\\\]]"
+          "match": "[)}\\]]"
         }
       ]
     },
@@ -316,7 +316,7 @@
       "patterns": [
         {
           "name": "variable.other.nebula",
-          "match": "[\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*"
+          "match": "[\\p{XID_Start}_][\\p{XID_Continue}_]*"
         }
       ]
     }
