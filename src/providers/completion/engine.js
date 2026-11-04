@@ -28,16 +28,17 @@ function isCodePosition(source,offset){
  }
  return state==='code';
 }
-function splitTopLevel(source,separator){
- const parts=[];let start=0,angle=0,paren=0,bracket=0;
+function splitTopLevelBy(source,separators){
+ const parts=[],set=new Set(separators);let start=0,angle=0,paren=0,bracket=0;
  for(let i=0;i<source.length;i++){const c=source[i];
   if(c==='<')angle++;else if(c==='>'&&angle>0)angle--;
   else if(c==='(')paren++;else if(c===')'&&paren>0)paren--;
   else if(c==='[')bracket++;else if(c===']'&&bracket>0)bracket--;
-  else if(c===separator&&angle===0&&paren===0&&bracket===0){parts.push(source.slice(start,i));start=i+1;}
+  else if(set.has(c)&&angle===0&&paren===0&&bracket===0){parts.push(source.slice(start,i));start=i+1;}
  }
  parts.push(source.slice(start));return parts;
 }
+function splitTopLevel(source,separator){return splitTopLevelBy(source,[separator]);}
 function collectSymbols(source){
  const code=maskNonCode(source),symbols=[],variables=new Map(),structures=new Map(),enums=new Map();
  const add=(label,kind,detail,documentation,extra={})=>{if(label&&!symbols.some(x=>x.label===label&&x.kind===kind))symbols.push({label,kind,detail,documentation,...extra});};
@@ -55,7 +56,7 @@ function collectSymbols(source){
   const open=m.index+m[0].lastIndexOf('{');let depth=1,end=open+1;
   for(;end<code.length&&depth>0;end++){if(code[end]==='{')depth++;else if(code[end]==='}')depth--;}
   const body=code.slice(open+1,Math.max(open+1,end-1));
-  const fields=[...body.matchAll(/(?:^|[,;\n])\s*([\p{L}_][\p{L}\p{N}_]*)\s*:\s*([^,;\n{}]+)/gu)].map(x=>({label:x[1],type:x[2].trim()}));
+  const fields=splitTopLevelBy(body,[',',';','\n']).map(part=>part.trim().match(/^([\p{L}_][\p{L}\p{N}_]*)\s*:\s*(.+)$/u)).filter(Boolean).map(x=>({label:x[1],type:x[2].trim()}));
   structures.set(m[1],fields);add(m[1],'struct','Estrutura','Estrutura declarada neste arquivo.',{fields});
  }
  const enumsRe=/(?<![\p{L}\p{N}_])(?:enumeracao|enumeração)\s+([\p{L}_][\p{L}\p{N}_]*)\s*\{/gu;
@@ -99,4 +100,4 @@ function getCompletionCandidates(source,cursorOffset){
  const prefix=current.normalize('NFC').toLocaleLowerCase();
  return {candidates:[...unique.values()].filter(x=>x.label.normalize('NFC').toLocaleLowerCase().startsWith(prefix)),wordStart,context:expectsType?'type':'general'};
 }
-module.exports={KEYWORDS,BUILTINS,CONSTANTS,TYPES,maskNonCode,isCodePosition,splitTopLevel,collectSymbols,getCompletionCandidates};
+module.exports={KEYWORDS,BUILTINS,CONSTANTS,TYPES,maskNonCode,isCodePosition,splitTopLevel,splitTopLevelBy,collectSymbols,getCompletionCandidates};
