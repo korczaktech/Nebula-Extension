@@ -66,3 +66,9 @@ test('formatador preserva CRLF e ignora delimitadores em strings',()=>{
  const expected=['funcao teste() {','    exibir("}")','}'].join(crlf);
  assert.equal(engine.formatDocument(source,4,true),expected);
 });
+
+test('formata blocos encerrados por fim com níveis aninhados',()=>{
+ const source=['funcao teste()','quando verdadeiro','exibir(1)','fim','fim'].join(nl);
+ const expected=['funcao teste()','    quando verdadeiro','        exibir(1)','    fim','fim'].join(nl);
+ assert.equal(engine.formatDocument(source,4,true),expected);
+});
