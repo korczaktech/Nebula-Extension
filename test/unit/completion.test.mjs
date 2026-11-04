@@ -6,6 +6,8 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const engine = require('../../src/providers/completion/engine.js');
 const snippets = JSON.parse(readFileSync(new URL('../../snippets/nebula.json', import.meta.url), 'utf8'));
+const packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
+const providerSource = readFileSync(new URL('../../src/providers/completion/provider.ts', import.meta.url), 'utf8');
 
 test('snippets possuem prefixo, corpo e descrição válidos', () => {
   assert.ok(Object.keys(snippets).length >= 30);
@@ -40,6 +42,24 @@ test('reconhece funções genéricas e módulos sem alias explícito', () => {
   const labels = engine.collectSymbols(source).symbols.map(item => item.label);
   assert.ok(labels.includes('transformar'));
   assert.ok(labels.includes('texto'));
+});
+
+test('registra snippets e autocomplete com gatilhos de membro e escopo', () => {
+  assert.deepEqual(packageJson.contributes.snippets, [{ language: 'nebula', path: './snippets/nebula.json' }]);
+  assert.ok(providerSource.includes("registerCompletionItemProvider({language:'nebula'}"));
+  assert.ok(providerSource.includes("new NebulaCompletionProvider(),'.',':'"));
+  const defaults = packageJson.contributes.configurationDefaults['[nebula]'];
+  assert.equal(defaults['editor.quickSuggestions'].comments, false);
+  assert.equal(defaults['editor.quickSuggestions'].strings, false);
+});
+
+test('oferece todos os builtins oficiais como chamadas', () => {
+  for (const name of ['exibir', 'receber', 'perguntar', 'ler_texto', 'aguardar', 'dormir', 'gerar', 'em_paralelo']) {
+    assert.ok(engine.BUILTINS.includes(name), 'Builtin ausente: ' + name);
+  }
+  const result = engine.getCompletionCandidates('exi', 3);
+  const item = result.candidates.find(candidate => candidate.label === 'exibir');
+  assert.equal(item.insertText, 'exibir($0)');
 });
 
 test('sugere símbolos locais pelo prefixo digitado', () => {
