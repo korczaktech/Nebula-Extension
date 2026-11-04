@@ -39,7 +39,7 @@ function collectSymbols(source){
  for(const m of code.matchAll(structs)){const open=m.index+m[0].lastIndexOf('{');let depth=1,end=open+1;for(;end<code.length&&depth;end++){if(code[end]==='{')depth++;if(code[end]==='}')depth--;}const body=code.slice(open+1,Math.max(open+1,end-1));const fields=[...body.matchAll(/([\p{L}_][\p{L}\p{N}_]*)\s*:\s*([\p{L}_][\p{L}\p{N}_]*)/gu)].map(x=>({label:x[1],type:x[2]}));structures.set(m[1],fields);add(m[1],'struct','Estrutura','Estrutura declarada neste arquivo.',{fields});}
  const enumsRe=/\b(?:enumeracao|enumeração)\s+([\p{L}_][\p{L}\p{N}_]*)\s*\{/gu;
  for(const m of code.matchAll(enumsRe)){const open=m.index+m[0].lastIndexOf('{'),close=code.indexOf('}',open+1),body=code.slice(open+1,close<0?code.length:close);const variants=[...body.matchAll(/(?:^|[,\n])\s*([\p{L}_][\p{L}\p{N}_]*)/gu)].map(x=>x[1]);enums.set(m[1],variants);add(m[1],'enum','Enumeração','Enumeração declarada neste arquivo.',{variants});}
- for(const m of code.matchAll(/\bincluir\s+([\p{L}_][\p{L}\p{N}_]*(?:::[\p{L}_][\p{L}\p{N}_]*)*)\s+como\s+([\p{L}_][\p{L}\p{N}_]*)/gu))add(m[2],'module','Módulo · '+m[1],'Alias de módulo importado neste arquivo.');
+ for(const m of code.matchAll(/\bincluir\s+([\p{L}_][\p{L}\p{N}_]*(?:::[\p{L}_][\p{L}\p{N}_]*)*)(?:\s+como\s+([\p{L}_][\p{L}\p{N}_]*))?/gu)){const alias=m[2]||m[1].split('::').at(-1);add(alias,'module','Módulo · '+m[1],'Módulo incluído neste arquivo.');}
  return {symbols,variables,structures,enums};
 }
 function getCompletionCandidates(source,cursorOffset){
