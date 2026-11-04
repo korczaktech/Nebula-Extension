@@ -8,7 +8,10 @@ Desenvolvida pela **Korczak Technologies**. Este repositório contém somente a 
 
 - Reconhecimento da extensão de arquivo `.nbx`.
 - Identificação da linguagem como `Nebula` no VS Code.
-- Configuração de comentários, delimitadores e indentação por chaves.
+- Comentários de linha e bloco com continuação ao pressionar Enter.
+- Indentação automática para blocos, listas e chamadas multilinha.
+- Fechamento automático, seleção por pares e colorização de chaves, colchetes e parênteses.
+- Configuração de aspas, delimitadores e recuo integrada ao editor do VS Code.
 - Realce TextMate abrangente para palavras reservadas, declarações, funções internas, tipos, literais, operadores, comentários e delimitadores, com cobertura lexical mantida neste repositório.
 - Snippets para declarações, funções, condicionais, laços, estruturas, enumerações e escolha.
 - Canal de saída para confirmar a ativação da extensão.
