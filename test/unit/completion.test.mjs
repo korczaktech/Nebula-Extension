@@ -7,6 +7,7 @@ const require = createRequire(import.meta.url);
 const engine = require('../../src/providers/completion/engine.js');
 const snippets = JSON.parse(readFileSync(new URL('../../snippets/nebula.json', import.meta.url), 'utf8'));
 const packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
+const tsconfig = JSON.parse(readFileSync(new URL('../../tsconfig.json', import.meta.url), 'utf8'));
 const providerSource = readFileSync(new URL('../../src/providers/completion/provider.ts', import.meta.url), 'utf8');
 
 test('snippets possuem prefixo, corpo e descrição válidos', () => {
@@ -90,6 +91,13 @@ test('reconhece funções genéricas e módulos sem alias explícito', () => {
   assert.ok(labels.includes('transformar'));
   assert.ok(labels.includes('texto'));
   assert.ok(!labels.includes('T'));
+});
+
+test('inclui o motor JavaScript no build distribuído', () => {
+  assert.equal(tsconfig.compilerOptions.allowJs, true);
+  assert.ok(tsconfig.include.includes('src/**/*.js'));
+  assert.ok(packageJson.scripts['check-output'].includes('out/providers/completion/engine.js'));
+  assert.ok(packageJson.files.includes('out/**'));
 });
 
 test('registra snippets e autocomplete com gatilhos de membro e escopo', () => {
