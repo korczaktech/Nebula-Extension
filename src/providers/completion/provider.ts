@@ -9,7 +9,7 @@ export class NebulaCompletionProvider implements vscode.CompletionItemProvider {
    item.detail=candidate.detail;item.documentation=new vscode.MarkdownString(candidate.documentation);
    item.filterText=candidate.label;item.sortText=String(index).padStart(4,'0')+candidate.label;
    item.range=new vscode.Range(document.positionAt(result.wordStart),position);
-   item.insertText=candidate.insertText??candidate.label;return item;
+   item.insertText=candidate.insertText?new vscode.SnippetString(candidate.insertText):candidate.label;return item;
   });
  }
 }
