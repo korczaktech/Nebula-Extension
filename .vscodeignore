@@ -1,4 +1,9 @@
 .vscode/**
+.github/**
+**/.gitkeep
+.editorconfig
+.gitattributes
+.gitignore
 .vscode-test/**
 test/**
 tests/**
@@ -8,3 +13,6 @@ docs/**
 **/*.map
 **/*.ts
 coverage/**
+package-lock.json
+tsconfig*.json
+*.vsix
