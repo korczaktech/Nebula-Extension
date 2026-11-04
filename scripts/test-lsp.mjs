@@ -50,6 +50,7 @@ assert.equal(exitCode, 0, 'O servidor LSP encerrou com erro: ' + stderr);
 assert.equal(stdout.length, 0, 'O servidor deixou bytes incompletos no stdout.');
 const initialized = messages.find(message => message.id === 1);
 assert.ok(initialized?.result?.capabilities, 'O servidor não respondeu ao initialize.');
+assert.equal(initialized.result.capabilities.textDocumentSync, 1, 'O servidor deve declarar sincronização integral, usada pelo cliente.');
 for (const capability of [
   'textDocumentSync',
   'completionProvider',
