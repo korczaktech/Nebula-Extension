@@ -74,7 +74,17 @@
         "editor.matchBrackets": "always",
         "editor.autoClosingBrackets": "languageDefined",
         "editor.autoClosingQuotes": "languageDefined",
-        "editor.autoSurround": "languageDefined"
+        "editor.autoSurround": "languageDefined",
+        "editor.quickSuggestions": {
+          "other": true,
+          "comments": false,
+          "strings": false
+        },
+        "editor.suggest.showWords": true,
+        "editor.suggestSelection": "first",
+        "editor.acceptSuggestionOnEnter": "on",
+        "editor.tabCompletion": "on",
+        "editor.suggest.snippetsPreventQuickSuggestions": false
       }
     }
   },
