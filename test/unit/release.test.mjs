@@ -23,6 +23,7 @@ test('o pipeline valida e publica o VSIX gerado', () => {
 
 test('o pacote inclui dependências de execução necessárias ao cliente LSP', () => {
   assert.ok(manifest.dependencies['vscode-languageclient']);
+  assert.equal(manifest.files, undefined, 'VSCE não permite combinar files com .vscodeignore');
   assert.ok(!read('.vscodeignore').split(/\r?\n/).includes('node_modules/**'));
   assert.ok(!read('scripts/package-extension.sh').includes('--no-dependencies'));
   assert.ok(read('scripts/verify-vsix.mjs').includes('extension/node_modules/vscode-languageclient/package.json'));
