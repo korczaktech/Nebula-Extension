@@ -52,7 +52,7 @@ function getDiagnostics(source){
  return out.sort((a,b)=>a.start-b.start);
 }
 function getDocumentSymbols(source){return collectSymbols(source);}
-function getSemanticTokens(source){const symbols=collectSymbols(source);return scan(source).map(t=>{if(t.type!=='identifier')return t;const s=symbols.find(x=>x.start===t.start);if(s)return {...t,semanticType:s.kind==='function'?'function':s.kind==='parameter'?'parameter':['type','struct','enum'].includes(s.kind)?'type':'variable',modifiers:['declaration']};if(BUILTINS.has(t.text))return {...t,semanticType:'function',modifiers:['defaultLibrary']};return t;});}
+function getSemanticTokens(source){const symbols=collectSymbols(source);return scan(source).map(t=>{if(t.type!=='identifier')return t;const s=symbols.find(x=>x.normalized===t.normalized);if(s){const semanticType=s.kind==='function'?'function':s.kind==='parameter'?'parameter':['type','struct','enum'].includes(s.kind)?'type':'variable';return {...t,semanticType,modifiers:s.start===t.start?['declaration']:[]};}if(BUILTINS.has(t.text))return {...t,semanticType:'function',modifiers:['defaultLibrary']};return t;});}
 function formatDocument(source,tabSize=4,insertSpaces=true){
  const eol=source.includes('\r\n')?'\r\n':'\n',normalized=source.replace(/\r\n/g,'\n');
  const unit=insertSpaces?' '.repeat(Math.max(1,tabSize)):'\t',lines=normalized.split('\n'),tokens=scan(normalized);let depth=0,offset=0,index=0;
