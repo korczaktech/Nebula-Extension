@@ -131,7 +131,8 @@ test('sugere tipos após anotação', () => {
   const result = engine.getCompletionCandidates(source, source.length);
   assert.equal(result.context, 'type');
   assert.ok(result.candidates.some(item => item.label === 'inteiro'));
-  const typeSource = 'variavel idade: ';\n  const allTypes = engine.getCompletionCandidates(typeSource, typeSource.length);
+  const typeSource = 'variavel idade: ';
+  const allTypes = engine.getCompletionCandidates(typeSource, typeSource.length);
   assert.ok(allTypes.candidates.some(item => item.label === 'Resultado'));
   assert.ok(!result.candidates.some(item => item.label === 'variavel'));
 });
