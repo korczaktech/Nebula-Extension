@@ -49,7 +49,12 @@ test('sugere símbolos locais pelo prefixo digitado', () => {
   assert.ok(!result.candidates.some(item => item.label === 'calcular'));
 });
 
-test('sugere declarações localizadas depois do cursor no mesmo arquivo', () => {\n  const source = 'cont\\nvariavel contador: inteiro = 0';\n  assert.ok(engine.getCompletionCandidates(source, 4).candidates.some(item => item.label === 'contador'));\n});\n\ntest('sugere tipos após anotação', () => {
+test('sugere declarações localizadas depois do cursor no mesmo arquivo', () => {
+  const source = 'cont\nvariavel contador: inteiro = 0';
+  assert.ok(engine.getCompletionCandidates(source, 4).candidates.some(item => item.label === 'contador'));
+});
+
+test('sugere tipos após anotação', () => {
   const source = 'variavel idade: int';
   const result = engine.getCompletionCandidates(source, source.length);
   assert.equal(result.context, 'type');
