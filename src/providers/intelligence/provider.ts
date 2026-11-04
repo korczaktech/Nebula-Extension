@@ -40,11 +40,24 @@ class Rename implements vscode.RenameProvider{prepareRename(d:vscode.TextDocumen
 function refresh(d:vscode.TextDocument,c:vscode.DiagnosticCollection):void{if(d.languageId!=='nebula')return;c.set(d.uri,getDiagnostics(d.getText()).map(x=>{const diag=new vscode.Diagnostic(wordRange(d,x.start,x.end),x.message,x.severity==='error'?vscode.DiagnosticSeverity.Error:vscode.DiagnosticSeverity.Warning);diag.code=x.code;diag.source='Nebula';return diag;}));}
 export function registerNebulaIntelligence(context:vscode.ExtensionContext):void{
  let registrations:vscode.Disposable[]=[];
- const disposeLocal=()=>{for(const item of registrations)item.dispose();registrations=[];};
+ let mode:'none'|'local'|'lsp'='none';
+ const dispose=()=>{for(const item of registrations)item.dispose();registrations=[];};
  const sync=()=>{
-  const ready=isNebulaLanguageServerReady();
-  if(ready){disposeLocal();return;}
-  if(registrations.length)return;
+  const next=isNebulaLanguageServerReady()?'lsp':'local';
+  if(mode===next)return;
+  dispose();
+  mode=next;
+  if(next==='lsp'){
+   // O servidor Rust assume diagnósticos, hover, navegação, assinatura e símbolos.
+   // Mantemos localmente apenas os recursos que ele ainda não anuncia.
+   registrations=[
+    vscode.languages.registerDocumentSemanticTokensProvider(selector,new Semantic(),legend),
+    vscode.languages.registerDocumentFormattingEditProvider(selector,new Formatting()),
+    vscode.languages.registerCodeActionsProvider(selector,new Actions(),{providedCodeActionKinds:[vscode.CodeActionKind.QuickFix]}),
+    vscode.languages.registerRenameProvider(selector,new Rename())
+   ];
+   return;
+  }
   registrations=[
    vscode.languages.registerHoverProvider(selector,new Hover()),
    vscode.languages.registerDefinitionProvider(selector,new Definition()),
@@ -56,7 +69,8 @@ export function registerNebulaIntelligence(context:vscode.ExtensionContext):void
    vscode.languages.registerCodeActionsProvider(selector,new Actions(),{providedCodeActionKinds:[vscode.CodeActionKind.QuickFix]}),
    vscode.languages.registerRenameProvider(selector,new Rename())
   ];
-  const diagnostics=vscode.languages.createDiagnosticCollection('nebula');registrations.push(diagnostics);
+  const diagnostics=vscode.languages.createDiagnosticCollection('nebula');
+  registrations.push(diagnostics);
   for(const d of vscode.workspace.textDocuments)refresh(d,diagnostics);
   registrations.push(
    vscode.workspace.onDidOpenTextDocument(d=>refresh(d,diagnostics)),
@@ -67,5 +81,5 @@ export function registerNebulaIntelligence(context:vscode.ExtensionContext):void
  };
  sync();
  context.subscriptions.push(onNebulaLanguageServerReady(sync));
- context.subscriptions.push(new vscode.Disposable(disposeLocal));
+ context.subscriptions.push(new vscode.Disposable(dispose));
 }
