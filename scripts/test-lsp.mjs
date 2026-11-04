@@ -34,9 +34,32 @@ child.stdout.on('data', chunk => {
 });
 child.stderr.on('data', chunk => { stderr += chunk.toString(); });
 
+const uri = 'file:///nebula-lsp-smoke.nbx';
 const requests = [
   { jsonrpc: '2.0', id: 1, method: 'initialize', params: { capabilities: {} } },
   { jsonrpc: '2.0', method: 'initialized', params: {} },
+  {
+    jsonrpc: '2.0',
+    method: 'textDocument/didOpen',
+    params: { textDocument: { uri, languageId: 'nebula', version: 1, text: 'variavel valor = 1' } }
+  },
+  {
+    jsonrpc: '2.0',
+    method: 'textDocument/didChange',
+    params: { textDocument: { uri, version: 2 }, contentChanges: [{ text: 'variavel valor = 2' }] }
+  },
+  {
+    jsonrpc: '2.0',
+    id: 3,
+    method: 'textDocument/completion',
+    params: { textDocument: { uri }, position: { line: 0, character: 3 } }
+  },
+  {
+    jsonrpc: '2.0',
+    id: 4,
+    method: 'textDocument/documentSymbol',
+    params: { textDocument: { uri } }
+  },
   { jsonrpc: '2.0', id: 2, method: 'shutdown', params: null },
   { jsonrpc: '2.0', method: 'exit', params: null }
 ];
@@ -48,9 +71,10 @@ const exitCode = await new Promise((resolveExit, reject) => {
 });
 assert.equal(exitCode, 0, 'O servidor LSP encerrou com erro: ' + stderr);
 assert.equal(stdout.length, 0, 'O servidor deixou bytes incompletos no stdout.');
+
 const initialized = messages.find(message => message.id === 1);
 assert.ok(initialized?.result?.capabilities, 'O servidor não respondeu ao initialize.');
-assert.equal(initialized.result.capabilities.textDocumentSync, 1, 'O servidor deve declarar sincronização integral, usada pelo cliente.');
+assert.equal(initialized.result.capabilities.textDocumentSync, 1, 'O servidor deve declarar sincronização integral.');
 for (const capability of [
   'textDocumentSync',
   'completionProvider',
@@ -60,5 +84,13 @@ for (const capability of [
   'referencesProvider',
   'documentSymbolProvider'
 ]) assert.ok(capability in initialized.result.capabilities, 'Capacidade ausente: ' + capability);
+
+assert.ok(
+  messages.some(message => message.method === 'textDocument/publishDiagnostics' && message.params?.version === 2),
+  'O servidor não publicou diagnósticos após didChange.'
+);
+assert.ok(messages.some(message => message.id === 3 && message.result?.items), 'O servidor não respondeu à conclusão.');
+assert.ok(messages.some(message => message.id === 4 && Array.isArray(message.result)), 'O servidor não respondeu aos símbolos do documento.');
 assert.ok(messages.some(message => message.id === 2 && message.result === null), 'O servidor não respondeu ao shutdown.');
-console.log('Nebula LSP iniciado e validado por JSON-RPC stdio.');
+
+console.log('Nebula LSP validado: inicialização, sincronização, diagnósticos, conclusão, símbolos e encerramento.');
