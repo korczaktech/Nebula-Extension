@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { getCompletionCandidates } from './engine';
-const kinds:Record<string,vscode.CompletionItemKind>={keyword:vscode.CompletionItemKind.Keyword,function:vscode.CompletionItemKind.Function,variable:vscode.CompletionItemKind.Variable,type:vscode.CompletionItemKind.Class,struct:vscode.CompletionItemKind.Struct,enum:vscode.CompletionItemKind.Enum,enumMember:vscode.CompletionItemKind.EnumMember,field:vscode.CompletionItemKind.Field,module:vscode.CompletionItemKind.Module};
+const kinds:Record<string,vscode.CompletionItemKind>={keyword:vscode.CompletionItemKind.Keyword,constant:vscode.CompletionItemKind.Constant,function:vscode.CompletionItemKind.Function,variable:vscode.CompletionItemKind.Variable,type:vscode.CompletionItemKind.Class,struct:vscode.CompletionItemKind.Struct,enum:vscode.CompletionItemKind.Enum,enumMember:vscode.CompletionItemKind.EnumMember,field:vscode.CompletionItemKind.Field,module:vscode.CompletionItemKind.Module};
 export class NebulaCompletionProvider implements vscode.CompletionItemProvider {
  provideCompletionItems(document:vscode.TextDocument,position:vscode.Position,_token:vscode.CancellationToken,_context:vscode.CompletionContext):vscode.CompletionItem[]{
   const offset=document.offsetAt(position),source=document.getText(),result=getCompletionCandidates(source,offset);
