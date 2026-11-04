@@ -34,7 +34,8 @@ test('todas as expressões regulares da gramática são compiláveis', () => {
 test('todas as palavras reservadas normativas estão contempladas', () => {
   const source = grammar.repository.keywords.patterns.map(pattern => pattern.match).join('|');
   const declarations = grammar.repository.declarations.patterns.map(pattern => pattern.match).join('|');
-  const all = source + '|' + declarations;
+  const constants = grammar.repository.constants.patterns.map(pattern => pattern.match).join('|');
+  const all = source + '|' + declarations + '|' + constants;
   const words = [
     'variavel', 'definir', 'mutavel', 'mutável', 'alterar', 'constante',
     'funcao', 'função', 'quando', 'senao', 'senão', 'avaliar', 'escolha',
@@ -73,7 +74,7 @@ test('a gramática identifica recursos futuros como inválidos', () => {
 
 test('o fixture cobre as principais construções léxicas e sintáticas', () => {
   for (const sample of [
-    '// comentário', '/* bloco */', '"texto"', "'N'", '0x2A', '0b1010', '0o17',
+    '/* comentário de bloco */', '"texto"', "'N'", '0x2A', '0b1010', '0o17',
     'verdadeiro', 'falso', 'nulo', 'variavel', 'constante', 'funcao',
     'quando', 'senao', 'escolha', 'caso', 'enquanto', 'cada', 'pulso',
     'estrutura', 'enumeracao', 'incluir', 'exibir(', 'receber(', '<-', '**', '..', '::'
