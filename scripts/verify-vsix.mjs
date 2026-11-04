@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-const file = process.argv[2] ?? 'nebula-language.vsix';
+const file = process.argv[2] ?? 'nbx-language.vsix';
 const archive = readFileSync(file);
 
 function readEntries(buffer) {
