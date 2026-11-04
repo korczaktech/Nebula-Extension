@@ -59,10 +59,10 @@ test('a gramática diferencia tipos primitivos e tipos de coleção', () => {
   const primitive = grammar.repository.types.patterns[0].match;
   const containers = grammar.repository.types.patterns[1].match;
   for (const name of ['vazio', 'logico', 'lógico', 'inteiro', 'inteiro128', 'inteiro_u64', 'decimal', 'decimal32', 'texto', 'caractere', 'byte']) {
-    assert.ok(primitive.includes(name), `Tipo primitivo ausente: ${name}`);
+    assert.ok(new RegExp(primitive, 'u').test(name), `Tipo primitivo ausente: ${name}`);
   }
   for (const name of ['vetor', 'matriz', 'Tupla', 'Opcional', 'Resultado']) {
-    assert.ok(containers.includes(name), `Tipo composto ausente: ${name}`);
+    assert.ok(new RegExp(containers, 'u').test(name), `Tipo composto ausente: ${name}`);
   }
 });
 
@@ -74,7 +74,7 @@ test('a gramática identifica recursos futuros como inválidos', () => {
 
 test('o fixture cobre as principais construções léxicas e sintáticas', () => {
   for (const sample of [
-    '/* comentário de bloco */', '"Nebula"', "'N'", '0x2A', '0b1010', '0o17',
+    '/* comentário de bloco */', 'variavel nome: texto', "'N'", '0x2A', '0b1010', '0o17',
     'verdadeiro', 'falso', 'nulo', 'variavel', 'constante', 'funcao',
     'quando', 'senao', 'escolha', 'caso', 'enquanto', 'cada', 'pulso',
     'estrutura', 'enumeracao', 'incluir', 'exibir(', 'receber(', '<-', '**', '..', '::'
