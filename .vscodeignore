@@ -7,3 +7,4 @@ docs/**
 **/*.map
 **/*.ts
 node_modules/**
+coverage/**
