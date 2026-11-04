@@ -95,7 +95,7 @@
     "test": "node --test",
     "vscode:prepublish": "npm run compile",
     "package": "vsce package",
-    "check-output": "node -e \"const fs=require('node:fs'); for (const file of ['out/extension.js','out/providers/completion/provider.js','out/providers/completion/engine.js']) fs.accessSync(file); console.log('Artefatos da extensão presentes.');\""
+    "check-output": "node -e \"const fs=require('node:fs'); for (const file of ['out/extension.js','out/providers/completion/provider.js','out/providers/completion/engine.js','out/providers/intelligence/provider.js','out/providers/intelligence/engine.js']) fs.accessSync(file); console.log('Artefatos da extensão presentes.');\""
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
