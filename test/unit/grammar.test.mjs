@@ -31,7 +31,7 @@ test('todas as expressões regulares da gramática são compiláveis', () => {
   }
 });
 
-test('todas as palavras reservadas normativas estão contempladas', () => {
+test('todas as palavras reservadas cadastradas na extensão estão contempladas', () => {
   const source = grammar.repository.keywords.patterns.map(pattern => pattern.match).join('|');
   const declarations = grammar.repository.declarations.patterns.map(pattern => pattern.match).join('|');
   const constants = grammar.repository.constants.patterns.map(pattern => pattern.match).join('|');
