@@ -18,6 +18,7 @@ Desenvolvida pela **Korczak Technologies**. Este repositório contém somente a 
 - Sugestões de campos de estruturas e variantes de enumerações após `.` e `::`.
 - Hover, navegação para definição, busca de referências e informações de parâmetros para símbolos declarados no arquivo atual.
 - Diagnósticos locais para delimitadores inconsistentes e declarações duplicadas.
+- Cliente Language Server Protocol (LSP) configurável, com inicialização por stdio, sincronização de arquivos `.nbx`, rastreamento e comandos de estado/reinício.
 - Símbolos de documento, tokens semânticos, formatação básica, correções rápidas e renomeação local.
 
 ## Instalação para desenvolvimento
@@ -53,7 +54,7 @@ O empacotamento gera um arquivo `.vsix`.
 
 ## Escopo
 
-A inteligência de código desta versão é local ao documento e baseada em análise textual leve; não substitui o parser nem o sistema de tipos do compilador. Resolução de módulos entre arquivos, inferência de tipos, validação semântica normativa e diagnósticos completos dependem da integração com o compilador Rust/LSP, prevista para a etapa 6.
+A inteligência de código desta versão é local ao documento e baseada em análise textual leve; não substitui o parser nem o sistema de tipos do compilador. A integração LSP do cliente está preparada, mas a conexão depende de um executável servidor Rust compatível. O repositório atual do compilador ainda não contém esse servidor; por isso a conexão fica desativada por padrão. Consulte [a arquitetura LSP](docs/architecture/language-server.md).
 
 ## Licença
 
