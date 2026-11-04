@@ -18,19 +18,17 @@ test('delimitadores possuem pares completos e colorização correspondente', () 
   assert.deepEqual(configuration.surroundingPairs.slice(0, 3), expected);
 });
 
-test('pares automáticos incluem delimitadores e aspas sem atuar em strings/comentários', () => {
+test('pares automáticos incluem delimitadores, aspas e comentário de bloco', () => {
   const pairs = configuration.autoClosingPairs;
-  for (const [open, close] of [['{', '}'], ['[', ']'], ['(', ')'], ['"', '"'], ["'", "'"]]) {
+  for (const [open, close] of [['{', '}'], ['[', ']'], ['(', ')'], ['"', '"'], ["'", "'"], ['/*', '*/']]) {
     assert.ok(pairs.some(pair => pair.open === open && pair.close === close), 'Par ausente: ' + open + close);
   }
-  for (const pair of pairs.filter(pair => pair.open !== '/*')) {
+  for (const pair of pairs) {
     assert.deepEqual(pair.notIn, ['string', 'comment']);
   }
-  const blockCommentPair = pairs.find(pair => pair.open === '/*');
-  assert.deepEqual(blockCommentPair.notIn, ['string', 'comment']);
 });
 
-test('regras de indentação são expressões válidas e reconhecem blocos', () => {
+test('regras de indentação reconhecem blocos com delimitadores e terminador fim', () => {
   const rules = configuration.indentationRules;
   const increase = new RegExp(rules.increaseIndentPattern);
   const decrease = new RegExp(rules.decreaseIndentPattern);
@@ -98,33 +96,7 @@ test('regras de Enter indentam blocos terminados por fim e continuam comentário
   ]) assert.ok(pattern.test(line), 'Não indentou bloco encerrado por fim: ' + line);
   assert.equal(headers.action.indent, 'indent');
 
-  const blockComment = rules.find(rule => rule.beforeText === '^\\\\s*/\\\\*.*
-  const keys = configuration.autoClosingPairs.map(pair => pair.open + '\0' + pair.close);
-  assert.equal(new Set(keys).size, keys.length);
-  assert.equal(configuration.comments.lineComment, '//');
-  assert.ok(configuration.autoCloseBefore.includes('\n'));
-  assert.ok(configuration.autoCloseBefore.includes('\t'));
-});
-
-test('VS Code recebe padrões de edição específicos para Nebula', () => {
-  const packageJson = JSON.parse(
-    readFileSync(new URL('../../package.json', import.meta.url), 'utf8')
-  );
-  const defaults = packageJson.contributes.configurationDefaults['[nebula]'];
-
-  assert.equal(defaults['editor.insertSpaces'], true);
-  assert.equal(defaults['editor.tabSize'], 4);
-  assert.equal(defaults['editor.detectIndentation'], false);
-  assert.equal(defaults['editor.autoIndent'], 'full');
-  assert.equal(defaults['editor.bracketPairColorization.enabled'], true);
-  assert.equal(defaults['editor.guides.bracketPairs'], true);
-  assert.equal(defaults['editor.guides.indentation'], true);
-  assert.equal(defaults['editor.matchBrackets'], 'always');
-  assert.equal(defaults['editor.autoClosingBrackets'], 'languageDefined');
-  assert.equal(defaults['editor.autoClosingQuotes'], 'languageDefined');
-  assert.equal(defaults['editor.autoSurround'], 'languageDefined');
-});
-);
+  const blockComment = rules.find(rule => rule.beforeText.includes('/\\\\*'));
   assert.ok(blockComment);
   assert.equal(blockComment.action.appendText, ' * ');
   assert.equal(blockComment.action.indent, 'indent');
