@@ -44,7 +44,7 @@ test('gera símbolos de documento e tokens semânticos',()=>{
  const source='funcao executar(valor: inteiro) { exibir(valor) }';
  assert.ok(engine.getDocumentSymbols(source).some(s=>s.name==='executar'));
  assert.ok(engine.getSemanticTokens(source).some(t=>t.semanticType==='function'));
- assert.ok(engine.getSemanticTokens(source).some(t=>t.semanticType==='parameter'));
+ assert.ok(engine.getSemanticTokens(source).filter(t=>t.semanticType==='parameter').length>=2);
 });
 
 test('formata recuo básico de blocos sem alterar o conteúdo',()=>{
@@ -58,4 +58,11 @@ test('registra todos os provedores da etapa 5 na ativação',async()=>{
  const provider=readFileSync(new URL('../../src/providers/intelligence/provider.ts',import.meta.url),'utf8');
  for(const feature of ['registerHoverProvider','registerDefinitionProvider','registerReferenceProvider','registerSignatureHelpProvider','registerDocumentSymbolProvider','registerDocumentSemanticTokensProvider','registerDocumentFormattingEditProvider','registerCodeActionsProvider','registerRenameProvider','createDiagnosticCollection'])assert.ok(provider.includes(feature),'Provedor ausente: '+feature);
  assert.ok(extension.includes('registerNebulaIntelligence(context)'));
+});
+
+test('formatador preserva CRLF e ignora delimitadores em strings',()=>{
+ const crlf=String.fromCharCode(13)+String.fromCharCode(10);
+ const source=['funcao teste() {','exibir("}")','}'].join(crlf);
+ const expected=['funcao teste() {','    exibir("}")','}'].join(crlf);
+ assert.equal(engine.formatDocument(source,4,true),expected);
 });
