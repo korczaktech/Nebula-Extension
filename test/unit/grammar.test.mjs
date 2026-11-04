@@ -68,13 +68,13 @@ test('a gramática diferencia tipos primitivos e tipos de coleção', () => {
 
 test('a gramática identifica recursos futuros como inválidos', () => {
   const future = grammar.repository.reservedFuture.patterns[0];
-  assert.match(future.name, /^invalid\\.illegal/);
+  assert.match(future.name, /^invalid\.illegal/);
   for (const word of ['tentar', 'capturar', 'finalmente', 'assinc']) assert.ok(future.match.includes(word));
 });
 
 test('o fixture cobre as principais construções léxicas e sintáticas', () => {
   for (const sample of [
-    '/* comentário de bloco */', '"texto"', "'N'", '0x2A', '0b1010', '0o17',
+    '/* comentário de bloco */', '"Nebula"', "'N'", '0x2A', '0b1010', '0o17',
     'verdadeiro', 'falso', 'nulo', 'variavel', 'constante', 'funcao',
     'quando', 'senao', 'escolha', 'caso', 'enquanto', 'cada', 'pulso',
     'estrutura', 'enumeracao', 'incluir', 'exibir(', 'receber(', '<-', '**', '..', '::'
