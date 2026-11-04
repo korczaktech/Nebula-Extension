@@ -62,7 +62,7 @@ function collectSymbols(source){
  const enumsRe=/(?<![\p{L}\p{N}_])(?:enumeracao|enumeração)\s+([\p{L}_][\p{L}\p{N}_]*)\s*\{/gu;
  for(const m of code.matchAll(enumsRe)){
   const open=m.index+m[0].lastIndexOf('{'),close=code.indexOf('}',open+1),body=code.slice(open+1,close<0?code.length:close);
-  const variants=body.split(/[,\n;]/).map(part=>part.trim().match(/^([\p{L}_][\p{L}\p{N}_]*)/u)).filter(Boolean).map(x=>x[1]);
+  const variants=splitTopLevelBy(body,[',',';','\n']).map(part=>part.trim().match(/^([\p{L}_][\p{L}\p{N}_]*)/u)).filter(Boolean).map(x=>x[1]);
   enums.set(m[1],variants);add(m[1],'enum','Enumeração','Enumeração declarada neste arquivo.',{variants});
  }
  for(const m of code.matchAll(/(?<![\p{L}\p{N}_])incluir\s+([\p{L}_][\p{L}\p{N}_]*(?:::\s*[\p{L}_][\p{L}\p{N}_]*)*)(?:\s+como\s+([\p{L}_][\p{L}\p{N}_]*))?/gu)){
