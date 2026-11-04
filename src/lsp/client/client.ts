@@ -2,16 +2,16 @@ import * as vscode from 'vscode';
 import {LanguageClient,LanguageClientOptions,ServerOptions,Trace} from 'vscode-languageclient/node';
 import {getNebulaLanguageServerConfiguration} from './configuration';
 import {createNebulaInitializationOptions} from '../protocol/capabilities';
-let client:LanguageClient|undefined,output:vscode.OutputChannel|undefined,starting=false;
+let client:LanguageClient|undefined,output:vscode.OutputChannel|undefined,fileWatcher:vscode.FileSystemWatcher|undefined,starting=false;
 function log(message:string):void{output?.appendLine('[LSP] '+message);}
 function serverOptions():ServerOptions{
  const c=getNebulaLanguageServerConfiguration();
  return {command:c.serverPath,args:c.args,options:{cwd:vscode.workspace.workspaceFolders?.[0]?.uri.fsPath,env:process.env}};
 }
 function clientOptions(context:vscode.ExtensionContext):LanguageClientOptions{
- const watcher=vscode.workspace.createFileSystemWatcher('**/*.nbx');
- context.subscriptions.push(watcher);
- return {documentSelector:[{scheme:'file',language:'nebula'}],synchronize:{fileEvents:watcher},initializationOptions:createNebulaInitializationOptions(),outputChannel:output,traceOutputChannel:output};
+ fileWatcher??=vscode.workspace.createFileSystemWatcher('**/*.nbx');
+ if(!context.subscriptions.includes(fileWatcher))context.subscriptions.push(fileWatcher);
+ return {documentSelector:[{scheme:'file',language:'nebula'}],synchronize:{fileEvents:fileWatcher},initializationOptions:createNebulaInitializationOptions(),outputChannel:output,traceOutputChannel:output};
 }
 export async function startNebulaLanguageClient(context:vscode.ExtensionContext):Promise<void>{
  if(client||starting)return;
