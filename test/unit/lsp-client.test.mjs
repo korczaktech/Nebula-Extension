@@ -10,3 +10,12 @@ test('cliente observa documentos e oferece ciclo de vida',()=>{const c=read('src
 test('declara recursos e versão do protocolo',()=>{const c=read('src/lsp/protocol/capabilities.ts');for(const x of ['diagnostics','completion','hover','definition','references','rename','signatureHelp','documentSymbols','semanticTokens','formatting','codeActions','workspaceFolders'])assert.ok(c.includes(x),x);assert.ok(c.includes('3.17'));});
 test('registra cliente durante a ativação',()=>assert.ok(read('src/extension.ts').includes('registerNebulaLanguageClient(context)')));
 test('verifica artefatos LSP compilados',()=>{const s=pkg.scripts['check-output'];for(const x of ['out/lsp/client/client.js','out/lsp/client/configuration.js','out/lsp/protocol/capabilities.js'])assert.ok(s.includes(x),x);});
+
+test('desativa provedores locais ao habilitar o LSP e os restaura ao desabilitar',()=>{
+ const completion=read('src/providers/completion/provider.ts');
+ const intelligence=read('src/providers/intelligence/provider.ts');
+ assert.ok(completion.includes("affectsConfiguration('nebula.languageServer.enabled')"));
+ assert.ok(completion.includes("get<boolean>('enabled',false)"));
+ assert.ok(intelligence.includes("affectsConfiguration('nebula.languageServer.enabled')"));
+ assert.ok(intelligence.includes('disposeLocal()'));
+});
