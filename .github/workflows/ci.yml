@@ -12,16 +12,30 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install --no-audit --no-fund
-      - run: npm test
-      - run: npm run check-types
-      - run: npm run compile
-      - run: npm run check-output
+      - name: Instalar Rust
+        uses: dtolnay/rust-toolchain@1.85.0
+      - name: Compilar servidor LSP oficial
+        run: cargo install --git https://github.com/korczaktech/Nebula --locked --root "$RUNNER_TEMP/nebula-lsp" nebula-lsp
+      - name: Testar protocolo real do servidor
+        env:
+          NEBULA_LSP_PATH: ${{ runner.temp }}/nebula-lsp/bin/nebula-lsp
+        run: npm run test:lsp
+      - name: Instalar dependências da extensão
+        run: npm install --no-audit --no-fund
+      - name: Testes unitários
+        run: npm test
+      - name: Verificar tipos
+        run: npm run check-types
+      - name: Compilar extensão
+        run: npm run compile
+      - name: Verificar artefatos
+        run: npm run check-output
       - name: Testes de integração no VS Code
         run: xvfb-run -a npm run test:integration
       - name: Empacotar e validar VSIX
