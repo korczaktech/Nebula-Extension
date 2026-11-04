@@ -3,8 +3,8 @@ import { spawn } from 'node:child_process';
 import { resolve } from 'node:path';
 
 const executable = process.env.NEBULA_LSP_PATH ?? resolve(
-  'node_modules',
-  '.bin',
+  'target',
+  'release',
   process.platform === 'win32' ? 'nebula-lsp.exe' : 'nebula-lsp'
 );
 
