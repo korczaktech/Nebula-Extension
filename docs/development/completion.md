@@ -1,7 +1,7 @@
 # Snippets e autocomplete
 
 ## Snippets
-Os modelos ficam em `snippets/nebula.json` e são registrados pelo VS Code via `contributes.snippets`. Os prefixos abrangem declarações, funções, condicionais, correspondência, laços, estruturas, enumerações, aliases, módulos e funções internas. Há modelos com chaves e com terminador `fim`. Os marcadores (`$1`, `${1:nome}`, `$0`) permitem navegar pelos campos usando Tab.
+Os modelos ficam em `snippets/nebula.json` e são registrados pelo VS Code via `contributes.snippets`. Os prefixos abrangem declarações, funções, condicionais, correspondência, laços, estruturas, enumerações, aliases, módulos, tipos de função e enumerações com payload, além de funções internas. Há modelos com chaves e com terminador `fim`. Os marcadores (`$1`, `${1:nome}`, `$0`) permitem navegar pelos campos usando Tab.
 
 ## Autocomplete
 O provedor é registrado para documentos Nebula e sugere palavras reservadas, literais (`verdadeiro`, `falso`, `nulo`), tipos, funções internas, variáveis, constantes, parâmetros, funções, aliases, estruturas, enumerações e módulos importados no arquivo atual (com `::` e alias opcional). Após `.`, sugere campos de estruturas quando o tipo da variável está anotado; após `Tipo::`, sugere variantes de enumeração. Caminhos de importação usam `::`, conforme a gramática. Após `:`, prioriza tipos.
