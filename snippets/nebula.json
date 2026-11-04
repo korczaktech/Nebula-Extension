@@ -1,7 +1,88 @@
 {
-  "Arquivo Nebula": {
-    "prefix": "arquivo",
-    "body": ["// ${1:Descrição do arquivo}", "${0}"] ,
-    "description": "Estrutura inicial de um arquivo Nebula"
+  "Variável": {
+    "prefix": "variavel",
+    "body": ["variavel ${1:nome}: ${2:tipo} = ${3:valor}"],
+    "description": "Declara uma variável"
+  },
+  "Constante": {
+    "prefix": "constante",
+    "body": ["constante ${1:nome}: ${2:tipo} = ${3:valor}"],
+    "description": "Declara uma constante"
+  },
+  "Função": {
+    "prefix": "funcao",
+    "body": [
+      "funcao ${1:nome}(${2:parametros}): ${3:vazio} {",
+      "    ${0}",
+      "}"
+    ],
+    "description": "Declara uma função"
+  },
+  "Quando e senão": {
+    "prefix": "quando",
+    "body": [
+      "quando ${1:condicao} {",
+      "    ${2}",
+      "} senao {",
+      "    ${0}",
+      "}"
+    ],
+    "description": "Estrutura condicional"
+  },
+  "Enquanto": {
+    "prefix": "enquanto",
+    "body": [
+      "enquanto ${1:condicao} {",
+      "    ${0}",
+      "}"
+    ],
+    "description": "Laço enquanto"
+  },
+  "Cada elemento": {
+    "prefix": "cada",
+    "body": [
+      "cada ${1:item} em ${2:colecao} {",
+      "    ${0}",
+      "}"
+    ],
+    "description": "Percorre os elementos de uma coleção"
+  },
+  "Estrutura": {
+    "prefix": "estrutura",
+    "body": [
+      "estrutura ${1:Nome} {",
+      "    ${2:campo}: ${3:tipo}",
+      "}"
+    ],
+    "description": "Declara uma estrutura"
+  },
+  "Enumeração": {
+    "prefix": "enumeracao",
+    "body": [
+      "enumeracao ${1:Nome} {",
+      "    ${2:PrimeiraVariante},",
+      "    ${0:SegundaVariante}",
+      "}"
+    ],
+    "description": "Declara uma enumeração"
+  },
+  "Escolha": {
+    "prefix": "escolha",
+    "body": [
+      "escolha ${1:valor} {",
+      "    caso ${2:Tipo::Variante} {",
+      "        ${3}",
+      "    }",
+      "    caso _ {",
+      "        ${0}",
+      "    }",
+      "}"
+    ],
+    "description": "Correspondência de padrões"
+  },
+  "Incluir módulo": {
+    "prefix": "incluir",
+    "body": ["incluir ${1:modulo} como ${2:apelido}"],
+    "description": "Inclui um módulo"
   }
 }
