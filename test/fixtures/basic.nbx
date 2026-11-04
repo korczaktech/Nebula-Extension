@@ -1,1 +1,66 @@
-// Arquivo de exemplo para testes básicos Nebula.
+// Palavras reservadas, literais, operadores e delimitadores.
+variavel nome: texto = "Nebula\\n"
+definir ativo: logico <- verdadeiro
+mutável contador: inteiro_u64 = 0x2A
+constante taxa: decimal32 = 1.25e+2
+constante mascara = 0b1010
+constante permissao = 0o17
+constante inicial = 'N'
+constante ausente = nulo
+
+publico funcao somar<T>(a: inteiro, b: inteiro): inteiro {
+    variavel total = a + b
+    devolver total
+}
+
+estrutura Pessoa {
+    nome: texto,
+    idade: inteiro
+}
+
+enumeracao Estado {
+    Ativo,
+    Inativo,
+    Falha(inteiro)
+}
+
+tipo Identificador = inteiro_u64
+
+funcao principal(): vazio {
+    variavel pessoa: Pessoa = Pessoa { nome: "Ada", idade: 36 }
+    quando pessoa.idade >= 18 e !falso {
+        exibir("maior")
+    } senao {
+        exibir("menor")
+    }
+
+    escolha Estado::Falha(1) {
+        caso Estado::Ativo { exibir("ativo") }
+        caso Estado::Falha(codigo) { exibir(codigo) }
+        caso _ { exibir(nulo) }
+    }
+
+    cada item em [1, 2, 3] {
+        exibir(item ** 2)
+    }
+
+    enquanto contador < 10 {
+        alterar contador <- contador + 1
+        seguir
+    }
+
+    pulso(100) {
+        parar
+    }
+
+    para (variavel i = 0; i < 3; i = i + 1) {
+        exibir(i)
+    }
+
+    variavel entrada = receber("Nome: ")
+    exibir(entrada)
+    incluir Colecoes::Vetores como Vetores
+    exibir(1..10)
+}
+
+/* comentário de bloco */
