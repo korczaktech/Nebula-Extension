@@ -1,19 +1,53 @@
-# Nebula-Extension
+# Nebula Language Support
 
-Extensão oficial da linguagem Nebula para Visual Studio Code.
+Extensão oficial da linguagem **Nebula** para Visual Studio Code, com suporte a arquivos `.nbx`.
 
-Este repositório contém a estrutura da extensão, separada do compilador Nebula. Os recursos serão implementados gradualmente e preparados para integração futura com o compilador em Rust e um servidor de linguagem (LSP).
+Desenvolvida pela **Korczak Technologies**. Este repositório contém somente a extensão do editor; o compilador da linguagem permanece em seu próprio repositório.
 
-## Estrutura
+## Recursos desta versão-base
 
-- `src/`: implementação da extensão e provedores de linguagem.
-- `syntaxes/`: gramática TextMate e realce de sintaxe.
-- `snippets/`: modelos de código Nebula.
-- `icons/`: ícones da extensão e dos arquivos `.nbx`.
-- `test/`: testes automatizados e arquivos de exemplo.
-- `docs/`: documentação de arquitetura, desenvolvimento e publicação.
-- `.github/workflows/`: automação de validação contínua.
+- Reconhecimento da extensão de arquivo `.nbx`.
+- Identificação da linguagem como `Nebula` no VS Code.
+- Configuração de comentários, delimitadores e indentação por chaves.
+- Realce TextMate para palavras reservadas, literais, números, operadores e comentários, alinhado à especificação léxica inicial.
+- Snippets para declarações, funções, condicionais, laços, estruturas, enumerações e escolha.
+- Canal de saída para confirmar a ativação da extensão.
 
-## Estado
+## Instalação para desenvolvimento
 
-Estrutura inicial do projeto. Os arquivos de implementação serão preenchidos nas próximas etapas.
+Requisitos: Node.js 20 ou superior e Visual Studio Code 1.85 ou superior.
+
+```bash
+npm install
+npm run compile
+```
+
+Abra esta pasta no VS Code e pressione F5 para iniciar uma janela de desenvolvimento da extensão.
+
+## Testes e pacote
+
+```bash
+npm test
+npm run check-types
+npm run compile
+npx @vscode/vsce package --no-dependencies
+```
+
+O empacotamento gera um arquivo `.vsix`.
+
+## Organização
+
+- `src/`: ponto de entrada e módulos da extensão.
+- `syntaxes/`: gramática TextMate.
+- `snippets/`: modelos de código.
+- `icons/`: identidade visual e ícone de arquivos Nebula.
+- `test/`: testes automatizados e fixtures.
+- `docs/`: arquitetura, desenvolvimento e publicação.
+
+## Escopo
+
+Esta versão-base prepara o reconhecimento e a experiência de edição. Recursos dependentes de análise do compilador — diagnósticos semânticos, autocomplete contextual, navegação, refatorações e integração LSP — serão implementados nas próximas etapas.
+
+## Licença
+
+Software proprietário da Korczak Technologies. Consulte [LICENSE](LICENSE).
