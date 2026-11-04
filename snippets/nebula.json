@@ -10,7 +10,10 @@
     "description": "Declara uma variável tipada"
   },
   "Variável mutável": {
-    "prefix": "mutavel",
+    "prefix": [
+      "mutavel",
+      "mutável"
+    ],
     "body": [
       "mutavel ${1:nome}: ${2:tipo} = ${3:valor}"
     ],
@@ -33,7 +36,7 @@
   "Alterar valor": {
     "prefix": "alterar",
     "body": [
-      "alterar ${1:nome} = ${2:valor}"
+      "alterar ${1:nome} <- ${2:valor}"
     ],
     "description": "Altera um valor"
   },
@@ -44,7 +47,7 @@
       "fn"
     ],
     "body": [
-      "funcao ${1:nome}(${2:parametros}): ${3:vazio} {",
+      "funcao ${1:nome}<${2:T}>(${3:parametros}): ${4:vazio} {",
       "\t${0}",
       "}"
     ],
@@ -53,7 +56,7 @@
   "Função pública": {
     "prefix": "funcaop",
     "body": [
-      "publico funcao ${1:nome}(${2:parametros}): ${3:vazio} {",
+      "publico funcao ${1:nome}<${2:T}>(${3:parametros}): ${4:vazio} {",
       "\t${0}",
       "}"
     ],
@@ -132,7 +135,7 @@
   "Repetir": {
     "prefix": "repetir",
     "body": [
-      "repetir {",
+      "repetir ${1:condicao} {",
       "\t${0}",
       "}"
     ],
@@ -225,7 +228,7 @@
   "Incluir módulo": {
     "prefix": "incluir",
     "body": [
-      "incluir ${1:modulo} como ${2:apelido}"
+      "incluir ${1:sistema::texto} como ${2:apelido}"
     ],
     "description": "Importa um módulo"
   },
@@ -260,7 +263,7 @@
   "Vetor": {
     "prefix": "vetor",
     "body": [
-      "vetor<${1:tipo}>[${2:}]"
+      "vetor<${1:tipo}>"
     ],
     "description": "Modelo de tipo vetor"
   },
@@ -270,5 +273,103 @@
       "Resultado<${1:Sucesso}, ${2:Erro}>"
     ],
     "description": "Tipo de resultado"
+  },
+  "Avaliar": {
+    "prefix": "avaliar",
+    "body": [
+      "avaliar ${1:valor} {",
+      "\tcaso ${2:Tipo::Variante} {",
+      "\t\t${3}",
+      "\t}",
+      "\tcaso _ {",
+      "\t\t${0}",
+      "\t}",
+      "}"
+    ],
+    "description": "Correspondência de padrões"
+  },
+  "Lista": {
+    "prefix": "lista",
+    "body": [
+      "[${1:tipo}]"
+    ],
+    "description": "Tipo de lista homogênea"
+  },
+  "Matriz": {
+    "prefix": "matriz",
+    "body": [
+      "matriz<${1:tipo}>"
+    ],
+    "description": "Tipo de matriz homogênea"
+  },
+  "Tupla": {
+    "prefix": "tupla",
+    "body": [
+      "Tupla<${1:TipoA}, ${2:TipoB}>"
+    ],
+    "description": "Tipo de tupla"
+  },
+  "Opcional": {
+    "prefix": "opcional",
+    "body": [
+      "Opcional<${1:tipo}>"
+    ],
+    "description": "Tipo opcional"
+  },
+  "Leitura de texto": {
+    "prefix": "lertexto",
+    "body": [
+      "ler_texto()"
+    ],
+    "description": "Lê uma linha de texto"
+  },
+  "Aguardar": {
+    "prefix": "aguardar",
+    "body": [
+      "aguardar(${1:milissegundos})"
+    ],
+    "description": "Aguarda um intervalo"
+  },
+  "Dormir": {
+    "prefix": "dormir",
+    "body": [
+      "dormir(${1:milissegundos})"
+    ],
+    "description": "Suspende a execução"
+  },
+  "Gerar coleção": {
+    "prefix": "gerar",
+    "body": [
+      "gerar(${1:valor}, ${2:quantidade})"
+    ],
+    "description": "Gera uma coleção com valores repetidos"
+  },
+  "Executar em paralelo": {
+    "prefix": "emparalelo",
+    "body": [
+      "em_paralelo(${1:funcao1}, ${2:funcao2})"
+    ],
+    "description": "Executa funções em paralelo"
+  },
+  "Parar": {
+    "prefix": "parar",
+    "body": [
+      "parar"
+    ],
+    "description": "Interrompe o laço atual"
+  },
+  "Encerrar": {
+    "prefix": "encerrar",
+    "body": [
+      "encerrar"
+    ],
+    "description": "Alias para parar"
+  },
+  "Seguir": {
+    "prefix": "seguir",
+    "body": [
+      "seguir"
+    ],
+    "description": "Avança para a próxima iteração"
   }
 }
