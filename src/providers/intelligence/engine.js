@@ -54,11 +54,20 @@ function getDiagnostics(source){
 function getDocumentSymbols(source){return collectSymbols(source);}
 function getSemanticTokens(source){const symbols=collectSymbols(source);return scan(source).map(t=>{if(t.type!=='identifier')return t;const s=symbols.find(x=>x.start===t.start);if(s)return {...t,semanticType:s.kind==='function'?'function':s.kind==='parameter'?'parameter':['type','struct','enum'].includes(s.kind)?'type':'variable',modifiers:['declaration']};if(BUILTINS.has(t.text))return {...t,semanticType:'function',modifiers:['defaultLibrary']};return t;});}
 function formatDocument(source,tabSize=4,insertSpaces=true){
- const unit=insertSpaces?' '.repeat(Math.max(1,tabSize)):'\t',lines=source.replace(/\r\n/g,'\n').split('\n'),tokens=scan(source);let depth=0,offset=0;
- return lines.map(line=>{const trimmed=line.trim(),lineStart=offset,lineEnd=offset+line.length;offset=lineEnd+1;if(!trimmed)return '';
-  const significant=tokens.filter(t=>t.start>=lineStart&&t.end<=lineEnd&&t.type==='punctuation'),firstClose=/^[}\])]/u.test(trimmed)||/^(?:fim|senao|senão)\b/u.test(trimmed)?1:0,current=Math.max(0,depth-firstClose),formatted=unit.repeat(current)+trimmed;
+ const eol=source.includes('\r\n')?'\r\n':'\n',normalized=source.replace(/\r\n/g,'\n');
+ const unit=insertSpaces?' '.repeat(Math.max(1,tabSize)):'\t',lines=normalized.split('\n'),tokens=scan(normalized);let depth=0,offset=0,index=0;
+ return lines.map(line=>{
+  const trimmed=line.trim(),lineStart=offset,lineEnd=offset+line.length;offset=lineEnd+1;
+  const lineTokens=[];while(index<tokens.length&&tokens[index].start<lineStart)index++;while(index<tokens.length&&tokens[index].start<=lineEnd){lineTokens.push(tokens[index]);index++;}
+  if(!trimmed)return '';
+  const significant=lineTokens.filter(t=>t.type==='punctuation'),startsWithClose=/^[}\])]/u.test(trimmed),isEnd=/^fim\b/u.test(trimmed),isElse=/^(?:senao|senão)\b/u.test(trimmed);
+  const dedent=startsWithClose||isEnd||isElse?1:0,formatted=unit.repeat(Math.max(0,depth-dedent))+trimmed;
   const opens=significant.filter(t=>['{','[','('].includes(t.text)).length,closes=significant.filter(t=>['}',']',')'].includes(t.text)).length;
-  depth=Math.max(0,current+opens-closes);if(/^(?:funcao|função|quando|senao|senão|enquanto|durante|repetir|cada|para|pulso|caso)\b/u.test(trimmed)&&!/[{]\s*$/u.test(trimmed)&&!/[;]\s*$/u.test(trimmed))depth++;if(/^fim\b/u.test(trimmed))depth=Math.max(0,depth-1);return formatted;
- }).join('\n');
+  depth=Math.max(0,depth+opens-closes);
+  if(!startsWithClose&&isEnd)depth=Math.max(0,depth-1);
+  if(!startsWithClose&&isElse)depth=Math.max(0,depth-1);
+  if(/^(?:funcao|função|quando|senao|senão|enquanto|durante|repetir|cada|para|pulso|caso)\b/u.test(trimmed)&&!trimmed.includes('{')&&!/;\s*$/u.test(trimmed))depth++;
+  return formatted;
+ }).join(eol);
 }
 module.exports={scan,collectSymbols,findWord,findReferences,findFunctionAtCall,getDiagnostics,getDocumentSymbols,getSemanticTokens,formatDocument};
