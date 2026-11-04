@@ -4,7 +4,7 @@ Extensão oficial da linguagem **Nebula** para Visual Studio Code, com suporte a
 
 Desenvolvida pela **Korczak Technologies**. Este repositório contém somente a extensão do editor; o compilador da linguagem permanece em seu próprio repositório.
 
-## Recursos desta versão-base
+## Recursos
 
 - Reconhecimento da extensão de arquivo `.nbx`.
 - Identificação da linguagem como `Nebula` no VS Code.
