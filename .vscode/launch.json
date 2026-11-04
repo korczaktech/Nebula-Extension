@@ -1,6 +1,13 @@
 {
   "version": "0.2.0",
   "configurations": [
-    { "name": "Executar extensão Nebula", "type": "extensionHost", "request": "launch", "args": ["--extensionDevelopmentPath=${workspaceFolder}"] }
+    {
+      "name": "Executar extensão Nebula",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+      "outFiles": ["${workspaceFolder}/out/**/*.js"],
+      "preLaunchTask": "Nebula: Compilar"
+    }
   ]
 }
