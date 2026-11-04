@@ -46,9 +46,9 @@ No Linux sem ambiente gráfico, execute a integração com:
 
     npm run package:ci
 
-O comando gera nebula-language.vsix e verifica o conteúdo do arquivo, incluindo artefatos compilados, gramática, snippets, ícones e dependências de execução do cliente LSP. Para instalar localmente:
+O comando gera nbx-language.vsix e verifica o conteúdo do arquivo, incluindo artefatos compilados, gramática, snippets, ícones e dependências de execução do cliente LSP. Para instalar localmente:
 
-    code --install-extension nebula-language.vsix
+    code --install-extension nbx-language.vsix
 
 O pacote exclui código-fonte TypeScript, testes, documentação interna e arquivos de CI. As dependências de execução são mantidas dentro do VSIX.
 
