@@ -14,13 +14,13 @@ O arquivo \`language-configuration.json\` define o comportamento nativo da lingu
 - Colchetes: \`[ ]\`.
 - Parênteses: \`( )\`.
 
-Os três pares participam da correspondência, colorização e seleção por delimitação. O editor insere automaticamente o fechamento e permite envolver seleções com esses pares.
+Os três pares participam da correspondência, colorização e seleção por delimitação. O editor insere automaticamente o fechamento e permite envolver seleções com esses pares. Os pares não são inseridos dentro de strings ou comentários.
 
-Aspas simples e duplas são fechadas automaticamente, exceto quando o cursor está dentro de uma string ou comentário.
+Aspas simples e duplas são fechadas automaticamente, exceto quando o cursor está dentro de uma string ou comentário. Comentários de bloco também recebem fechamento automático e continuação com o prefixo ` * `.
 
 ## Indentação
 
-A configuração reconhece abertura de blocos com chaves, colchetes e parênteses, e reduz o recuo ao iniciar uma linha com o delimitador de fechamento correspondente. Regras de Enter tratam blocos com chaves, linhas de fechamento e continuação de comentários.
+A configuração reconhece abertura de blocos com chaves, colchetes e parênteses. Também reconhece cabeçalhos de blocos encerrados por `fim`, incluindo `funcao`/`função`, `quando`, `senao`/`senão`, `enquanto`, `durante`, `repetir`, `cada`, `pulso`, `para` e `caso`. O recuo diminui ao iniciar uma linha com `fim`, `senao`/`senão` ou um delimitador de fechamento. Regras de Enter tratam blocos com chaves, blocos terminados por `fim` e continuação de comentários de linha e bloco.
 
 As regras são heurísticas de editor baseadas no texto da linha. Elas não substituem o parser e não tentam interpretar estruturas semanticamente.
 
