@@ -14,8 +14,8 @@ test('verifica artefatos LSP compilados',()=>{const s=pkg.scripts['check-output'
 test('desativa provedores locais ao habilitar o LSP e os restaura ao desabilitar',()=>{
  const completion=read('src/providers/completion/provider.ts');
  const intelligence=read('src/providers/intelligence/provider.ts');
- assert.ok(completion.includes("affectsConfiguration('nebula.languageServer.enabled')"));
- assert.ok(completion.includes("get<boolean>('enabled',false)"));
- assert.ok(intelligence.includes("affectsConfiguration('nebula.languageServer.enabled')"));
- assert.ok(intelligence.includes('disposeLocal()'));
+ assert.ok(completion.includes('onNebulaLanguageServerReady(sync)'));
+ assert.ok(completion.includes('isNebulaLanguageServerReady()'));
+ assert.ok(intelligence.includes('onNebulaLanguageServerReady(sync)'));
+ assert.ok(intelligence.includes('isNebulaLanguageServerReady()'));
 });
