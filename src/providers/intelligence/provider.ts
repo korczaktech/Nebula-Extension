@@ -9,7 +9,26 @@ class Definition implements vscode.DefinitionProvider{provideDefinition(d:vscode
 class References implements vscode.ReferenceProvider{provideReferences(d:vscode.TextDocument,p:vscode.Position,c:vscode.ReferenceContext):vscode.Location[]{const w=findWord(d.getText(),d.offsetAt(p));if(!w)return [];const decl=collectSymbols(d.getText()).find(s=>s.normalized===w.normalized);return findReferences(d.getText(),w.text).filter(t=>c.includeDeclaration||!decl||t.start!==decl.start).map(t=>new vscode.Location(d.uri,wordRange(d,t.start,t.end)));}}
 class Signature implements vscode.SignatureHelpProvider{provideSignatureHelp(d:vscode.TextDocument,p:vscode.Position):vscode.SignatureHelp|undefined{const call=findFunctionAtCall(d.getText(),d.offsetAt(p));if(!call)return;const sig=new vscode.SignatureInformation(call.name+'('+call.parameters.map(x=>x.name+': '+x.type).join(', ')+')');sig.parameters=call.parameters.map(x=>new vscode.ParameterInformation(x.name+': '+x.type));const help=new vscode.SignatureHelp();help.signatures=[sig];help.activeSignature=0;help.activeParameter=Math.min(call.activeParameter,Math.max(0,call.parameters.length-1));return help;}}
 class Symbols implements vscode.DocumentSymbolProvider{provideDocumentSymbols(d:vscode.TextDocument):vscode.DocumentSymbol[]{return getDocumentSymbols(d.getText()).map(s=>{const r=wordRange(d,s.start,s.end),k=s.kind==='function'?vscode.SymbolKind.Function:['variable','parameter'].includes(s.kind)?vscode.SymbolKind.Variable:s.kind==='constant'?vscode.SymbolKind.Constant:s.kind==='struct'?vscode.SymbolKind.Struct:s.kind==='enum'?vscode.SymbolKind.Enum:vscode.SymbolKind.Class;return new vscode.DocumentSymbol(s.name,s.detail,k,r,r);});}}
-class Semantic implements vscode.DocumentSemanticTokensProvider{provideDocumentSemanticTokens(d:vscode.TextDocument):vscode.SemanticTokens{const b=new vscode.SemanticTokensBuilder(legend);for(const t of getSemanticTokens(d.getText())){let type:string|undefined=t.semanticType;if(!type&&['keyword','type','number','string','comment'].includes(t.type))type=t.type;if(!type)continue;const p=d.positionAt(t.start),e=d.positionAt(t.end);if(e.line!==p.line)continue;b.push(p.line,p.character,Math.max(1,e.character-p.character),type,t.modifiers||[]);}return b.build();}}
+class Semantic implements vscode.DocumentSemanticTokensProvider{
+ provideDocumentSemanticTokens(d:vscode.TextDocument):vscode.SemanticTokens{
+  const b=new vscode.SemanticTokensBuilder(legend);
+  for(const t of getSemanticTokens(d.getText())){
+   let type:string|undefined=t.semanticType;
+   if(!type&&['keyword','type','number','string','comment'].includes(t.type))type=t.type;
+   if(!type)continue;
+   const p=d.positionAt(t.start),e=d.positionAt(t.end);
+   if(p.line===e.line){b.push(p.line,p.character,Math.max(1,e.character-p.character),type,t.modifiers||[]);continue;}
+   if(t.type==='comment'||t.type==='string'){
+    for(let line=p.line;line<=e.line;line++){
+     const start=line===p.line?p.character:0;
+     const end=line===e.line?e.character:d.lineAt(line).text.length;
+     if(end>start)b.push(line,start,end-start,type,t.modifiers||[]);
+    }
+   }
+  }
+  return b.build();
+ }
+}
 class Formatting implements vscode.DocumentFormattingEditProvider{provideDocumentFormattingEdits(d:vscode.TextDocument,o:vscode.FormattingOptions):vscode.TextEdit[]{const text=d.getText(),formatted=formatDocument(text,o.tabSize,o.insertSpaces);return formatted===text?[]:[vscode.TextEdit.replace(new vscode.Range(d.positionAt(0),d.positionAt(text.length)),formatted)];}}
 class Actions implements vscode.CodeActionProvider{provideCodeActions(d:vscode.TextDocument,_r:vscode.Range,c:vscode.CodeActionContext):vscode.CodeAction[]{const out:vscode.CodeAction[]=[];for(const diag of c.diagnostics){const code=typeof diag.code==='object'&&diag.code!==null?diag.code.value:diag.code;if(code==='unmatched-delimiter'){const a=new vscode.CodeAction('Remover delimitador sem abertura',vscode.CodeActionKind.QuickFix);a.diagnostics=[diag];a.edit=new vscode.WorkspaceEdit();a.edit.delete(d.uri,diag.range);out.push(a);}else if(code==='unclosed-delimiter'){const open=d.getText(diag.range),close:Record<string,string>={'(':')','[':']','{':'}'},end=new vscode.Position(d.lineCount-1,d.lineAt(d.lineCount-1).text.length);if(close[open]){const a=new vscode.CodeAction('Inserir "'+close[open]+'" no final',vscode.CodeActionKind.QuickFix);a.diagnostics=[diag];a.edit=new vscode.WorkspaceEdit();a.edit.insert(d.uri,end,close[open]);out.push(a);}}}return out;}}
 class Rename implements vscode.RenameProvider{prepareRename(d:vscode.TextDocument,p:vscode.Position):vscode.ProviderResult<vscode.Range|{range:vscode.Range;placeholder:string}>{const w=findWord(d.getText(),d.offsetAt(p));if(!w)throw new Error('O cursor não está sobre um identificador Nebula.');return {range:wordRange(d,w.start,w.end),placeholder:w.text};}provideRenameEdits(d:vscode.TextDocument,p:vscode.Position,name:string):vscode.WorkspaceEdit|undefined{if(!new RegExp('^[\\p{XID_Start}_][\\p{XID_Continue}_]*$','u').test(name.normalize('NFC')))throw new Error('O novo nome não é um identificador válido da Nebula.');const w=findWord(d.getText(),d.offsetAt(p));if(!w)return;const edit=new vscode.WorkspaceEdit();for(const t of findReferences(d.getText(),w.text))edit.replace(d.uri,wordRange(d,t.start,t.end),name);return edit;}}
