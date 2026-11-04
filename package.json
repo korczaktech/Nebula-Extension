@@ -2,7 +2,7 @@
   "name": "nbx-language",
   "displayName": "Suporte à Linguagem Nebula",
   "description": "Suporte oficial à linguagem Nebula no Visual Studio Code.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "KorczakTechnologiesBR",
   "author": "Korczak Technologies",
   "license": "SEE LICENSE IN LICENSE",
@@ -92,13 +92,13 @@
       "properties": {
         "nebula.languageServer.enabled": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Ativa a conexão com o servidor LSP externo da Nebula."
         },
         "nebula.languageServer.serverPath": {
           "type": "string",
-          "default": "nebula-lsp",
-          "description": "Caminho do executável do servidor Language Server da Nebula."
+          "default": "",
+          "description": "Caminho opcional para um executável já instalado. Vazio utiliza o servidor instalado pela extensão."
         },
         "nebula.languageServer.args": {
           "type": "array",
@@ -128,6 +128,10 @@
       {
         "command": "nebula.languageServerStatus",
         "title": "Nebula: Estado do Language Server"
+      },
+      {
+        "command": "nebula.installLanguageServer",
+        "title": "Nebula: Instalar servidor LSP"
       }
     ],
     "themes": [
@@ -145,7 +149,7 @@
     "test": "node --test",
     "vscode:prepublish": "npm run compile",
     "package": "vsce package",
-    "check-output": "node -e \"const fs=require('node:fs'); for (const file of ['out/extension.js','out/providers/completion/provider.js','out/providers/completion/engine.js','out/providers/intelligence/provider.js','out/providers/intelligence/engine.js','out/lsp/client/client.js','out/lsp/client/configuration.js','out/lsp/client/state.js','out/lsp/protocol/capabilities.js']) fs.accessSync(file); console.log('Artefatos da extensão e LSP presentes.');\"",
+    "check-output": "node -e \"const fs=require('node:fs'); for (const file of ['out/extension.js','out/providers/completion/provider.js','out/providers/completion/engine.js','out/providers/intelligence/provider.js','out/providers/intelligence/engine.js','out/lsp/client/client.js','out/lsp/client/installer.js','out/lsp/client/configuration.js','out/lsp/client/state.js','out/lsp/protocol/capabilities.js']) fs.accessSync(file); console.log('Artefatos da extensão e LSP presentes.');\"",
     "compile-tests": "tsc -p tsconfig.test.json",
     "test:integration": "npm run compile-tests && node out-test/test/runTest.js",
     "package:ci": "vsce package --out nbx-language.vsix && node scripts/verify-vsix.mjs nbx-language.vsix"
