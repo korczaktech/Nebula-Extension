@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import {LanguageClient,LanguageClientOptions,ServerOptions,TransportKind} from 'vscode-languageclient/node';
+import {LanguageClient,LanguageClientOptions,ServerOptions,TransportKind,Trace} from 'vscode-languageclient/node';
 import {getNebulaLanguageServerConfiguration} from './configuration';
 import {createNebulaInitializationOptions} from '../protocol/capabilities';
 let client:LanguageClient|undefined,output:vscode.OutputChannel|undefined,starting=false;
@@ -21,7 +21,7 @@ export async function startNebulaLanguageClient(context:vscode.ExtensionContext)
  try{
   output??=vscode.window.createOutputChannel('Nebula Language Server');
   const instance=new LanguageClient('nebulaLanguageServer','Nebula Language Server',serverOptions(),clientOptions());
-  instance.setTrace(c.trace==='verbose'?2:c.trace==='messages'?1:0);
+  instance.setTrace(c.trace==='verbose'?Trace.Verbose:c.trace==='messages'?Trace.Messages:Trace.Off);
   client=instance;context.subscriptions.push(instance);await instance.start();log('Conectado ao servidor: '+c.serverPath);
  }catch(error){
   client=undefined;log('Falha ao iniciar: '+(error instanceof Error?error.message:String(error)));
