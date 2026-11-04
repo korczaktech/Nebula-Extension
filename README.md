@@ -16,7 +16,9 @@ Desenvolvida pela **Korczak Technologies**. Este repositório contém somente a 
 - Snippets para declarações, funções, condicionais, laços, estruturas, enumerações, módulos, tipos e funções internas, incluindo blocos com `fim`.
 - Autocomplete contextual alinhado ao inventário de palavras reservadas, literais, tipos, funções internas, declarações e parâmetros, incluindo tipos genéricos e de função.
 - Sugestões de campos de estruturas e variantes de enumerações após `.` e `::`.
-- Canal de saída para confirmar a ativação e o registro do autocomplete.
+- Hover, navegação para definição, busca de referências e informações de parâmetros para símbolos declarados no arquivo atual.
+- Diagnósticos locais para delimitadores inconsistentes e declarações duplicadas.
+- Símbolos de documento, tokens semânticos, formatação básica, correções rápidas e renomeação local.
 
 ## Instalação para desenvolvimento
 
@@ -51,7 +53,7 @@ O empacotamento gera um arquivo `.vsix`.
 
 ## Escopo
 
-Esta versão-base prepara o reconhecimento e a experiência de edição. O autocomplete desta etapa é local ao arquivo e baseado em análise textual leve; não substitui o parser nem o sistema de tipos do compilador. Diagnósticos semânticos, resolução entre arquivos, navegação, refatorações e integração LSP permanecem fora do escopo desta etapa.
+A inteligência de código desta versão é local ao documento e baseada em análise textual leve; não substitui o parser nem o sistema de tipos do compilador. Resolução de módulos entre arquivos, inferência de tipos, validação semântica normativa e diagnósticos completos dependem da integração com o compilador Rust/LSP, prevista para a etapa 6.
 
 ## Licença
 
