@@ -47,7 +47,7 @@ function getCompletionCandidates(source,cursorOffset){
  if(!isCodePosition(source,cursorOffset))return {candidates:[],wordStart:cursorOffset,context:'general'};
  const masked=maskNonCode(before),lineStart=masked.lastIndexOf('\n')+1,line=masked.slice(lineStart);
  const current=line.match(/[\p{L}_][\p{L}\p{N}_]*$/u)?.[0]||'',wordStart=cursorOffset-current.length;
- const symbols=collectSymbols(before),trimmed=line.trimEnd();
+ const symbols=collectSymbols(source),trimmed=line.trimEnd();
  const member=trimmed.match(/([\p{L}_][\p{L}\p{N}_]*)\s*(::|\.)\s*[\p{L}_]*$/u);
  if(member){const [receiver,operator]=[member[1],member[2]],items=[];
   if(operator==='::'&&symbols.enums.has(receiver))for(const label of symbols.enums.get(receiver))items.push({label,kind:'enumMember',detail:'Variante de '+receiver,documentation:'Variante da enumeração '+receiver+'.'});
