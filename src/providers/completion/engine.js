@@ -44,10 +44,15 @@ function collectSymbols(source){
  const add=(label,kind,detail,documentation,extra={})=>{if(label&&!symbols.some(x=>x.label===label&&x.kind===kind))symbols.push({label,kind,detail,documentation,...extra});};
  const varRe=/(?<![\p{L}\p{N}_])(?:variavel|definir|mutavel|mutável|constante)\s+([\p{L}_][\p{L}\p{N}_]*)(?:\s*:\s*([\p{L}_][\p{L}\p{N}_]*))?/gu;
  for(const m of code.matchAll(varRe)){variables.set(m[1],m[2]||'');add(m[1],'variable',m[2]?'Variável · '+m[2]:'Variável','Símbolo declarado neste arquivo.');}
- const fnRe=/(?<![\p{L}\p{N}_])(?:publico|público|privado)?\s*(?:funcao|função)\s+([\p{L}_][\p{L}\p{N}_]*)(?:\s*<[^>]*>)?\s*\(([^)]*)\)(?:\s*:\s*([\p{L}_][\p{L}\p{N}_]*))?/gu;
- for(const m of code.matchAll(fnRe)){
-  const params=splitTopLevel(m[2],',').map(part=>part.trim().match(/^([\p{L}_][\p{L}\p{N}_]*)\s*:\s*(.+)$/u)).filter(Boolean);
-  add(m[1],'function','('+params.map(p=>p[1]+': '+p[2].trim()).join(', ')+')'+(m[3]?': '+m[3]:''),'Função declarada neste arquivo.');
+ const fnStart=/(?<![\p{L}\p{N}_])(?:(?:publico|público|privado)\s+)?(?:funcao|função)\s+([\p{L}_][\p{L}\p{N}_]*)(?:\s*<[^>]*>)?\s*\(/gu;
+ for(const m of code.matchAll(fnStart)){
+  const open=m.index+m[0].lastIndexOf('(');let depth=1,end=open+1;
+  for(;end<code.length&&depth>0;end++){if(code[end]==='(')depth++;else if(code[end]===')')depth--;}
+  if(depth!==0)continue;
+  const close=end-1,paramsText=code.slice(open+1,close);
+  const params=splitTopLevel(paramsText,',').map(part=>part.trim().match(/^([\p{L}_][\p{L}\p{N}_]*)\s*:\s*(.+)$/u)).filter(Boolean);
+  const returnType=code.slice(close+1).match(/^\s*:\s*([^\n;{}]+)/u)?.[1]?.trim();
+  add(m[1],'function','('+params.map(p=>p[1]+': '+p[2].trim()).join(', ')+')'+(returnType?': '+returnType:''),'Função declarada neste arquivo.');
   for(const p of params)add(p[1],'variable','Parâmetro · '+p[2].trim(),'Parâmetro da função '+m[1]+'.');
  }
  for(const m of code.matchAll(/(?<![\p{L}\p{N}_])tipo\s+([\p{L}_][\p{L}\p{N}_]*)/gu))add(m[1],'type','Alias de tipo','Tipo definido neste arquivo.');
