@@ -2,6 +2,7 @@ export interface NebulaSymbol { label:string; kind:string; detail:string; docume
 export interface CompletionResult { candidates:NebulaSymbol[]; wordStart:number; context:'member'|'type'|'general'; }
 export const KEYWORDS:string[];
 export const BUILTINS:string[];
+export const CONSTANTS:string[];
 export const TYPES:string[];
 export function maskNonCode(source:string):string;
 export function isCodePosition(source:string,offset:number):boolean;
