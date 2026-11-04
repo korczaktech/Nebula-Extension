@@ -13,7 +13,9 @@ Desenvolvida pela **Korczak Technologies**. Este repositório contém somente a 
 - Autocomplete contextual para palavras reservadas, literais, tipos, funções, declarações, parâmetros e membros.
 - Hover, navegação para definição, referências e informações de parâmetros para símbolos do arquivo atual.
 - Diagnósticos locais para delimitadores inconsistentes e declarações duplicadas.
-- Cliente LSP configurável, com inicialização por stdio, sincronização de arquivos .nbx e comandos de estado/reinício.
+- Language Server oficial em Rust, com diagnósticos, autocomplete, hover, navegação, referências, assinatura de funções e símbolos.
+- Instalação assistida do servidor LSP no próprio ambiente, com confirmação e compilação local via Cargo.
+- Inicialização automática por stdio, sincronização de arquivos .nbx e comandos de instalação, estado e reinício.
 
 ## Requisitos
 
