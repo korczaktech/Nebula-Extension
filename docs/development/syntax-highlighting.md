@@ -1,6 +1,6 @@
 # Realce de sintaxe Nebula
 
-A gramática TextMate em `syntaxes/nebula.tmLanguage.json` segue as regras normativas do Lexer e da gramática Nebula. Ela é carregada pelo escopo `source.nebula` e aplicada a arquivos `.nbx`.
+A gramática TextMate em `syntaxes/nebula.tmLanguage.json` implementa o inventário léxico atualmente mantido neste repositório. Ela é carregada pelo escopo `source.nebula` e aplicada a arquivos `.nbx`. A equivalência integral com o Lexer do compilador ainda depende de uma comparação com sua especificação canônica.
 
 ## Cobertura
 
@@ -8,7 +8,7 @@ A gramática TextMate em `syntaxes/nebula.tmLanguage.json` segue as regras norma
 - Strings, caracteres, escapes válidos e escapes inválidos.
 - Inteiros decimais, hexadecimais, binários e octais; decimais fracionários e expoentes.
 - Literais lógicos e nulo.
-- Todas as palavras reservadas atuais, incluindo grafias acentuadas e aliases.
+- As palavras reservadas cadastradas nesta versão da extensão, incluindo grafias acentuadas e aliases.
 - Palavras reservadas futuras destacadas como construções inválidas, sem tratá-las como recursos implementados.
 - Declarações de variáveis, constantes, funções, aliases de tipo, estruturas e enumerações.
 - Funções internas, chamadas de função, parâmetros, campos, tipos primitivos e tipos de coleção.
