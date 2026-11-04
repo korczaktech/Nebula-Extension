@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
-import {LanguageClient,LanguageClientOptions,ServerOptions,Trace} from 'vscode-languageclient/node';
+import {LanguageClient,LanguageClientOptions,ServerOptions,Trace,State} from 'vscode-languageclient/node';
 import {getNebulaLanguageServerConfiguration} from './configuration';
 import {createNebulaInitializationOptions} from '../protocol/capabilities';
+import {setNebulaLanguageServerReady} from './state';
 let client:LanguageClient|undefined,output:vscode.OutputChannel|undefined,fileWatcher:vscode.FileSystemWatcher|undefined,starting=false;
 function log(message:string):void{output?.appendLine('[LSP] '+message);}
 function serverOptions():ServerOptions{
@@ -16,28 +17,28 @@ function clientOptions(context:vscode.ExtensionContext):LanguageClientOptions{
 export async function startNebulaLanguageClient(context:vscode.ExtensionContext):Promise<void>{
  if(client||starting)return;
  const c=getNebulaLanguageServerConfiguration();
- if(!c.enabled){log('Integração desativada. Configure nebula.languageServer.enabled para habilitar.');return;}
+ if(!c.enabled){setNebulaLanguageServerReady(false);log('Integração desativada. Configure nebula.languageServer.enabled para habilitar.');return;}
  if(!c.serverPath){log('Caminho do servidor não configurado.');return;}
  starting=true;
  try{
   output??=vscode.window.createOutputChannel('Nebula Language Server');
   const instance=new LanguageClient('nebulaLanguageServer','Nebula Language Server',serverOptions(),clientOptions(context));
   instance.setTrace(c.trace==='verbose'?Trace.Verbose:c.trace==='messages'?Trace.Messages:Trace.Off);
-  client=instance;context.subscriptions.push(instance);await instance.start();log('Conectado ao servidor: '+c.serverPath);
+  client=instance;context.subscriptions.push(instance);instance.onDidChangeState(event=>setNebulaLanguageServerReady(event.newState===State.Running));await instance.start();setNebulaLanguageServerReady(true);log('Conectado ao servidor: '+c.serverPath);
  }catch(error){
-  client=undefined;log('Falha ao iniciar: '+(error instanceof Error?error.message:String(error)));
+  client=undefined;setNebulaLanguageServerReady(false);log('Falha ao iniciar: '+(error instanceof Error?error.message:String(error)));
   void vscode.window.showWarningMessage('Nebula: não foi possível iniciar o Language Server. Consulte o canal de saída.');
  }finally{starting=false;}
 }
 export async function stopNebulaLanguageClient():Promise<void>{
- const current=client;client=undefined;if(!current)return;
+ const current=client;client=undefined;setNebulaLanguageServerReady(false);if(!current)return;
  try{await current.stop();log('Conexão encerrada.');}catch(error){log('Erro ao encerrar: '+(error instanceof Error?error.message:String(error)));}
 }
 export async function restartNebulaLanguageClient(context:vscode.ExtensionContext):Promise<void>{await stopNebulaLanguageClient();await startNebulaLanguageClient(context);}
 export function registerNebulaLanguageClient(context:vscode.ExtensionContext):void{
  output=vscode.window.createOutputChannel('Nebula Language Server');context.subscriptions.push(output);
  context.subscriptions.push(vscode.commands.registerCommand('nebula.restartLanguageServer',()=>restartNebulaLanguageClient(context)));
- context.subscriptions.push(vscode.commands.registerCommand('nebula.languageServerStatus',()=>{const state=client?'conectado':getNebulaLanguageServerConfiguration().enabled?'desconectado':'desativado';void vscode.window.showInformationMessage('Nebula Language Server: '+state+'.');}));
+ context.subscriptions.push(vscode.commands.registerCommand('nebula.languageServerStatus',()=>{const state=client?.state===State.Running?'conectado':client?.state===State.Starting?'iniciando':getNebulaLanguageServerConfiguration().enabled?'desconectado':'desativado';void vscode.window.showInformationMessage('Nebula Language Server: '+state+'.');}));
  context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e=>{if(e.affectsConfiguration('nebula.languageServer'))void restartNebulaLanguageClient(context);}));
  context.subscriptions.push({dispose:()=>{void stopNebulaLanguageClient();}});
  void startNebulaLanguageClient(context);
