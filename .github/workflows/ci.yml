@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -14,8 +17,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
+      - run: npm install --no-audit --no-fund
       - run: npm test
       - run: npm run check-types
       - run: npm run compile
       - run: npm run check-output
+      - name: Testes de integração no VS Code
+        run: xvfb-run -a npm run test:integration
+      - name: Empacotar e validar VSIX
+        run: npm run package:ci
+      - name: Publicar artefato VSIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: nebula-language-vsix
+          path: nebula-language.vsix
+          if-no-files-found: error
+          retention-days: 14

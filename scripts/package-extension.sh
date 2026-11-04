@@ -2,5 +2,4 @@
 set -euo pipefail
 
 npm install
-npm run vscode:prepublish
-npx @vscode/vsce package --no-dependencies
+npm run package:ci

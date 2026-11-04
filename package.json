@@ -138,7 +138,10 @@
     "test": "node --test",
     "vscode:prepublish": "npm run compile",
     "package": "vsce package",
-    "check-output": "node -e \"const fs=require('node:fs'); for (const file of ['out/extension.js','out/providers/completion/provider.js','out/providers/completion/engine.js','out/providers/intelligence/provider.js','out/providers/intelligence/engine.js','out/lsp/client/client.js','out/lsp/client/configuration.js','out/lsp/client/state.js','out/lsp/protocol/capabilities.js']) fs.accessSync(file); console.log('Artefatos da extensão e LSP presentes.');\""
+    "check-output": "node -e \"const fs=require('node:fs'); for (const file of ['out/extension.js','out/providers/completion/provider.js','out/providers/completion/engine.js','out/providers/intelligence/provider.js','out/providers/intelligence/engine.js','out/lsp/client/client.js','out/lsp/client/configuration.js','out/lsp/client/state.js','out/lsp/protocol/capabilities.js']) fs.accessSync(file); console.log('Artefatos da extensão e LSP presentes.');\"",
+    "compile-tests": "tsc -p tsconfig.test.json",
+    "test:integration": "npm run compile-tests && node out-test/test/runTest.js",
+    "package:ci": "vsce package --out nebula-language.vsix && node scripts/verify-vsix.mjs nebula-language.vsix"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
@@ -146,7 +149,10 @@
     "@vscode/vsce": "^3.2.1",
     "typescript": "^5.3.3",
     "vscode-oniguruma": "2.0.1",
-    "vscode-textmate": "9.2.0"
+    "vscode-textmate": "9.2.0",
+    "@types/mocha": "^10.0.10",
+    "@vscode/test-electron": "^2.5.2",
+    "mocha": "^10.8.2"
   },
   "files": [
     "out/**",
