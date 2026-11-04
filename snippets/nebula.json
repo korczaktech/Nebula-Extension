@@ -380,5 +380,23 @@
       "}"
     ],
     "description": "Declara uma função genérica"
+  },
+  "Tipo de função": {
+    "prefix": "tipofuncao",
+    "body": [
+      "funcao(${1:TipoParametro}): ${2:TipoRetorno}"
+    ],
+    "description": "Declara um tipo de função"
+  },
+  "Enumeração com payload": {
+    "prefix": "enumpayload",
+    "body": [
+      "enumeracao ${1:Resultado} {",
+      "\t${2:Sucesso}(${3:inteiro}),",
+      "\t${4:Falha}(${5:texto})",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Declara variantes de enumeração com dados associados"
   }
 }
