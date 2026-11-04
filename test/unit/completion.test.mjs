@@ -184,6 +184,13 @@ test('exporta literais e reconhece limites Unicode de identificadores', () => {
   assert.ok(engine.getCompletionCandidates('verd', 4).candidates.some(item => item.label === 'verdadeiro'));
 });
 
+test('compara identificadores Unicode em NFC como o compilador', () => {
+  const decomposed = 'cafe\u0301';
+  const source = 'variavel ' + decomposed + ': inteiro = 1\ncafé';
+  const result = engine.getCompletionCandidates(source, source.length);
+  assert.ok(result.candidates.some(item => item.label === decomposed));
+});
+
 test('sugere literais e não oferece conteúdo dentro de comentários ou strings', () => {
   const literal = engine.getCompletionCandidates('verd', 4);
   assert.ok(literal.candidates.some(item => item.label === 'verdadeiro'));
