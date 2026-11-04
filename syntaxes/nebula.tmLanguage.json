@@ -68,7 +68,7 @@
       "patterns": [
         {
           "name": "constant.character.escape.nebula",
-          "match": "\\\\(?:[\\\\\\\"'nrt0]|u\\{[0-9A-Fa-f]+\\})"
+          "match": "\\\\(?:[\\\\'\"nrt0]|u\\{[0-9A-Fa-f]+\\})"
         },
         {
           "name": "invalid.illegal.escape.nebula",
@@ -83,7 +83,7 @@
       "patterns": [
         {
           "name": "constant.character.escape.nebula",
-          "match": "\\\\(?:[\\\\\\\"'nrt0]|u\\{[0-9A-Fa-f]+\\})"
+          "match": "\\\\(?:[\\\\'\"nrt0]|u\\{[0-9A-Fa-f]+\\})"
         },
         {
           "name": "invalid.illegal.escape.nebula",
