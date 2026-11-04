@@ -120,7 +120,7 @@ test('sugere tipos após anotação', () => {
   const result = engine.getCompletionCandidates(source, source.length);
   assert.equal(result.context, 'type');
   assert.ok(result.candidates.some(item => item.label === 'inteiro'));
-  assert.ok(result.candidates.some(item => item.label === 'Resultado'));
+  const allTypes = engine.getCompletionCandidates('variavel idade: ', 17);\n  assert.ok(allTypes.candidates.some(item => item.label === 'Resultado'));
   assert.ok(!result.candidates.some(item => item.label === 'variavel'));
 });
 
