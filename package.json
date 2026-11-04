@@ -61,7 +61,22 @@
         "language": "nebula",
         "path": "./snippets/nebula.json"
       }
-    ]
+    ],
+    "configurationDefaults": {
+      "[nebula]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false,
+        "editor.autoIndent": "full",
+        "editor.bracketPairColorization.enabled": true,
+        "editor.guides.bracketPairs": true,
+        "editor.guides.indentation": true,
+        "editor.matchBrackets": "always",
+        "editor.autoClosingBrackets": "languageDefined",
+        "editor.autoClosingQuotes": "languageDefined",
+        "editor.autoSurround": "languageDefined"
+      }
+    }
   },
   "scripts": {
     "compile": "tsc -p ./",
