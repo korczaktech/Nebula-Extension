@@ -27,13 +27,13 @@ function isCodePosition(source,offset){
  }
  return state==='code';
 }
-function collectSymbols(source){
+function splitTopLevel(source,separator){const parts=[];let start=0,angle=0,paren=0,bracket=0;for(let i=0;i<source.length;i++){const c=source[i];if(c==='<')angle++;else if(c==='>'&&angle)angle--;else if(c==='(')paren++;else if(c===')'&&paren)paren--;else if(c==='[')bracket++;else if(c===']'&&bracket)bracket--;else if(c===separator&&angle===0&&paren===0&&bracket===0){parts.push(source.slice(start,i));start=i+1;}}parts.push(source.slice(start));return parts;}\nfunction collectSymbols(source){
  const code=maskNonCode(source),symbols=[],variables=new Map(),structures=new Map(),enums=new Map();
  const add=(label,kind,detail,documentation,extra={})=>{if(label&&!symbols.some(x=>x.label===label&&x.kind===kind))symbols.push({label,kind,detail,documentation,...extra});};
  const varRe=/\b(?:variavel|definir|mutavel|mutável|constante)\s+([\p{L}_][\p{L}\p{N}_]*)(?:\s*:\s*([\p{L}_][\p{L}\p{N}_]*))?/gu;
  for(const m of code.matchAll(varRe)){variables.set(m[1],m[2]||'');add(m[1],'variable',m[2]?'Variável · '+m[2]:'Variável','Símbolo declarado neste arquivo.');}
  const fnRe=/\b(?:publico|público|privado)?\s*(?:funcao|função)\s+([\p{L}_][\p{L}\p{N}_]*)(?:\s*<[^>]*>)?\s*\(([^)]*)\)(?:\s*:\s*([\p{L}_][\p{L}\p{N}_]*))?/gu;
- for(const m of code.matchAll(fnRe)){const params=[...m[2].matchAll(/([\p{L}_][\p{L}\p{N}_]*)\s*(?::\s*([\p{L}_][\p{L}\p{N}_]*))?/gu)];add(m[1],'function','('+params.map(p=>p[1]+(p[2]?': '+p[2]:'')).join(', ')+')'+(m[3]?': '+m[3]:''),'Função declarada neste arquivo.');for(const p of params)add(p[1],'variable',p[2]?'Parâmetro · '+p[2]:'Parâmetro','Parâmetro da função '+m[1]+'.');}
+ for(const m of code.matchAll(fnRe)){const params=[...m[2].matchAll(/([\p{L}_][\p{L}\p{N}_]*)\s*(?::\s*([\p{L}_][\p{L}\p{N}_]*))?/gu)];add(m[1],'function','('+params.map(p=>p[1]+(p[2]?': '+p[2]:'')).join(', ')+')'+(m[3]?': '+m[3]:''),'Função declarada neste arquivo.');for(const p of params)add(p[1],'variable','Parâmetro · '+p[2].trim(),'Parâmetro da função '+m[1]+'.');}
  for(const m of code.matchAll(/\btipo\s+([\p{L}_][\p{L}\p{N}_]*)/gu))add(m[1],'type','Alias de tipo','Tipo definido neste arquivo.');
  const structs=/\bestrutura\s+([\p{L}_][\p{L}\p{N}_]*)\s*\{/gu;
  for(const m of code.matchAll(structs)){const open=m.index+m[0].lastIndexOf('{');let depth=1,end=open+1;for(;end<code.length&&depth;end++){if(code[end]==='{')depth++;if(code[end]==='}')depth--;}const body=code.slice(open+1,Math.max(open+1,end-1));const fields=[...body.matchAll(/([\p{L}_][\p{L}\p{N}_]*)\s*:\s*([\p{L}_][\p{L}\p{N}_]*)/gu)].map(x=>({label:x[1],type:x[2]}));structures.set(m[1],fields);add(m[1],'struct','Estrutura','Estrutura declarada neste arquivo.',{fields});}
@@ -52,7 +52,7 @@ function getCompletionCandidates(source,cursorOffset){
  if(member){const [receiver,operator]=[member[1],member[2]],items=[];
   if(operator==='::'&&symbols.enums.has(receiver))for(const label of symbols.enums.get(receiver))items.push({label,kind:'enumMember',detail:'Variante de '+receiver,documentation:'Variante da enumeração '+receiver+'.'});
   if(operator==='.'&&symbols.variables.has(receiver)){const type=symbols.variables.get(receiver);for(const field of symbols.structures.get(type)||[])items.push({label:field.label,kind:'field',detail:'Campo · '+field.type,documentation:'Campo da estrutura '+type+'.'});}
-  return {candidates:items.filter(x=>x.label.toLocaleLowerCase().startsWith(current.toLocaleLowerCase())),wordStart,context:'member'};
+  return {candidates:items.filter(x=>x.label.normalize('NFC').toLocaleLowerCase().startsWith(current.normalize('NFC').toLocaleLowerCase())),wordStart,context:'member'};
  }
  const expectsType=/:\s*[\p{L}_\p{N}]*$/u.test(trimmed),items=[];
  const add=(label,kind,detail,documentation,extra={})=>items.push({label,kind,detail,documentation,...extra});
@@ -61,4 +61,4 @@ function getCompletionCandidates(source,cursorOffset){
  const unique=new Map();for(const item of items){const key=item.label.normalize('NFC');if(!unique.has(key))unique.set(key,item);}
  return {candidates:[...unique.values()].filter(x=>x.label.toLocaleLowerCase().startsWith(current.toLocaleLowerCase())),wordStart,context:expectsType?'type':'general'};
 }
-module.exports={KEYWORDS,BUILTINS,TYPES,maskNonCode,isCodePosition,collectSymbols,getCompletionCandidates};
+module.exports={KEYWORDS,BUILTINS,CONSTANTS,TYPES,maskNonCode,isCodePosition,collectSymbols,getCompletionCandidates};
