@@ -22,8 +22,7 @@ function serverOptions(context: vscode.ExtensionContext): ServerOptions {
     args: configuration.args,
     options: {
       cwd: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath,
-      env: process.env,
-      windowsHide: true
+      env: process.env
     }
   };
 }
