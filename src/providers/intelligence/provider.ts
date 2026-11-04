@@ -34,7 +34,33 @@ class Actions implements vscode.CodeActionProvider{provideCodeActions(d:vscode.T
 class Rename implements vscode.RenameProvider{prepareRename(d:vscode.TextDocument,p:vscode.Position):vscode.ProviderResult<vscode.Range|{range:vscode.Range;placeholder:string}>{const w=findWord(d.getText(),d.offsetAt(p));if(!w)throw new Error('O cursor não está sobre um identificador Nebula.');return {range:wordRange(d,w.start,w.end),placeholder:w.text};}provideRenameEdits(d:vscode.TextDocument,p:vscode.Position,name:string):vscode.WorkspaceEdit|undefined{if(!new RegExp('^[\\p{XID_Start}_][\\p{XID_Continue}_]*$','u').test(name.normalize('NFC')))throw new Error('O novo nome não é um identificador válido da Nebula.');const w=findWord(d.getText(),d.offsetAt(p));if(!w)return;const edit=new vscode.WorkspaceEdit();for(const t of findReferences(d.getText(),w.text))edit.replace(d.uri,wordRange(d,t.start,t.end),name);return edit;}}
 function refresh(d:vscode.TextDocument,c:vscode.DiagnosticCollection):void{if(d.languageId!=='nebula')return;c.set(d.uri,getDiagnostics(d.getText()).map(x=>{const diag=new vscode.Diagnostic(wordRange(d,x.start,x.end),x.message,x.severity==='error'?vscode.DiagnosticSeverity.Error:vscode.DiagnosticSeverity.Warning);diag.code=x.code;diag.source='Nebula';return diag;}));}
 export function registerNebulaIntelligence(context:vscode.ExtensionContext):void{
- context.subscriptions.push(vscode.languages.registerHoverProvider(selector,new Hover()),vscode.languages.registerDefinitionProvider(selector,new Definition()),vscode.languages.registerReferenceProvider(selector,new References()),vscode.languages.registerSignatureHelpProvider(selector,new Signature(),'(',','),vscode.languages.registerDocumentSymbolProvider(selector,new Symbols()),vscode.languages.registerDocumentSemanticTokensProvider(selector,new Semantic(),legend),vscode.languages.registerDocumentFormattingEditProvider(selector,new Formatting()),vscode.languages.registerCodeActionsProvider(selector,new Actions(),{providedCodeActionKinds:[vscode.CodeActionKind.QuickFix]}),vscode.languages.registerRenameProvider(selector,new Rename()));
- const diagnostics=vscode.languages.createDiagnosticCollection('nebula');context.subscriptions.push(diagnostics);for(const d of vscode.workspace.textDocuments)refresh(d,diagnostics);
- context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(d=>refresh(d,diagnostics)),vscode.workspace.onDidChangeTextDocument(e=>refresh(e.document,diagnostics)),vscode.workspace.onDidSaveTextDocument(d=>refresh(d,diagnostics)),vscode.workspace.onDidCloseTextDocument(d=>diagnostics.delete(d.uri)));
+ let registrations:vscode.Disposable[]=[];
+ const disposeLocal=()=>{for(const item of registrations)item.dispose();registrations=[];};
+ const sync=()=>{
+  const enabled=vscode.workspace.getConfiguration('nebula.languageServer').get<boolean>('enabled',false);
+  if(enabled){disposeLocal();return;}
+  if(registrations.length)return;
+  registrations=[
+   vscode.languages.registerHoverProvider(selector,new Hover()),
+   vscode.languages.registerDefinitionProvider(selector,new Definition()),
+   vscode.languages.registerReferenceProvider(selector,new References()),
+   vscode.languages.registerSignatureHelpProvider(selector,new Signature(),'(',','),
+   vscode.languages.registerDocumentSymbolProvider(selector,new Symbols()),
+   vscode.languages.registerDocumentSemanticTokensProvider(selector,new Semantic(),legend),
+   vscode.languages.registerDocumentFormattingEditProvider(selector,new Formatting()),
+   vscode.languages.registerCodeActionsProvider(selector,new Actions(),{providedCodeActionKinds:[vscode.CodeActionKind.QuickFix]}),
+   vscode.languages.registerRenameProvider(selector,new Rename())
+  ];
+  const diagnostics=vscode.languages.createDiagnosticCollection('nebula');registrations.push(diagnostics);
+  for(const d of vscode.workspace.textDocuments)refresh(d,diagnostics);
+  registrations.push(
+   vscode.workspace.onDidOpenTextDocument(d=>refresh(d,diagnostics)),
+   vscode.workspace.onDidChangeTextDocument(e=>refresh(e.document,diagnostics)),
+   vscode.workspace.onDidSaveTextDocument(d=>refresh(d,diagnostics)),
+   vscode.workspace.onDidCloseTextDocument(d=>diagnostics.delete(d.uri))
+  );
+ };
+ sync();
+ context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e=>{if(e.affectsConfiguration('nebula.languageServer.enabled'))sync();}));
+ context.subscriptions.push(new vscode.Disposable(disposeLocal));
 }
