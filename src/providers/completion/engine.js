@@ -32,14 +32,14 @@ function collectSymbols(source){
  const add=(label,kind,detail,documentation,extra={})=>{if(label&&!symbols.some(x=>x.label===label&&x.kind===kind))symbols.push({label,kind,detail,documentation,...extra});};
  const varRe=/\b(?:variavel|definir|mutavel|mutável|constante)\s+([\p{L}_][\p{L}\p{N}_]*)(?:\s*:\s*([\p{L}_][\p{L}\p{N}_]*))?/gu;
  for(const m of code.matchAll(varRe)){variables.set(m[1],m[2]||'');add(m[1],'variable',m[2]?'Variável · '+m[2]:'Variável','Símbolo declarado neste arquivo.');}
- const fnRe=/\b(?:publico|público|privado)?\s*(?:funcao|função)\s+([\p{L}_][\p{L}\p{N}_]*)\s*\(([^)]*)\)(?:\s*:\s*([\p{L}_][\p{L}\p{N}_]*))?/gu;
+ const fnRe=/\b(?:publico|público|privado)?\s*(?:funcao|função)\s+([\p{L}_][\p{L}\p{N}_]*)(?:\s*<[^>]*>)?\s*\(([^)]*)\)(?:\s*:\s*([\p{L}_][\p{L}\p{N}_]*))?/gu;
  for(const m of code.matchAll(fnRe)){const params=[...m[2].matchAll(/([\p{L}_][\p{L}\p{N}_]*)\s*(?::\s*([\p{L}_][\p{L}\p{N}_]*))?/gu)];add(m[1],'function','('+params.map(p=>p[1]+(p[2]?': '+p[2]:'')).join(', ')+')'+(m[3]?': '+m[3]:''),'Função declarada neste arquivo.');for(const p of params)add(p[1],'variable',p[2]?'Parâmetro · '+p[2]:'Parâmetro','Parâmetro da função '+m[1]+'.');}
  for(const m of code.matchAll(/\btipo\s+([\p{L}_][\p{L}\p{N}_]*)/gu))add(m[1],'type','Alias de tipo','Tipo definido neste arquivo.');
  const structs=/\bestrutura\s+([\p{L}_][\p{L}\p{N}_]*)\s*\{/gu;
  for(const m of code.matchAll(structs)){const open=m.index+m[0].lastIndexOf('{');let depth=1,end=open+1;for(;end<code.length&&depth;end++){if(code[end]==='{')depth++;if(code[end]==='}')depth--;}const body=code.slice(open+1,Math.max(open+1,end-1));const fields=[...body.matchAll(/([\p{L}_][\p{L}\p{N}_]*)\s*:\s*([\p{L}_][\p{L}\p{N}_]*)/gu)].map(x=>({label:x[1],type:x[2]}));structures.set(m[1],fields);add(m[1],'struct','Estrutura','Estrutura declarada neste arquivo.',{fields});}
  const enumsRe=/\b(?:enumeracao|enumeração)\s+([\p{L}_][\p{L}\p{N}_]*)\s*\{/gu;
  for(const m of code.matchAll(enumsRe)){const open=m.index+m[0].lastIndexOf('{'),close=code.indexOf('}',open+1),body=code.slice(open+1,close<0?code.length:close);const variants=[...body.matchAll(/(?:^|[,\n])\s*([\p{L}_][\p{L}\p{N}_]*)/gu)].map(x=>x[1]);enums.set(m[1],variants);add(m[1],'enum','Enumeração','Enumeração declarada neste arquivo.',{variants});}
- for(const m of code.matchAll(/\bincluir\s+([\p{L}_][\p{L}\p{N}_.]*)\s+como\s+([\p{L}_][\p{L}\p{N}_]*)/gu))add(m[2],'module','Módulo · '+m[1],'Alias de módulo importado neste arquivo.');
+ for(const m of code.matchAll(/\bincluir\s+([\p{L}_][\p{L}\p{N}_]*(?:::[\p{L}_][\p{L}\p{N}_]*)*)\s+como\s+([\p{L}_][\p{L}\p{N}_]*)/gu))add(m[2],'module','Módulo · '+m[1],'Alias de módulo importado neste arquivo.');
  return {symbols,variables,structures,enums};
 }
 function getCompletionCandidates(source,cursorOffset){
