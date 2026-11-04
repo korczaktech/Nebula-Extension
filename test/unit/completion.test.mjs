@@ -104,6 +104,22 @@ test('registra snippets e autocomplete com gatilhos de membro e escopo', () => {
   assert.equal(defaults['editor.quickSuggestions'].strings, false);
 });
 
+test('palavras reservadas e builtins acompanham o inventário normativo', () => {
+  const reserved = [
+    'variavel', 'definir', 'mutavel', 'mutável', 'constante', 'funcao',
+    'quando', 'senao', 'avaliar', 'escolha', 'caso', 'para', 'cada', 'em',
+    'enquanto', 'durante', 'repetir', 'pulso', 'alterar', 'devolver',
+    'incluir', 'como', 'verdadeiro', 'falso', 'nulo', 'fim', 'parar',
+    'encerrar', 'seguir', 'e', 'ou', 'nao', 'publico', 'privado', 'tipo',
+    'estrutura', 'enumeracao'
+  ];
+  for (const word of reserved) assert.ok(engine.KEYWORDS.includes(word), 'Palavra reservada ausente: ' + word);
+  for (const builtin of engine.BUILTINS) assert.ok(!engine.KEYWORDS.includes(builtin), 'Builtin não é palavra reservada: ' + builtin);
+  for (const alias of ['função', 'senão', 'enumeração', 'não', 'público']) {
+    assert.ok(engine.KEYWORDS.includes(alias), 'Grafia acentuada ausente: ' + alias);
+  }
+});
+
 test('oferece todos os builtins oficiais como chamadas', () => {
   for (const name of [
     'exibir', 'receber', 'perguntar', 'ler_texto',
