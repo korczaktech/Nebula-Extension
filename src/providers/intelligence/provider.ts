@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import { collectSymbols, findWord, findReferences, findFunctionAtCall, getDiagnostics, getDocumentSymbols, getSemanticTokens, formatDocument } from './engine';
 const selector: vscode.DocumentSelector = { language: 'nebula' };
 const legend = new vscode.SemanticTokensLegend(['keyword','type','function','variable','parameter','number','string','comment'],['declaration','defaultLibrary']);
+const semanticModifiers=['declaration','defaultLibrary'];
+function modifierBits(modifiers:string[]|undefined):number{return (modifiers||[]).reduce((bits,name)=>{const index=semanticModifiers.indexOf(name);return index<0?bits:bits|(1<<index);},0);}
 function wordRange(d:vscode.TextDocument,s:number,e:number):vscode.Range{return new vscode.Range(d.positionAt(s),d.positionAt(e));}
 function symbolAt(d:vscode.TextDocument,o:number){const word=findWord(d.getText(),o);if(!word)return null;const symbols=collectSymbols(d.getText());return {word,symbols,declaration:symbols.find(s=>s.normalized===word.normalized)};}
 class Hover implements vscode.HoverProvider{provideHover(d:vscode.TextDocument,p:vscode.Position):vscode.Hover|undefined{const f=symbolAt(d,d.offsetAt(p));if(!f)return;const {word,declaration}=f,md=new vscode.MarkdownString();if(declaration){md.appendCodeblock(declaration.kind==='function'?'funcao '+declaration.name+'('+(declaration.parameters||[]).map(x=>x.name+': '+x.type).join(', ')+')':declaration.name,'nebula');md.appendMarkdown('**'+declaration.kind+'** · '+declaration.detail);if(declaration.owner)md.appendMarkdown('\n\nParâmetro de **'+declaration.owner+'**.');}else if(['exibir','receber','perguntar','ler_texto','aguardar','dormir','gerar','em_paralelo'].includes(word.text)){md.appendCodeblock(word.text+'(...)','nebula');md.appendMarkdown('Função interna da biblioteca padrão Nebula.');}else return;return new vscode.Hover(md,wordRange(d,word.start,word.end));}}
@@ -22,7 +24,7 @@ class Semantic implements vscode.DocumentSemanticTokensProvider{
     for(let line=p.line;line<=e.line;line++){
      const start=line===p.line?p.character:0;
      const end=line===e.line?e.character:d.lineAt(line).text.length;
-     if(end>start)b.push(line,start,end-start,type,t.modifiers||[]);
+     if(end>start)b.push(line,start,end-start,type,modifierBits(t.modifiers));
     }
    }
   }
