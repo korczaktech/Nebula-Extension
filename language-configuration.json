@@ -1,33 +1,92 @@
 {
   "comments": {
     "lineComment": "//",
-    "blockComment": ["/*", "*/"]
+    "blockComment": [
+      "/*",
+      "*/"
+    ]
   },
   "brackets": [
-    ["{", "}"],
-    ["[", "]"],
-    ["(", ")"]
+    [
+      "{",
+      "}"
+    ],
+    [
+      "[",
+      "]"
+    ],
+    [
+      "(",
+      ")"
+    ]
   ],
   "colorizedBracketPairs": [
-    ["{", "}"],
-    ["[", "]"],
-    ["(", ")"]
+    [
+      "{",
+      "}"
+    ],
+    [
+      "[",
+      "]"
+    ],
+    [
+      "(",
+      ")"
+    ]
   ],
   "autoClosingPairs": [
-    { "open": "{", "close": "}" },
-    { "open": "[", "close": "]" },
-    { "open": "(", "close": ")" },
-    { "open": "\"", "close": "\"", "notIn": ["string", "comment"] },
-    { "open": "'", "close": "'", "notIn": ["string", "comment"] }
+    {
+      "open": "{",
+      "close": "}"
+    },
+    {
+      "open": "[",
+      "close": "]"
+    },
+    {
+      "open": "(",
+      "close": ")"
+    },
+    {
+      "open": "\"",
+      "close": "\"",
+      "notIn": [
+        "string",
+        "comment"
+      ]
+    },
+    {
+      "open": "'",
+      "close": "'",
+      "notIn": [
+        "string",
+        "comment"
+      ]
+    }
   ],
   "surroundingPairs": [
-    ["{", "}"],
-    ["[", "]"],
-    ["(", ")"],
-    ["\"", "\""],
-    ["'", "'"]
+    [
+      "{",
+      "}"
+    ],
+    [
+      "[",
+      "]"
+    ],
+    [
+      "(",
+      ")"
+    ],
+    [
+      "\"",
+      "\""
+    ],
+    [
+      "'",
+      "'"
+    ]
   ],
-  "autoCloseBefore": ";:.,=}])> \\n\\t",
+  "autoCloseBefore": ";:.,=}])> \n\t",
   "indentationRules": {
     "increaseIndentPattern": "^.*(\\{[^}]*|\\([^)]*|\\[[^\\]]*)$",
     "decreaseIndentPattern": "^\\s*[}\\])]\\s*(?:$|//.*$)"
@@ -36,28 +95,42 @@
     {
       "beforeText": "^.*\\{\\s*$",
       "afterText": "^\\s*\\}\\s*$",
-      "action": { "indent": "indentOutdent" }
+      "action": {
+        "indent": "indentOutdent"
+      }
     },
     {
       "beforeText": "^.*\\{[^}]*$",
-      "action": { "indent": "indent" }
+      "action": {
+        "indent": "indent"
+      }
     },
     {
       "beforeText": "^\\s*[}\\])]\\s*$",
-      "action": { "indent": "outdent" }
+      "action": {
+        "indent": "outdent"
+      }
     },
     {
       "beforeText": "^\\s*/\\*.*$",
       "afterText": "^\\s*\\*/\\s*$",
-      "action": { "indent": "indentOutdent" }
+      "action": {
+        "indent": "indentOutdent"
+      }
     },
     {
       "beforeText": "^\\s*\\*(?!/).*$",
-      "action": { "indent": "none", "appendText": " * " }
+      "action": {
+        "indent": "none",
+        "appendText": " * "
+      }
     },
     {
       "beforeText": "^\\s*//.*$",
-      "action": { "indent": "none", "appendText": "// " }
+      "action": {
+        "indent": "none",
+        "appendText": "// "
+      }
     }
   ]
 }
