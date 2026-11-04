@@ -29,7 +29,7 @@ jobs:
       - name: Publicar artefato VSIX
         uses: actions/upload-artifact@v4
         with:
-          name: nebula-language-vsix
-          path: nebula-language.vsix
+          name: nbx-language-vsix
+          path: nbx-language.vsix
           if-no-files-found: error
           retention-days: 14
