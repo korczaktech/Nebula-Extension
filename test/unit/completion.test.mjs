@@ -99,7 +99,7 @@ test('ignora declarações em comentários e strings', () => {
   for (const name of ['fantasma', 'falsa', 'oculta']) assert.ok(!names.includes(name));
 });
 
-test('sugere literais e não oferece conteúdo dentro de comentários ou strings', () => {
+test('exporta literais e reconhece limites Unicode de identificadores', () => {\n  assert.deepEqual(engine.CONSTANTS, ['verdadeiro', 'falso', 'nulo']);\n  const source = 'variavel açãofuncao: inteiro = 1\\nvariavel nome: texto = "Nebula"';\n  const labels = engine.collectSymbols(source).symbols.map(item => item.label);\n  assert.ok(labels.includes('açãofuncao'));\n  assert.ok(!labels.includes('funcao'));\n  assert.ok(engine.getCompletionCandidates('verd', 4).candidates.some(item => item.label === 'verdadeiro'));\n});\n\ntest('sugere literais e não oferece conteúdo dentro de comentários ou strings', () => {
   const literal = engine.getCompletionCandidates('verd', 4);
   assert.ok(literal.candidates.some(item => item.label === 'verdadeiro'));
   for (const source of ['// exi', 'variavel texto: texto = "exi', '/* exi']) {
