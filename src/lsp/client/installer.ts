@@ -35,15 +35,15 @@ export async function installNebulaLanguageServer(
   await vscode.window.withProgress(
     { location: vscode.ProgressLocation.Notification, title: 'Instalando o servidor LSP da Nebula…', cancellable: false },
     () => new Promise<void>((resolve, reject) => {
-      const process = spawn('cargo', args, { env: process.env, windowsHide: true });
-      process.stdout.on('data', chunk => output.append(chunk.toString()));
-      process.stderr.on('data', chunk => output.append(chunk.toString()));
-      process.once('error', error => reject(new Error(
+      const child = spawn('cargo', args, { env: process.env, windowsHide: true });
+      child.stdout.on('data', chunk => output.append(chunk.toString()));
+      child.stderr.on('data', chunk => output.append(chunk.toString()));
+      child.once('error', error => reject(new Error(
         error.message.includes('ENOENT')
           ? 'Rust/Cargo não foi encontrado. Instale o Rust pelo site oficial e tente novamente.'
           : 'Não foi possível executar o instalador: ' + error.message
       )));
-      process.once('close', code => {
+      child.once('close', code => {
         if (code === 0) resolve();
         else reject(new Error('cargo install terminou com código ' + String(code) + '. Consulte o canal de saída Nebula Language Server.'));
       });
