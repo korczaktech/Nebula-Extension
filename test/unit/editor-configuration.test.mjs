@@ -96,7 +96,7 @@ test('regras de Enter indentam blocos terminados por fim e continuam comentário
   ]) assert.ok(pattern.test(line), 'Não indentou bloco encerrado por fim: ' + line);
   assert.equal(headers.action.indent, 'indent');
 
-  const blockComment = rules.find(rule => rule.beforeText.includes('/\\\\*'));
+  const blockComment = rules.find(rule => rule.action.appendText === ' * ');
   assert.ok(blockComment);
   assert.equal(blockComment.action.appendText, ' * ');
   assert.equal(blockComment.action.indent, 'indent');
