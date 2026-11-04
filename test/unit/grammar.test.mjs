@@ -66,6 +66,12 @@ test('a gramática diferencia tipos primitivos e tipos de coleção', () => {
   }
 });
 
+test('tipos definidos pelo usuário recebem escopo em anotações', () => {
+  const annotation = grammar.repository.typeAnnotations;
+  assert.equal(annotation.name, 'meta.type.annotation.nebula');
+  assert.ok(annotation.patterns.some(pattern => pattern.name === 'entity.name.type.reference.nebula'));
+});
+
 test('a gramática identifica recursos futuros como inválidos', () => {
   const future = grammar.repository.reservedFuture.patterns[0];
   assert.match(future.name, /^invalid\.illegal/);
