@@ -1,0 +1,7 @@
+{
+  "Arquivo Nebula": {
+    "prefix": "arquivo",
+    "body": ["// ${1:Descrição do arquivo}", "${0}"] ,
+    "description": "Estrutura inicial de um arquivo Nebula"
+  }
+}

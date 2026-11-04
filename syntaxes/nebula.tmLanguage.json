@@ -1,0 +1,15 @@
+{
+  "scopeName": "source.nebula",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" }
+  ],
+  "repository": {
+    "comments": { "patterns": [ { "name": "comment.line.double-slash.nebula", "match": "//.*$" }, { "name": "comment.block.nebula", "begin": "/\\*", "end": "\\*/" } ] },
+    "strings": { "patterns": [ { "name": "string.quoted.double.nebula", "begin": "\"", "end": "\"", "patterns": [ { "name": "constant.character.escape.nebula", "match": "\\\\." } ] }, { "name": "string.quoted.single.nebula", "begin": "'", "end": "'" } ] },
+    "numbers": { "patterns": [ { "name": "constant.numeric.nebula", "match": "\\b[0-9]+(\\.[0-9]+)?\\b" } ] },
+    "keywords": { "patterns": [ { "name": "keyword.control.nebula", "match": "\\b(se|senao|enquanto|para|retornar|importar|de|em)\\b" }, { "name": "constant.language.nebula", "match": "\\b(verdadeiro|falso|nulo)\\b" } ] }
+  }
+}

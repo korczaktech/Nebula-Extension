@@ -1,0 +1,19 @@
+{
+  "name": "nebula-language",
+  "displayName": "Nebula Language Support",
+  "description": "Suporte à linguagem Nebula no Visual Studio Code.",
+  "version": "0.0.1",
+  "publisher": "korczak-technologies",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Programming Languages", "Formatters", "Linters"],
+  "activationEvents": ["onLanguage:nebula"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [{ "id": "nebula", "aliases": ["Nebula", "nebula"], "extensions": [".nbx"], "configuration": "./language-configuration.json", "icon": { "light": "./icons/nebula-file.svg", "dark": "./icons/nebula-file.svg" } }],
+    "grammars": [{ "language": "nebula", "scopeName": "source.nebula", "path": "./syntaxes/nebula.tmLanguage.json" }],
+    "snippets": [{ "language": "nebula", "path": "./snippets/nebula.json" }]
+  },
+  "scripts": { "compile": "tsc -p ./", "watch": "tsc -watch -p ./", "check-types": "tsc --noEmit -p ./", "test": "npm run check-types" },
+  "devDependencies": { "@types/node": "^20.11.0", "@types/vscode": "^1.85.0", "typescript": "^5.3.3" },
+  "files": ["out/**", "syntaxes/**", "snippets/**", "icons/**", "language-configuration.json", "README.md", "LICENSE"]
+}
