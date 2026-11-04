@@ -1,35 +1,70 @@
 # Integração com o Language Server
 
-A extensão inclui um cliente LSP baseado em vscode-languageclient, com transporte padrão por entrada/saída padrão (stdio). O cliente é registrado na ativação da extensão, observa arquivos .nbx, envia opções de inicialização, respeita as capacidades negociadas pelo VS Code e permite reinício e consulta de estado.
+A extensão utiliza `vscode-languageclient` e inicia o `nebula-lsp` local como subprocesso. A comunicação usa JSON-RPC 2.0 pelo transporte stdio do LSP.
+
+## Instalação automática
+
+Na primeira abertura de um arquivo `.nbx`, a extensão procura o servidor no armazenamento global da própria extensão. Se ainda não estiver instalado, oferece a instalação com confirmação do usuário.
+
+A instalação executa localmente:
+
+```bash
+cargo install --git https://github.com/korczaktech/Nebula --locked --root <armazenamento-da-extensao> --force nebula-lsp
+```
+
+É necessário ter Rust/Cargo instalado e acesso ao GitHub. O binário fica no armazenamento global do VS Code, fora do VSIX. A extensão não baixa nem executa binários de terceiros sem consentimento.
+
+Essa estratégia respeita a situação atual da licença da Nebula: `LICENSE-STATUS.md` registra que a redistribuição do compilador e de seus componentes ainda aguarda revisão e aprovação. Por isso, o servidor não é incorporado ao pacote Marketplace.
 
 ## Configuração
 
-A conexão permanece desativada por padrão porque o repositório do compilador ainda não fornece um executável de servidor LSP. Quando o servidor Rust estiver disponível, configure:
+- `nebula.languageServer.enabled`: habilita a integração (padrão `true`).
+- `nebula.languageServer.serverPath`: caminho opcional para um executável já instalado. Vazio usa a instalação gerenciada pela extensão.
+- `nebula.languageServer.args`: argumentos adicionais.
+- `nebula.languageServer.trace`: rastreamento `off`, `messages` ou `verbose`.
 
-- `nebula.languageServer.enabled`: habilita a conexão.
-- `nebula.languageServer.serverPath`: caminho do executável do servidor.
-- `nebula.languageServer.args`: argumentos do processo.
-- `nebula.languageServer.trace`: nível de rastreamento `off`, `messages` ou `verbose`.
+Comandos disponíveis na Paleta de Comandos:
 
-O padrão de caminho é `nebula-lsp`; isso é um nome configurável, não um binário já fornecido pelo compilador.
+- **Nebula: Instalar servidor LSP**
+- **Nebula: Reiniciar Language Server**
+- **Nebula: Estado do Language Server**
 
-## Ciclo de vida
+## Recursos conectados ao servidor
 
-- Inicialização quando a extensão é ativada e a opção está habilitada.
-- Negociação LSP com opções de inicialização Nebula e capacidades suportadas pelo VS Code.
-- Sincronização de alterações de arquivos .nbx por watcher e sincronização de texto do cliente.
-- Reinício automático quando configurações nebula.languageServer.* mudam.
-- Comandos Nebula: Reiniciar Language Server e Nebula: Estado do Language Server.
-- Encerramento do processo junto com o ciclo de vida da extensão.
-- Os provedores locais das etapas anteriores permanecem como fallback e são suspensos somente enquanto o cliente LSP está efetivamente conectado; voltam quando a conexão cai ou é desativada.
-- Erros de inicialização registrados no canal de saída Nebula Language Server, sem derrubar a extensão.
+O servidor Rust atual anuncia e fornece:
 
-## Integração com o compilador
+- Diagnósticos léxicos, sintáticos e semânticos.
+- Autocompletar palavras-chave, declarações, funções e parâmetros.
+- Hover com informações de identificadores e declarações.
+- Ir para definição.
+- Encontrar referências.
+- Ajuda de assinatura de funções.
+- Símbolos do documento.
 
-A extensão não implementa um protocolo próprio nem simula respostas LSP. O processo externo precisa implementar LSP 3.17 por stdio e publicar os recursos correspondentes, encaminhando análise, diagnósticos, símbolos, tokens semânticos, formatação e refatorações para as bibliotecas Rust do compilador.
+O cliente usa a sincronização de texto integral declarada pelo servidor e observa arquivos `.nbx`. Ao conectar, os provedores locais equivalentes são suspensos para evitar resultados duplicados.
 
-Na revisão do repositório korczaktech/Nebula, o CLI disponível oferece comandos de compilação, execução, interpretação e formatação, mas não declara um comando lsp nem contém um servidor LSP. Por isso, a conexão real não pode ser ativada com o compilador atual. A opção fica desativada por padrão para evitar tentativas de iniciar um executável inexistente.
+## Recursos locais complementares
 
-## Verificação
+Enquanto o servidor ainda não anuncia esses métodos, a extensão mantém os provedores locais de tokens semânticos, formatação, ações rápidas e renomeação. Se o servidor não estiver instalado ou não conseguir iniciar, os provedores locais de fallback continuam ativos.
 
-A suíte da extensão valida dependência, configurações, comandos, ativação, opções de inicialização e presença dos artefatos compilados. A validação de uma sessão LSP real depende de um servidor compatível executável.
+## Ciclo de vida e diagnóstico
+
+- Inicialização quando a extensão ativa em um arquivo Nebula e a configuração está habilitada.
+- Instalação somente após confirmação explícita.
+- Reinício automático quando as configurações `nebula.languageServer.*` mudam.
+- Encerramento do subprocesso com o ciclo de vida da extensão.
+- Logs de instalação e protocolo no canal **Nebula Language Server**.
+- O comando de estado informa se o cliente está conectado, iniciando, desconectado ou desativado.
+
+## Desenvolvimento e validação
+
+```bash
+npm install
+npm test
+npm run check-types
+npm run compile
+npm run check-output
+npm run package:ci
+```
+
+Os testes verificam o cliente, a instalação local, as capacidades negociadas e a preservação dos provedores complementares. A validação de uma sessão real também exige compilar o servidor Rust e abrir um arquivo `.nbx` em uma janela do VS Code.
