@@ -1,18 +1,18 @@
 # Indentação e configuração do editor
 
-O arquivo \`language-configuration.json\` define o comportamento nativo da linguagem Nebula no Visual Studio Code. Não depende de servidor de linguagem nem executa código do compilador.
+O arquivo `language-configuration.json` define o comportamento nativo da linguagem Nebula no Visual Studio Code. Não depende de servidor de linguagem nem executa código do compilador.
 
 ## Comentários
 
-- Linha: \`//\`.
-- Bloco: \`/* ... */\`.
+- Linha: `//`.
+- Bloco: `/* ... */`.
 - Ao pressionar Enter em uma linha de comentário, o prefixo é continuado.
 
 ## Delimitadores
 
-- Chaves: \`{ }\`.
-- Colchetes: \`[ ]\`.
-- Parênteses: \`( )\`.
+- Chaves: `{ }`.
+- Colchetes: `[ ]`.
+- Parênteses: `( )`.
 
 Os três pares participam da correspondência, colorização e seleção por delimitação. O editor insere automaticamente o fechamento e permite envolver seleções com esses pares. Os pares não são inseridos dentro de strings ou comentários.
 
@@ -22,7 +22,7 @@ Aspas simples e duplas são fechadas automaticamente, exceto quando o cursor est
 
 A configuração reconhece abertura de blocos com chaves, colchetes e parênteses. Também reconhece cabeçalhos de blocos encerrados por `fim`, incluindo `funcao`/`função`, `quando`, `senao`/`senão`, `enquanto`, `durante`, `repetir`, `cada`, `pulso`, `para` e `caso`. O recuo diminui ao iniciar uma linha com `fim`, `senao`/`senão` ou um delimitador de fechamento. Regras de Enter tratam blocos com chaves, blocos terminados por `fim` e continuação de comentários de linha e bloco.
 
-As regras são heurísticas de editor baseadas no texto da linha. Elas não substituem o parser e não tentam interpretar estruturas semanticamente.
+A indentação é apenas uma convenção visual: na Nebula, ela não cria nem fecha blocos. O escopo é determinado pela sintaxe com chaves ou pelo terminador `fim`, conforme a gramática oficial. As regras do editor são heurísticas baseadas no texto da linha e não substituem o parser.
 
 ## Padrões do editor
 
@@ -38,4 +38,4 @@ Esses valores são padrões do VS Code para Nebula; configurações pessoais do 
 
 ## Validação
 
-\`npm test\` verifica os pares, comentários, padrões de indentação e regras de Enter, incluindo a compilação das expressões regulares. O comportamento final de edição deve também ser conferido em uma janela de desenvolvimento do VS Code.
+`npm test` verifica os pares, comentários, padrões de indentação e regras de Enter, incluindo a compilação das expressões regulares. O comportamento final de edição deve também ser conferido em uma janela de desenvolvimento do VS Code.
