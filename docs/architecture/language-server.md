@@ -21,6 +21,7 @@ O padrão de caminho é `nebula-lsp`; isso é um nome configurável, não um bin
 - Reinício automático quando configurações nebula.languageServer.* mudam.
 - Comandos Nebula: Reiniciar Language Server e Nebula: Estado do Language Server.
 - Encerramento do processo junto com o ciclo de vida da extensão.
+- Os provedores locais das etapas anteriores permanecem como fallback e são suspensos somente enquanto o cliente LSP está efetivamente conectado; voltam quando a conexão cai ou é desativada.
 - Erros de inicialização registrados no canal de saída Nebula Language Server, sem derrubar a extensão.
 
 ## Integração com o compilador
