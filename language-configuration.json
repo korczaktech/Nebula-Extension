@@ -37,15 +37,27 @@
   "autoClosingPairs": [
     {
       "open": "{",
-      "close": "}"
+      "close": "}",
+      "notIn": [
+        "string",
+        "comment"
+      ]
     },
     {
       "open": "[",
-      "close": "]"
+      "close": "]",
+      "notIn": [
+        "string",
+        "comment"
+      ]
     },
     {
       "open": "(",
-      "close": ")"
+      "close": ")",
+      "notIn": [
+        "string",
+        "comment"
+      ]
     },
     {
       "open": "\"",
@@ -61,6 +73,13 @@
       "notIn": [
         "string",
         "comment"
+      ]
+    },
+    {
+      "open": "/*",
+      "close": "*/",
+      "notIn": [
+        "string"
       ]
     }
   ],
@@ -88,8 +107,8 @@
   ],
   "autoCloseBefore": ";:.,=}])> \n\t",
   "indentationRules": {
-    "increaseIndentPattern": "^.*(\\{[^}]*|\\([^)]*|\\[[^\\]]*)$",
-    "decreaseIndentPattern": "^\\s*[}\\])]\\s*(?:$|//.*$)"
+    "increaseIndentPattern": "^\\s*(?:(?:publico|privado)\\s+)?(?:funcao\\b.*|quando\\b.*|senao\\b.*|enquanto\\b.*|durante\\b.*|repetir\\b.*|cada\\b.*|pulso\\b.*|para\\b.*|caso\\b.*)$|^.*(\\{[^}]*|\\([^)]*|\\[[^\\]]*)$",
+    "decreaseIndentPattern": "^\\s*(?:[}\\])]\\s*(?:$|//.*$)|(?:fim|senao)\\b.*$)"
   },
   "onEnterRules": [
     {
@@ -106,7 +125,25 @@
       }
     },
     {
-      "beforeText": "^\\s*[}\\])]\\s*$",
+      "beforeText": "^\\s*(?:(?:publico|privado)\\s+)?(?:funcao\\b.*|quando\\b.*|senao\\b.*|enquanto\\b.*|durante\\b.*|repetir\\b.*|cada\\b.*|pulso\\b.*|para\\b.*|caso\\b.*)$",
+      "action": {
+        "indent": "indent"
+      }
+    },
+    {
+      "beforeText": "^\\s*[}])]\\s*$",
+      "action": {
+        "indent": "outdent"
+      }
+    },
+    {
+      "beforeText": "^\\s*fim\\b.*$",
+      "action": {
+        "indent": "outdent"
+      }
+    },
+    {
+      "beforeText": "^\\s*senao\\b.*$",
       "action": {
         "indent": "outdent"
       }
@@ -115,7 +152,8 @@
       "beforeText": "^\\s*/\\*.*$",
       "afterText": "^\\s*\\*/\\s*$",
       "action": {
-        "indent": "indentOutdent"
+        "indent": "indent",
+        "appendText": " * "
       }
     },
     {
