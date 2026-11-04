@@ -41,6 +41,13 @@ test('TextMate aplica os escopos de declarações e tipos', () => {
   assert.ok(scopesAt(line, 'verdadeiro').includes('constant.language.boolean.nebula'));
 });
 
+test('anotação de retorno termina antes do corpo da função', () => {
+  const line = 'funcao principal(): vazio {';
+  const braceScopes = scopesAt(line, '{');
+  assert.ok(braceScopes.includes('punctuation.section.group.begin.nebula'));
+  assert.ok(!braceScopes.includes('meta.type.annotation.nebula'));
+});
+
 test('TextMate reconhece funções, builtins e chamadas', () => {
   assert.ok(scopesAt('funcao principal(): vazio {', 'principal').includes('entity.name.function.nebula'));
   assert.ok(scopesAt('exibir("Olá")', 'exibir').includes('support.function.builtin.nebula'));
