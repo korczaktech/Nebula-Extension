@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: korczaktech/Nebula
-          ref: 291025ac5225fc10919e856bfe503c39c681e5be
+          ref: 9f601aa5bc34d598100d7f9ec606f94ba4f8b623
           path: .nebula-source
       - name: Compilar e incorporar CLI nativo
         run: npm run build:native
