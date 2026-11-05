@@ -178,8 +178,6 @@
         "languages": [
           "nebula"
         ],
-        "program": "${file}",
-        "runtime": "nebula",
         "configurationAttributes": {
           "launch": {
             "required": [
