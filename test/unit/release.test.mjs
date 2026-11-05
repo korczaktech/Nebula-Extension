@@ -48,3 +48,18 @@ test('CI testa a execução interativa do runtime incorporado', () => {
   assert.ok(build.includes('cargo tree'));
   assert.ok(build.includes('nebula-runtime'));
 });
+
+
+test('registra depuração DAP da linguagem Nebula', () => {
+  const debuggerAdapter = read('src/debug/adapter.ts');
+  const extension = read('src/extension.ts');
+  const contribution = manifest.contributes.debuggers?.find(item => item.type === 'nebula');
+  assert.ok(contribution);
+  assert.ok(contribution.languages.includes('nebula'));
+  assert.ok(contribution.initialConfigurations.some(item => item.request === 'launch'));
+  assert.ok(manifest.activationEvents.includes('onDebugResolve:nebula'));
+  assert.ok(extension.includes('registerNebulaDebugger(context)'));
+  assert.ok(debuggerAdapter.includes('registerDebugConfigurationProvider'));
+  assert.ok(debuggerAdapter.includes('registerDebugAdapterDescriptorFactory'));
+  assert.ok(debuggerAdapter.includes("'depurar', '--dap', program"));
+});
