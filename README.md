@@ -2,7 +2,7 @@
 
 Extensão oficial da linguagem **Nebula** para Visual Studio Code, com suporte a arquivos `.nbx`.
 
-Desenvolvida pela **Korczak Technologies**. O compilador e o servidor de linguagem são construídos a partir do repositório oficial Nebula e incorporados ao pacote da extensão.
+Desenvolvida pela **Korczak Technologies**. O compilador, o runtime e o servidor de linguagem são construídos a partir do repositório oficial Nebula e incorporados ao pacote da extensão.
 
 ## Recursos
 
@@ -10,12 +10,22 @@ Desenvolvida pela **Korczak Technologies**. O compilador e o servidor de linguag
 - Autocomplete contextual, hover e inteligência local.
 - Language Server oficial em Rust, com diagnósticos, autocomplete, hover, navegação para definição, referências, assinatura de funções e símbolos.
 - CLI oficial incorporado para compilar, interpretar e executar arquivos Nebula.
-- Servidor LSP incorporado; a instalação não exige Rust, Cargo nem downloads adicionais.
-- Comandos para executar, compilar, interpretar, reiniciar o LSP, consultar seu estado e interromper execução.
+- Runtime Rust e interpretador de IR incorporados no executável oficial.
+- Execução interpretada em terminal integrado do VS Code, com entrada interativa por `receber()`, saída e interrupção pela extensão.
+- Execução nativa separada para programas compatíveis com o backend ELF atual.
+- A instalação não exige Rust, Cargo ou downloads adicionais.
 
-## Compilar e executar
+## Executar programas
 
-Abra um arquivo `.nbx` e use a paleta de comandos: **Nebula: Executar arquivo atual**, **Nebula: Compilar arquivo atual** ou **Nebula: Interpretar arquivo atual**. Os arquivos são salvos antes da execução. A saída é exibida em **Nebula — Execução**.
+Abra e salve um arquivo `.nbx`.
+
+- **Nebula: Executar arquivo atual**: executa pelo runtime da Nebula no terminal integrado. Suporta entrada interativa, saída e chamadas de runtime implementadas pelo interpretador.
+- **Nebula: Interpretar arquivo atual**: mesmo runtime interpretado, disponível como comando explícito.
+- **Nebula: Executar nativamente (experimental)**: compila e inicia um executável ELF. O backend nativo ainda não liga o runtime nem toda a biblioteca padrão; use apenas os recursos atualmente suportados pelo backend.
+- **Nebula: Compilar arquivo atual**: gera o executável nativo `.out` ao lado do arquivo-fonte.
+- **Nebula: Interromper execução**: encerra o processo nativo e fecha os terminais de runtime abertos pela extensão.
+
+A execução interpretada abre um terminal próprio para cada sessão. Programas que chamam `receber()` podem solicitar dados diretamente pelo terminal, sem captura parcial de entrada pela extensão.
 
 ## Language Server
 
@@ -36,7 +46,7 @@ npm run check-types
 npm run check-output
 ```
 
-Para construir os binários oficiais no Linux x86-64, disponibilize o repositório Nebula em `.nebula-source` e execute `npm run build:native`. O script compila CLI e LSP em modo release, incorpora ambos em `bin/linux-x64` e inclui a licença em `licenses/NEBULA-LICENSE`.
+Para construir os binários oficiais no Linux x86-64, disponibilize o repositório Nebula em `.nebula-source` e execute `npm run build:native`. O script compila CLI e LSP em modo release, incorpora ambos em `bin/linux-x64` e inclui a licença em `licenses/NEBULA-LICENSE`. O CLI inclui o runtime Rust por meio da dependência do interpretador de IR.
 
 ## Empacotamento
 
@@ -44,7 +54,7 @@ Para construir os binários oficiais no Linux x86-64, disponibilize o repositór
 
 ## Depuração
 
-A extensão oferece execução, compilação e interpretação. O depurador DAP com breakpoints e execução passo a passo será implementado em fase posterior; não é anunciado como disponível nesta versão.
+A extensão oferece execução interpretada e nativa, compilação e interrupção. O depurador DAP com breakpoints e execução passo a passo será implementado na Fase 3.
 
 ## Licença
 

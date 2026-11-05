@@ -2,7 +2,7 @@
   "name": "nbx-language",
   "displayName": "Suporte à Linguagem Nebula",
   "description": "Suporte oficial à linguagem Nebula no Visual Studio Code.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "KorczakTechnologiesBR",
   "author": "Korczak Technologies",
   "license": "SEE LICENSE IN LICENSE",
@@ -123,7 +123,7 @@
     "commands": [
       {
         "command": "nebula.run",
-        "title": "Nebula: Executar arquivo atual"
+        "title": "Nebula: Executar arquivo atual (runtime)"
       },
       {
         "command": "nebula.compile",
@@ -148,6 +148,10 @@
       {
         "command": "nebula.installLanguageServer",
         "title": "Nebula: Verificar servidor LSP incorporado"
+      },
+      {
+        "command": "nebula.runNative",
+        "title": "Nebula: Executar nativamente (experimental)"
       }
     ],
     "themes": [

@@ -35,6 +35,8 @@ suite('Nebula — integração com o VS Code', () => {
     assert.ok(commands.includes('nebula.restartLanguageServer'));
     assert.ok(commands.includes('nebula.languageServerStatus'));
     assert.ok(commands.includes('nebula.compile'));
+    assert.ok(commands.includes('nebula.run'));
+    assert.ok(commands.includes('nebula.runNative'));
     assert.ok(commands.includes('nebula.interpret'));
     assert.ok(commands.includes('nebula.stopExecution'));
   });

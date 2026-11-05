@@ -86,13 +86,19 @@ test('verifica o cliente e o instalador nos artefatos compilados', () => {
 test('publica executar, compilar e interpretar no editor Nebula', () => {
   const commands = pkg.contributes.commands.map(item => item.command);
   assert.ok(commands.includes('nebula.run'));
+  assert.ok(commands.includes('nebula.runNative'));
   assert.ok(commands.includes('nebula.compile'));
   assert.ok(commands.includes('nebula.interpret'));
   assert.ok(pkg.contributes.menus['editor/title'].some(item => item.command === 'nebula.run'));
   const execution = read('src/commands/execution.ts');
-  assert.ok(execution.includes("runCli(context, ['executar'"));
+  assert.ok(execution.includes("runInRuntimeTerminal(context, target)"));
+  assert.ok(execution.includes("runtimeCommand(executable, ['interpretar', target])"));
+  assert.ok(execution.includes('terminal.sendText'));
+  assert.ok(execution.includes("runCli(context, ['executar', target]"));
+  assert.ok(execution.includes("registerCommand('nebula.runNative'"));
+  assert.ok(execution.includes('terminal.dispose()'));
   assert.ok(execution.includes("runCli(context, ['compilar'"));
-  assert.ok(execution.includes("runCli(context, ['interpretar'"));
+
 });
 
 test('resolve o compilador empacotado para a plataforma atual', () => {
