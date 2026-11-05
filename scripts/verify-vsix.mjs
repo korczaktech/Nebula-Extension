@@ -3,60 +3,32 @@ import { readFileSync } from 'node:fs';
 
 const file = process.argv[2] ?? 'nbx-language.vsix';
 const archive = readFileSync(file);
-
-function readEntries(buffer) {
-  const eocdSignature = 0x06054b50;
-  let eocd = -1;
-  const minimum = Math.max(0, buffer.length - 22 - 0xffff);
-  for (let offset = buffer.length - 22; offset >= minimum; offset -= 1) {
-    if (buffer.readUInt32LE(offset) === eocdSignature) {
-      eocd = offset;
-      break;
-    }
-  }
-  assert.notEqual(eocd, -1, 'Arquivo não contém diretório ZIP válido.');
-
-  const totalEntries = buffer.readUInt16LE(eocd + 10);
-  let cursor = buffer.readUInt32LE(eocd + 16);
-  const entries = [];
-  for (let index = 0; index < totalEntries; index += 1) {
-    assert.equal(buffer.readUInt32LE(cursor), 0x02014b50, 'Entrada ZIP inválida.');
-    const nameLength = buffer.readUInt16LE(cursor + 28);
-    const extraLength = buffer.readUInt16LE(cursor + 30);
-    const commentLength = buffer.readUInt16LE(cursor + 32);
-    const name = buffer.toString('utf8', cursor + 46, cursor + 46 + nameLength);
-    entries.push(name);
-    cursor += 46 + nameLength + extraLength + commentLength;
-  }
-  return entries;
+let eocd = -1;
+for (let offset = archive.length - 22; offset >= Math.max(0, archive.length - 22 - 0xffff); offset -= 1) {
+  if (archive.readUInt32LE(offset) === 0x06054b50) { eocd = offset; break; }
 }
-
-const entries = readEntries(archive);
-const required = [
-  'extension/package.json',
-  'extension/out/extension.js',
-  'extension/out/compiler/native.js',
-  'extension/bin/linux-x64/nebula',
-  'extension/licenses/NEBULA-LICENSE',
-  'extension/out/lsp/client/client.js',
-  'extension/syntaxes/nebula.tmLanguage.json',
-  'extension/snippets/nebula.json',
-  'extension/language-configuration.json',
-  'extension/icons/nebula-file.svg',
+assert.notEqual(eocd, -1, 'Arquivo não contém diretório ZIP válido.');
+const total = archive.readUInt16LE(eocd + 10);
+let cursor = archive.readUInt32LE(eocd + 16);
+const entries = [];
+for (let i = 0; i < total; i += 1) {
+  assert.equal(archive.readUInt32LE(cursor), 0x02014b50, 'Entrada ZIP inválida.');
+  const nameLength = archive.readUInt16LE(cursor + 28);
+  const extraLength = archive.readUInt16LE(cursor + 30);
+  const commentLength = archive.readUInt16LE(cursor + 32);
+  entries.push(archive.toString('utf8', cursor + 46, cursor + 46 + nameLength));
+  cursor += 46 + nameLength + extraLength + commentLength;
+}
+for (const required of [
+  'extension/package.json','extension/out/extension.js','extension/out/compiler/native.js',
+  'extension/bin/linux-x64/nebula','extension/bin/linux-x64/nebula-lsp',
+  'extension/licenses/NEBULA-LICENSE','extension/out/lsp/client/client.js',
+  'extension/syntaxes/nebula.tmLanguage.json','extension/snippets/nebula.json',
+  'extension/language-configuration.json','extension/icons/nebula-file.svg',
   'extension/node_modules/vscode-languageclient/package.json'
-];
-
-for (const entry of required) {
-  assert.ok(entries.includes(entry), 'Arquivo obrigatório ausente no VSIX: ' + entry);
-}
+]) assert.ok(entries.includes(required), 'Arquivo obrigatório ausente no VSIX: ' + required);
 for (const entry of entries) {
-  assert.ok(!entry.startsWith('extension/src/'), 'Código-fonte TS incluído: ' + entry);
-  assert.ok(!entry.startsWith('extension/test/'), 'Testes incluídos no pacote: ' + entry);
-  assert.ok(!entry.startsWith('extension/tests/'), 'Testes incluídos no pacote: ' + entry);
-  assert.ok(!entry.startsWith('extension/docs/'), 'Documentação interna incluída: ' + entry);
-  assert.ok(!entry.startsWith('extension/.github/'), 'Configuração CI incluída: ' + entry);
-  assert.ok(!entry.endsWith('.map'), 'Source map incluído: ' + entry);
-  assert.ok(!entry.endsWith('.ts'), 'Arquivo TypeScript incluído: ' + entry);
+  assert.ok(!/^extension\/(src|test|tests|docs|\.github)\//.test(entry), 'Arquivo de desenvolvimento incluído: ' + entry);
+  assert.ok(!entry.endsWith('.map') && !entry.endsWith('.ts'), 'Fonte TypeScript incluída: ' + entry);
 }
-
-console.log('VSIX validado: ' + entries.length + ' arquivos; manifesto, compilador nativo, licença, LSP, gramática e recursos essenciais presentes.');
+console.log('VSIX validado: ' + entries.length + ' arquivos; CLI, LSP, licença e recursos essenciais presentes.');

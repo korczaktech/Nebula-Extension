@@ -1,85 +1,51 @@
 # Nebula Language Support
 
-Extensão oficial da linguagem **Nebula** para Visual Studio Code, com suporte a arquivos .nbx.
+Extensão oficial da linguagem **Nebula** para Visual Studio Code, com suporte a arquivos `.nbx`.
 
-Desenvolvida pela **Korczak Technologies**. Este repositório contém somente a extensão do editor; o compilador da linguagem permanece em seu próprio repositório.
+Desenvolvida pela **Korczak Technologies**. O compilador e o servidor de linguagem são construídos a partir do repositório oficial Nebula e incorporados ao pacote da extensão.
 
 ## Recursos
 
-- Reconhecimento de arquivos .nbx e identificação da linguagem como Nebula.
-- Comentários, indentação automática, fechamento de delimitadores e colorização de pares.
-- Realce TextMate para palavras reservadas, declarações, funções internas, tipos, literais, operadores e comentários.
-- Snippets para declarações, funções, condicionais, laços, estruturas, enumerações, módulos e tipos.
-- Autocomplete contextual para palavras reservadas, literais, tipos, funções, declarações, parâmetros e membros.
-- Hover, navegação para definição, referências e informações de parâmetros para símbolos do arquivo atual.
-- Diagnósticos locais para delimitadores inconsistentes e declarações duplicadas.
-- Language Server oficial em Rust, com diagnósticos, autocomplete, hover, navegação, referências, assinatura de funções e símbolos.
-- Instalação assistida do servidor LSP no próprio ambiente, com confirmação e compilação local via Cargo.
-- Comandos para compilar e interpretar o arquivo `.nbx` ativo usando o CLI oficial da Nebula.
-- Saída de compilação/interpretação no canal “Nebula — Execução” e comando para interromper uma execução.
-- Inicialização automática por stdio, sincronização de arquivos .nbx e comandos de instalação, estado e reinício.
+- Reconhecimento de arquivos `.nbx`, gramática TextMate, snippets e configuração de edição.
+- Autocomplete contextual, hover e inteligência local.
+- Language Server oficial em Rust, com diagnósticos, autocomplete, hover, navegação para definição, referências, assinatura de funções e símbolos.
+- CLI oficial incorporado para compilar, interpretar e executar arquivos Nebula.
+- Servidor LSP incorporado; a instalação não exige Rust, Cargo nem downloads adicionais.
+- Comandos para executar, compilar, interpretar, reiniciar o LSP, consultar seu estado e interromper execução.
 
-## Compilar e interpretar
+## Compilar e executar
 
-A extensão chama o executável CLI oficial `nebula` instalado no sistema. Instale o compilador Nebula e garanta que `nebula` esteja no `PATH`, ou configure `nebula.executablePath` com o caminho absoluto do executável.
+Abra um arquivo `.nbx` e use a paleta de comandos: **Nebula: Executar arquivo atual**, **Nebula: Compilar arquivo atual** ou **Nebula: Interpretar arquivo atual**. Os arquivos são salvos antes da execução. A saída é exibida em **Nebula — Execução**.
 
-- `Nebula: Compilar arquivo atual` executa `nebula compilar <arquivo.nbx>` e gera o `.out` padrão ao lado do fonte.
-- `Nebula: Interpretar arquivo atual` executa `nebula interpretar <arquivo.nbx>` pelo runtime de referência.
-- `Nebula: Interromper execução` encerra o processo iniciado pela extensão.
+## Language Server
 
-Os comandos salvam os arquivos antes de executar e exibem stdout/stderr no canal “Nebula — Execução”. A compilação nativa continua sujeita aos alvos suportados pelo compilador (atualmente Linux x86-64). A extensão ainda não oferece depuração passo a passo: o backend não gera informações de depuração e o projeto não possui um adaptador DAP.
+O servidor LSP é iniciado automaticamente quando a extensão é ativada e `nebula.languageServer.enabled` está habilitado. O executável vem incorporado no VSIX. Não é necessário instalar Rust/Cargo.
 
-## Requisitos
-
-- Node.js 20 ou superior.
-- Visual Studio Code 1.85 ou superior.
-- Para testes de integração no Linux: ambiente gráfico virtual, como Xvfb.
+- `nebula.languageServer.enabled`: ativa ou desativa a integração.
+- `nebula.languageServer.serverPath`: caminho opcional para substituir o servidor incorporado.
+- `nebula.languageServer.args`: argumentos adicionais.
+- `nebula.languageServer.trace`: rastreamento `off`, `messages` ou `verbose`.
 
 ## Desenvolvimento
 
-    npm install
-    npm run compile
+```sh
+npm install
+npm run compile
+npm test
+npm run check-types
+npm run check-output
+```
 
-Abra a pasta no VS Code e pressione F5 para iniciar uma janela de desenvolvimento da extensão.
+Para construir os binários oficiais no Linux x86-64, disponibilize o repositório Nebula em `.nebula-source` e execute `npm run build:native`. O script compila CLI e LSP em modo release, incorpora ambos em `bin/linux-x64` e inclui a licença em `licenses/NEBULA-LICENSE`.
 
-## Testes
+## Empacotamento
 
-    npm test
-    npm run check-types
-    npm run compile
-    npm run check-output
-    npm run test:integration
+`npm run package:ci` gera `nbx-language.vsix` para Linux x64 e verifica manifesto, extensão compilada, CLI, LSP, licença, gramática, snippets e dependências de execução.
 
-Os testes unitários usam o executor nativo do Node.js. Os testes de integração iniciam uma instância real do VS Code e verificam ativação, reconhecimento de arquivos .nbx, comandos e configurações.
+## Depuração
 
-No Linux sem ambiente gráfico, execute a integração com:
-
-    xvfb-run -a npm run test:integration
-
-## Gerar e validar o pacote
-
-    npm run package:ci
-
-O comando gera nbx-language.vsix e verifica o conteúdo do arquivo, incluindo artefatos compilados, gramática, snippets, ícones e dependências de execução do cliente LSP. Para instalar localmente:
-
-    code --install-extension nbx-language.vsix
-
-O pacote exclui código-fonte TypeScript, testes, documentação interna e arquivos de CI. As dependências de execução são mantidas dentro do VSIX.
-
-## Organização
-
-- src/: ponto de entrada e módulos da extensão.
-- syntaxes/: gramática TextMate.
-- snippets/: modelos de código.
-- icons/: identidade visual e ícone de arquivos Nebula.
-- test/: testes automatizados e fixtures.
-- scripts/: validação e empacotamento.
-- docs/: arquitetura, desenvolvimento e publicação.
-
-## Escopo
-
-A inteligência local desta versão é limitada ao documento atual e usa análise textual leve; não substitui o parser nem o sistema de tipos do compilador. O cliente LSP está preparado, mas a conexão depende de um executável servidor Rust compatível. O repositório atual do compilador ainda não contém esse servidor; por isso a conexão fica desativada por padrão. Consulte docs/architecture/language-server.md.
+A extensão oferece execução, compilação e interpretação. O depurador DAP com breakpoints e execução passo a passo será implementado em fase posterior; não é anunciado como disponível nesta versão.
 
 ## Licença
 
-Software proprietário da Korczak Technologies. Consulte LICENSE.
+Software proprietário da Korczak Technologies. Consulte `LICENSE` e a licença Nebula incluída em `licenses/NEBULA-LICENSE`.

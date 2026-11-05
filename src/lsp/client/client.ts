@@ -42,32 +42,12 @@ function clientOptions(context: vscode.ExtensionContext): LanguageClientOptions 
 async function ensureServerInstalled(context: vscode.ExtensionContext): Promise<boolean> {
   const configuration = getNebulaLanguageServerConfiguration();
   if (hasNebulaLanguageServer(context, configuration.serverPath)) return true;
-
-  log('Executável LSP não encontrado. Caminho esperado: ' +
-    getNebulaLanguageServerPath(context, configuration.serverPath));
-
-  if (installationPrompted) return false;
-  installationPrompted = true;
-  const choice = await vscode.window.showInformationMessage(
-    'O servidor Nebula ainda não está instalado. Deseja instalá-lo agora? É necessário ter Rust/Cargo instalado.',
-    'Instalar agora',
-    'Depois'
-  );
-  if (choice !== 'Instalar agora') {
-    log('Instalação adiada pelo usuário. Use “Nebula: Instalar servidor LSP” quando desejar.');
-    return false;
-  }
-
-  try {
-    await installNebulaLanguageServer(context, output!);
-    void vscode.window.showInformationMessage('Servidor LSP da Nebula instalado com sucesso.');
-    return true;
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    log('Falha na instalação: ' + message);
-    void vscode.window.showErrorMessage('Nebula: não foi possível instalar o servidor LSP. ' + message);
-    return false;
-  }
+  let expected = 'bin/<plataforma>/nebula-lsp';
+  try { expected = getNebulaLanguageServerPath(context, configuration.serverPath); }
+  catch (error) { expected = error instanceof Error ? error.message : String(error); }
+  log('Servidor LSP incorporado indisponível: ' + expected);
+  void vscode.window.showErrorMessage('Nebula: servidor LSP desta plataforma indisponível. ' + expected);
+  return false;
 }
 
 export async function startNebulaLanguageClient(context: vscode.ExtensionContext): Promise<void> {

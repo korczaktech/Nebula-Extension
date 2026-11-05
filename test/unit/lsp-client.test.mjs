@@ -38,13 +38,12 @@ test('cliente inicia o processo local e observa arquivos Nebula', () => {
   ]) assert.ok(client.includes(value), value);
 });
 
-test('instalador compila a versão oficial sem redistribuir binários', () => {
+test('resolve o servidor LSP incorporado sem depender de Cargo', () => {
   const installer = read('src/lsp/client/installer.ts');
-  assert.ok(installer.includes('https://github.com/korczaktech/Nebula'));
-  assert.ok(installer.includes("'--locked'"));
-  assert.ok(installer.includes("'--root', root"));
-  assert.ok(installer.includes("'nebula-lsp'"));
-  assert.ok(installer.includes('globalStorageUri'));
+  assert.ok(installer.includes('getNebulaLanguageServerBinaryPath'));
+  assert.ok(installer.includes('context.extensionPath'));
+  assert.ok(installer.includes('fs.accessSync'));
+  assert.ok(!installer.includes("spawn('cargo'"));
 });
 
 test('anuncia somente recursos realmente suportados pelo servidor Rust', () => {
@@ -95,15 +94,12 @@ test('publica executar, compilar e interpretar no editor Nebula', () => {
   assert.ok(execution.includes("runCli(['interpretar'"));
 });
 
-test('configura caminho do CLI oficial', () => {
-  assert.equal(pkg.contributes.configuration.properties['nebula.executablePath'].default, 'nebula');
-});
-
 test('resolve o compilador empacotado para a plataforma atual', () => {
   const resolver = read('src/compiler/native.ts');
-  assert.ok(resolver.includes("path.join(extensionPath, 'bin', target)"));
+  assert.ok(resolver.includes("path.join(extensionPath, 'bin', target[kind])"));
   assert.ok(resolver.includes('process.platform'));
   assert.ok(resolver.includes('process.arch'));
+  assert.ok(resolver.includes('getNebulaLanguageServerBinaryPath'));
 });
 
 test('não exige configuração de executável externo', () => {

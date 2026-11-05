@@ -28,15 +28,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: korczaktech/Nebula
-          ref: 70dfd84bce104a66464a2c20737052ebde288453
+          ref: d2de910d6165e8887dc682df1c9e64bc8778f643
           path: .nebula-source
       - name: Compilar e incorporar CLI nativo
         run: npm run build:native
-      - name: Compilar servidor LSP oficial
-        run: cargo install --git https://github.com/korczaktech/Nebula --locked --root "$RUNNER_TEMP/nebula-lsp" nebula-lsp
-      - name: Testar protocolo real do servidor
+      - name: Testar protocolo real do servidor incorporado
         env:
-          NEBULA_LSP_PATH: ${{ runner.temp }}/nebula-lsp/bin/nebula-lsp
+          NEBULA_LSP_PATH: bin/linux-x64/nebula-lsp
         run: npm run test:lsp
       - name: Instalar dependências da extensão
         run: npm install --no-audit --no-fund
