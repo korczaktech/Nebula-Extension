@@ -81,3 +81,20 @@ test('verifica o cliente e o instalador nos artefatos compilados', () => {
     'out/lsp/protocol/capabilities.js'
   ]) assert.ok(script.includes(artifact), artifact);
 });
+
+
+test('publica executar, compilar e interpretar no editor Nebula', () => {
+  const commands = pkg.contributes.commands.map(item => item.command);
+  assert.ok(commands.includes('nebula.run'));
+  assert.ok(commands.includes('nebula.compile'));
+  assert.ok(commands.includes('nebula.interpret'));
+  assert.ok(pkg.contributes.menus['editor/title'].some(item => item.command === 'nebula.run'));
+  const execution = read('src/commands/execution.ts');
+  assert.ok(execution.includes("runCli(['executar'"));
+  assert.ok(execution.includes("runCli(['compilar'"));
+  assert.ok(execution.includes("runCli(['interpretar'"));
+});
+
+test('configura caminho do CLI oficial', () => {
+  assert.equal(pkg.contributes.configuration.properties['nebula.executablePath'].default, 'nebula');
+});

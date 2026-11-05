@@ -65,6 +65,12 @@ export function registerNebulaExecutionCommands(context: vscode.ExtensionContext
   output = vscode.window.createOutputChannel('Nebula — Execução');
   context.subscriptions.push(output);
 
+  context.subscriptions.push(vscode.commands.registerCommand('nebula.run', async () => {
+    if (!activeNebulaFile()) return;
+    await vscode.workspace.saveAll(false);
+    await runCli(['executar', activeNebulaFile()!], 'execução');
+  }));
+
   context.subscriptions.push(vscode.commands.registerCommand('nebula.compile', async () => {
     if (!activeNebulaFile()) return;
     await vscode.workspace.saveAll(false);

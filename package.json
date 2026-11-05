@@ -127,6 +127,10 @@
     },
     "commands": [
       {
+        "command": "nebula.run",
+        "title": "Nebula: Executar arquivo atual"
+      },
+      {
         "command": "nebula.compile",
         "title": "Nebula: Compilar arquivo atual"
       },
@@ -157,13 +161,22 @@
         "uiTheme": "vs-dark",
         "path": "./themes/nebula-vibrante-color-theme.json"
       }
-    ]
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "nebula.run",
+          "when": "resourceLangId == nebula",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "check-types": "tsc --noEmit -p ./",
-    "test": "node --test",
+    "test": "node --test test/unit/*.test.mjs",
     "vscode:prepublish": "npm run compile",
     "package": "vsce package",
     "check-output": "node -e \"const fs=require('node:fs'); for (const file of ['out/extension.js','out/commands/execution.js','out/providers/completion/provider.js','out/providers/completion/engine.js','out/providers/intelligence/provider.js','out/providers/intelligence/engine.js','out/lsp/client/client.js','out/lsp/client/installer.js','out/lsp/client/configuration.js','out/lsp/client/state.js','out/lsp/protocol/capabilities.js']) fs.accessSync(file); console.log('Artefatos da extensão e LSP presentes.');\"",
@@ -186,4 +199,4 @@
   "dependencies": {
     "vscode-languageclient": "^9.0.1"
   }
-}
+}\n
