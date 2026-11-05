@@ -223,7 +223,8 @@
     "test:integration": "npm run compile-tests && node out-test/test/runTest.js",
     "package:ci": "vsce package --target linux-x64 --out nbx-language.vsix && node scripts/verify-vsix.mjs nbx-language.vsix",
     "test:lsp": "node scripts/test-lsp.mjs",
-    "build:native": "bash scripts/build-native.sh"
+    "build:native": "bash scripts/build-native.sh",
+    "test:debugger": "node scripts/test-debugger.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
