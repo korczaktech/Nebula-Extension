@@ -3,6 +3,7 @@ import { registerNebulaCompletions } from './providers/completion/provider';
 import { registerNebulaIntelligence } from './providers/intelligence/provider';
 import { registerNebulaLanguageClient } from './lsp/client/client';
 import { registerNebulaExecutionCommands } from './commands/execution';
+import { registerNebulaDebugger } from './debug/adapter';
 
 export function activate(context: vscode.ExtensionContext): void {
   const output = vscode.window.createOutputChannel('Nebula');
@@ -11,7 +12,8 @@ export function activate(context: vscode.ExtensionContext): void {
   registerNebulaIntelligence(context);
   registerNebulaLanguageClient(context);
   registerNebulaExecutionCommands(context);
-  output.appendLine('Provedores locais, integração LSP e comandos de execução registrados.');
+  registerNebulaDebugger(context);
+  output.appendLine('Provedores locais, integração LSP e comandos de execução e depuração registrados.');
   context.subscriptions.push(output);
 }
 
