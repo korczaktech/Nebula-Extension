@@ -59,3 +59,8 @@ A extensão oferece execução interpretada e nativa, compilação e interrupç�
 ## Licença
 
 Software proprietário da Korczak Technologies. Consulte `LICENSE` e a licença Nebula incluída em `licenses/NEBULA-LICENSE`.
+
+
+## Depuração no VS Code
+
+A extensão registra o depurador `Nebula` no VS Code. Use **Executar e Depurar** e selecione **Depurar arquivo Nebula** (ou crie uma configuração `type: nebula`, `request: launch`, `program: ${file}`). O adaptador inicia o CLI incorporado com `nebula depurar --dap` e oferece breakpoints por linha, pilha de chamadas, escopos, variáveis, continuar, passo a passo, avançar sobre chamadas e sair da função.
