@@ -89,9 +89,9 @@ test('publica executar, compilar e interpretar no editor Nebula', () => {
   assert.ok(commands.includes('nebula.interpret'));
   assert.ok(pkg.contributes.menus['editor/title'].some(item => item.command === 'nebula.run'));
   const execution = read('src/commands/execution.ts');
-  assert.ok(execution.includes("runCli(['executar'"));
-  assert.ok(execution.includes("runCli(['compilar'"));
-  assert.ok(execution.includes("runCli(['interpretar'"));
+  assert.ok(execution.includes("runCli(context, ['executar'"));
+  assert.ok(execution.includes("runCli(context, ['compilar'"));
+  assert.ok(execution.includes("runCli(context, ['interpretar'"));
 });
 
 test('resolve o compilador empacotado para a plataforma atual', () => {
