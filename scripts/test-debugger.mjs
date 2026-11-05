@@ -27,6 +27,7 @@ const encerramento = new Promise((resolver, rejeitar) => {
   child.once('exit', code => code === 0 ? resolver() : rejeitar(new Error('CLI terminou com código ' + code)));
   child.once('error', rejeitar);
 });
+void encerramento.catch(() => {});
 
 let buffer = Buffer.alloc(0);
 let stderr = '';
