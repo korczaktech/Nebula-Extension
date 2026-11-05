@@ -11,6 +11,7 @@ writeFileSync(program, [
   'funcao somar(valor: inteiro): inteiro {',
   '    devolver valor + 1',
   '}',
+  'variavel itens = [4, 5, 6]',
   'variavel contador = 1',
   'contador = somar(contador)',
   'contador = contador + 1',
@@ -104,7 +105,7 @@ try {
   await requisitar('launch', { program, stopOnEntry: true });
   const pontos = await requisitar('setBreakpoints', {
     source: { name: 'depuracao.nbx', path: program },
-    breakpoints: [{ line: 5 }],
+    breakpoints: [{ line: 6 }],
   });
   assert.equal(pontos.breakpoints[0].verified, true, 'breakpoint de linha precisa ser verificado');
   await requisitar('configurationDone');
@@ -127,9 +128,17 @@ try {
   assert.equal(pilha.stackFrames[0].name, 'somar');
   assert.equal(pilha.stackFrames[0].line, 2, 'pilha deve apontar para a linha real da função');
   assert.equal(pilha.stackFrames[1].name, 'Programa');
-  assert.equal(pilha.stackFrames[1].line, 5, 'quadro chamador deve apontar para a chamada');
+  assert.equal(pilha.stackFrames[1].line, 6, 'quadro chamador deve apontar para a chamada');
+  const avaliado = await requisitar('evaluate', { expression: 'valor', frameId: pilha.stackFrames[0].id, context: 'hover' });
+  assert.equal(avaliado.result, 'Inteiro(1)');
   const escoposPrograma = await requisitar('scopes', { frameId: pilha.stackFrames[1].id });
-  assert.ok(escoposPrograma.scopes.some(escopo => escopo.name === 'Globais'));
+  const escopoGlobalPrograma = escoposPrograma.scopes.find(escopo => escopo.name === 'Globais');
+  assert.ok(escopoGlobalPrograma); 
+  const variaveisPrograma = await requisitar('variables', { variablesReference: escopoGlobalPrograma.variablesReference });
+  const lista = variaveisPrograma.variables.find(variavel => variavel.name === 'itens');
+  assert.ok(lista && lista.variablesReference > 0, 'listas devem ser expansíveis');
+  const elementos = await requisitar('variables', { variablesReference: lista.variablesReference });
+  assert.equal(elementos.variables.find(variavel => variavel.name === '0').value, 'Inteiro(4)');
   const escopos = await requisitar('scopes', { frameId: pilha.stackFrames[0].id });
   const locais = escopos.scopes.find(escopo => escopo.name === 'Escopo 1');
   assert.ok(locais, 'escopo local precisa estar disponível');
@@ -139,7 +148,7 @@ try {
   await requisitar('stepOut', { threadId: 1 });
   await esperar(m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'step', 'retorno da função');
   const pilhaRetorno = await requisitar('stackTrace', { threadId: 1 });
-  assert.equal(pilhaRetorno.stackFrames[0].line, 6);
+  assert.equal(pilhaRetorno.stackFrames[0].line, 7);
   const escoposGlobais = await requisitar('scopes', { frameId: pilhaRetorno.stackFrames[0].id });
   const globais = escoposGlobais.scopes.find(escopo => escopo.name === 'Globais');
   const variaveisGlobais = await requisitar('variables', { variablesReference: globais.variablesReference });
@@ -148,7 +157,7 @@ try {
   await requisitar('next', { threadId: 1 });
   await esperar(m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'step', 'avanço sobre instrução');
   const pilhaSeguinte = await requisitar('stackTrace', { threadId: 1 });
-  assert.equal(pilhaSeguinte.stackFrames[0].line, 7);
+  assert.equal(pilhaSeguinte.stackFrames[0].line, 8);
 
   await requisitar('continue', { threadId: 1 });
   const saida = await esperar(
