@@ -117,10 +117,27 @@
           ],
           "default": "off",
           "description": "Nível de rastreamento da comunicação LSP."
+        },
+        "nebula.executablePath": {
+          "type": "string",
+          "default": "nebula",
+          "description": "Caminho do executável CLI da Nebula. Use caminho absoluto se não estiver no PATH."
         }
       }
     },
     "commands": [
+      {
+        "command": "nebula.compile",
+        "title": "Nebula: Compilar arquivo atual"
+      },
+      {
+        "command": "nebula.interpret",
+        "title": "Nebula: Interpretar arquivo atual"
+      },
+      {
+        "command": "nebula.stopExecution",
+        "title": "Nebula: Interromper execução"
+      },
       {
         "command": "nebula.restartLanguageServer",
         "title": "Nebula: Reiniciar Language Server"
