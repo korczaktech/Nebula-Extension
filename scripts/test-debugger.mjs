@@ -102,6 +102,7 @@ try {
     breakpoints: [{ line: 2 }],
   });
   assert.equal(pontos.breakpoints[0].verified, true, 'breakpoint de linha precisa ser verificado');
+  await requisitar('configurationDone');
 
   const entrada = await esperar(
     m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'entry',
