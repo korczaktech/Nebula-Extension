@@ -34,6 +34,8 @@ jobs:
         run: npm run build:native
       - name: Testar runtime interativo incorporado
         run: node scripts/test-runtime.mjs bin/linux-x64/nebula
+      - name: Testar protocolo DAP real
+        run: npm run test:debugger -- bin/linux-x64/nebula
       - name: Testar protocolo real do servidor incorporado
         env:
           NEBULA_LSP_PATH: bin/linux-x64/nebula-lsp
