@@ -35,3 +35,14 @@ test('o empacotamento exclui fontes, testes e documentação interna', () => {
     assert.ok(ignore.includes(entry), 'Regra de exclusão ausente: ' + entry);
   }
 });
+
+test('CI testa a execução interativa do runtime incorporado', () => {
+  const workflow = read('.github/workflows/ci.yml');
+  const smoke = read('scripts/test-runtime.mjs');
+  const build = read('scripts/build-native.sh');
+  assert.ok(workflow.includes('node scripts/test-runtime.mjs bin/linux-x64/nebula'));
+  assert.ok(smoke.includes("input: 'Ada\\n'"));
+  assert.ok(smoke.includes("assert.equal(result.stdout, 'Nome: Ada\\n')"));
+  assert.ok(build.includes('cargo tree'));
+  assert.ok(build.includes('nebula-runtime'));
+});
