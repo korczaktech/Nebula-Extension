@@ -63,3 +63,13 @@ test('registra depuração DAP da linguagem Nebula', () => {
   assert.ok(debuggerAdapter.includes('registerDebugAdapterDescriptorFactory'));
   assert.ok(debuggerAdapter.includes("'depurar', '--dap', program"));
 });
+
+
+test('CI valida o protocolo DAP do compilador incorporado', () => {
+  const workflow = read('.github/workflows/ci.yml');
+  const smoke = read('scripts/test-debugger.mjs');
+  assert.ok(workflow.includes('node scripts/test-debugger.mjs bin/linux-x64/nebula'));
+  for (const capability of ['setBreakpoints', 'stackTrace', 'scopes', 'variables', 'continue']) {
+    assert.ok(smoke.includes("'" + capability + "'"));
+  }
+});
