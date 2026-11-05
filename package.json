@@ -98,7 +98,7 @@
         "nebula.languageServer.serverPath": {
           "type": "string",
           "default": "",
-          "description": "Caminho opcional para substituir o executável LSP instalado pela extensão."
+          "description": "Caminho opcional para substituir o servidor LSP incorporado na extensão."
         },
         "nebula.languageServer.args": {
           "type": "array",
@@ -147,7 +147,7 @@
       },
       {
         "command": "nebula.installLanguageServer",
-        "title": "Nebula: Instalar servidor LSP"
+        "title": "Nebula: Verificar servidor LSP incorporado"
       }
     ],
     "themes": [

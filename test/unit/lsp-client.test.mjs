@@ -21,6 +21,7 @@ test('ativa a integração por padrão e permite caminho externo', () => {
 test('publica comandos para instalar, reiniciar e consultar o servidor', () => {
   const commands = pkg.contributes.commands.map(item => item.command);
   assert.ok(commands.includes('nebula.installLanguageServer'));
+  assert.equal(pkg.contributes.commands.find(item => item.command === 'nebula.installLanguageServer').title, 'Nebula: Verificar servidor LSP incorporado');
   assert.ok(commands.includes('nebula.restartLanguageServer'));
   assert.ok(commands.includes('nebula.languageServerStatus'));
 });
