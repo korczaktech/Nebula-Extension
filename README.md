@@ -63,4 +63,4 @@ Software proprietário da Korczak Technologies. Consulte `LICENSE` e a licença 
 
 ## Depuração no VS Code
 
-A extensão registra o depurador `Nebula` no VS Code. Use **Executar e Depurar** e selecione **Depurar arquivo Nebula** (ou crie uma configuração `type: nebula`, `request: launch`, `program: ${file}`). O adaptador inicia o CLI incorporado com `nebula depurar --dap` e oferece breakpoints por linha, pilha de chamadas, escopos, variáveis, continuar, pausar, entrar em funções, avançar sobre chamadas e sair da função.
+A extensão registra o depurador `Nebula` no VS Code. Use **Executar e Depurar** e selecione **Depurar arquivo Nebula** (ou crie uma configuração `type: nebula`, `request: launch`, `program: ${file}`). O adaptador inicia o CLI incorporado com `nebula depurar --dap` e oferece breakpoints por linha, pilha de chamadas, escopos, variáveis, continuar, pausar, entrar em funções, avançar sobre chamadas e sair da função. A entrada interativa por `receber()` não está disponível durante a sessão de depuração.
