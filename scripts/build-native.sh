@@ -13,6 +13,11 @@ if [[ "$(uname -s)" != "Linux" || "$(uname -m)" != "x86_64" ]]; then
   exit 1
 fi
 
+DEPENDENCIES="$(cargo tree --locked --manifest-path "${MANIFEST}" -p nebula-cli -e normal)"
+if ! grep -q 'nebula-runtime' <<<"${DEPENDENCIES}"; then
+  echo "O CLI foi construído sem a dependência nebula-runtime." >&2
+  exit 1
+fi
 cargo build --locked --release --manifest-path "${MANIFEST}" -p nebula-cli --bin nebula
 cargo build --locked --release --manifest-path "${MANIFEST}" -p nebula-lsp --bin nebula-lsp
 mkdir -p "${TARGET_DIR}" licenses
