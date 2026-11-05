@@ -8,7 +8,11 @@ const executable = resolve(process.argv[2] ?? 'bin/linux-x64/nebula');
 const directory = mkdtempSync(join(tmpdir(), 'nebula-dap-'));
 const program = join(directory, 'depuracao.nbx');
 writeFileSync(program, [
+  'funcao somar(valor: inteiro): inteiro {',
+  '    devolver valor + 1',
+  '}',
   'variavel contador = 1',
+  'contador = somar(contador)',
   'contador = contador + 1',
   'exibir(contador)',
   '',
@@ -99,7 +103,7 @@ try {
   await requisitar('launch', { program, stopOnEntry: true });
   const pontos = await requisitar('setBreakpoints', {
     source: { name: 'depuracao.nbx', path: program },
-    breakpoints: [{ line: 2 }],
+    breakpoints: [{ line: 5 }],
   });
   assert.equal(pontos.breakpoints[0].verified, true, 'breakpoint de linha precisa ser verificado');
   await requisitar('configurationDone');
@@ -113,30 +117,44 @@ try {
   await requisitar('continue', { threadId: 1 });
   await esperar(
     m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'breakpoint',
-    'breakpoint na linha 2',
+    'breakpoint na linha 5',
   );
 
+  await requisitar('stepIn', { threadId: 1 });
+  await esperar(m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'step', 'entrada na função');
   const pilha = await requisitar('stackTrace', { threadId: 1 });
-  assert.equal(pilha.stackFrames[0].line, 2, 'pilha deve apontar para a linha real');
+  assert.equal(pilha.stackFrames[0].name, 'somar');
+  assert.equal(pilha.stackFrames[0].line, 2, 'pilha deve apontar para a linha real da função');
   const escopos = await requisitar('scopes', { frameId: pilha.stackFrames[0].id });
-  const globais = escopos.scopes.find(escopo => escopo.name === 'Globais');
-  assert.ok(globais, 'escopo global precisa estar disponível');
-  const variaveis = await requisitar('variables', { variablesReference: globais.variablesReference });
-  assert.ok(
-    variaveis.variables.some(variavel => variavel.name === 'contador' && variavel.value === 'Inteiro(1)'),
-    'o depurador precisa expor o valor atual da variável',
-  );
+  const locais = escopos.scopes.find(escopo => escopo.name === 'Escopo 1');
+  assert.ok(locais, 'escopo local precisa estar disponível');
+  const variaveisLocais = await requisitar('variables', { variablesReference: locais.variablesReference });
+  assert.ok(variaveisLocais.variables.some(variavel => variavel.name === 'valor' && variavel.value === 'Inteiro(1)'));
+
+  await requisitar('stepOut', { threadId: 1 });
+  await esperar(m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'step', 'retorno da função');
+  const pilhaRetorno = await requisitar('stackTrace', { threadId: 1 });
+  assert.equal(pilhaRetorno.stackFrames[0].line, 6);
+  const escoposGlobais = await requisitar('scopes', { frameId: pilhaRetorno.stackFrames[0].id });
+  const globais = escoposGlobais.scopes.find(escopo => escopo.name === 'Globais');
+  const variaveisGlobais = await requisitar('variables', { variablesReference: globais.variablesReference });
+  assert.ok(variaveisGlobais.variables.some(variavel => variavel.name === 'contador' && variavel.value === 'Inteiro(2)'));
+
+  await requisitar('next', { threadId: 1 });
+  await esperar(m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'step', 'avanço sobre instrução');
+  const pilhaSeguinte = await requisitar('stackTrace', { threadId: 1 });
+  assert.equal(pilhaSeguinte.stackFrames[0].line, 7);
 
   await requisitar('continue', { threadId: 1 });
   const saida = await esperar(
-    m => m.type === 'event' && m.event === 'output' && m.body.output.includes('2'),
+    m => m.type === 'event' && m.event === 'output' && m.body.output.includes('3'),
     'saída do runtime',
   );
-  assert.match(saida.body.output, /2/);
+  assert.match(saida.body.output, /3/);
   await esperar(m => m.type === 'event' && m.event === 'terminated', 'evento terminated');
   child.stdin.end();
   await encerramento;
-  console.log('DAP: inicialização, breakpoint por linha, pilha, escopos, variáveis e continuação validados.');
+  console.log('DAP: inicialização, breakpoint por linha, step-in, step-out, step-over, pilha, escopos e variáveis validados.');
 } catch (error) {
   child.kill();
   throw error;
