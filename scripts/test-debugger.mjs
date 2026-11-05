@@ -105,9 +105,14 @@ try {
   await requisitar('launch', { program, stopOnEntry: true });
   const pontos = await requisitar('setBreakpoints', {
     source: { name: 'depuracao.nbx', path: program },
-    breakpoints: [{ line: 6 }],
+    breakpoints: [{ line: 4 }],
   });
   assert.equal(pontos.breakpoints[0].verified, true, 'breakpoint de linha precisa ser verificado');
+  const pontosModulo = await requisitar('setBreakpoints', {
+    source: { name: 'Matematica.nbx', path: moduleFile },
+    breakpoints: [{ line: 2 }],
+  });
+  assert.equal(pontosModulo.breakpoints[0].verified, true, 'breakpoint em módulo importado precisa ser verificado');
   await requisitar('configurationDone');
 
   const entrada = await esperar(
@@ -119,16 +124,18 @@ try {
   await requisitar('continue', { threadId: 1 });
   await esperar(
     m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'breakpoint',
-    'breakpoint na linha 5',
+    'breakpoint na linha 4',
   );
 
   await requisitar('stepIn', { threadId: 1 });
-  await esperar(m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'step', 'entrada na função');
+  await esperar(m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'breakpoint', 'breakpoint no módulo importado');
   const pilha = await requisitar('stackTrace', { threadId: 1 });
   assert.equal(pilha.stackFrames[0].name, 'somar');
   assert.equal(pilha.stackFrames[0].line, 2, 'pilha deve apontar para a linha real da função');
+  assert.equal(pilha.stackFrames[0].source.path, moduleFile, 'quadro da função deve apontar para o módulo');
   assert.equal(pilha.stackFrames[1].name, 'Programa');
-  assert.equal(pilha.stackFrames[1].line, 6, 'quadro chamador deve apontar para a chamada');
+  assert.equal(pilha.stackFrames[1].line, 4, 'quadro chamador deve apontar para a chamada');
+  assert.equal(pilha.stackFrames[1].source.path, program, 'quadro chamador deve apontar para o arquivo principal');
   const avaliado = await requisitar('evaluate', { expression: 'valor', frameId: pilha.stackFrames[0].id, context: 'hover' });
   assert.equal(avaliado.result, 'Inteiro(1)');
   const escoposPrograma = await requisitar('scopes', { frameId: pilha.stackFrames[1].id });
@@ -148,7 +155,7 @@ try {
   await requisitar('stepOut', { threadId: 1 });
   await esperar(m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'step', 'retorno da função');
   const pilhaRetorno = await requisitar('stackTrace', { threadId: 1 });
-  assert.equal(pilhaRetorno.stackFrames[0].line, 7);
+  assert.equal(pilhaRetorno.stackFrames[0].line, 5);
   const escoposGlobais = await requisitar('scopes', { frameId: pilhaRetorno.stackFrames[0].id });
   const globais = escoposGlobais.scopes.find(escopo => escopo.name === 'Globais');
   const variaveisGlobais = await requisitar('variables', { variablesReference: globais.variablesReference });
@@ -157,7 +164,7 @@ try {
   await requisitar('next', { threadId: 1 });
   await esperar(m => m.type === 'event' && m.event === 'stopped' && m.body.reason === 'step', 'avanço sobre instrução');
   const pilhaSeguinte = await requisitar('stackTrace', { threadId: 1 });
-  assert.equal(pilhaSeguinte.stackFrames[0].line, 8);
+  assert.equal(pilhaSeguinte.stackFrames[0].line, 6);
 
   await requisitar('continue', { threadId: 1 });
   const saida = await esperar(
