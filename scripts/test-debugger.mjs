@@ -126,6 +126,10 @@ try {
   const pilha = await requisitar('stackTrace', { threadId: 1 });
   assert.equal(pilha.stackFrames[0].name, 'somar');
   assert.equal(pilha.stackFrames[0].line, 2, 'pilha deve apontar para a linha real da função');
+  assert.equal(pilha.stackFrames[1].name, 'Programa');
+  assert.equal(pilha.stackFrames[1].line, 5, 'quadro chamador deve apontar para a chamada');
+  const escoposPrograma = await requisitar('scopes', { frameId: pilha.stackFrames[1].id });
+  assert.ok(escoposPrograma.scopes.some(escopo => escopo.name === 'Globais'));
   const escopos = await requisitar('scopes', { frameId: pilha.stackFrames[0].id });
   const locais = escopos.scopes.find(escopo => escopo.name === 'Escopo 1');
   assert.ok(locais, 'escopo local precisa estar disponível');
