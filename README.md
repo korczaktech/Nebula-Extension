@@ -15,7 +15,19 @@ Desenvolvida pela **Korczak Technologies**. Este repositório contém somente a 
 - Diagnósticos locais para delimitadores inconsistentes e declarações duplicadas.
 - Language Server oficial em Rust, com diagnósticos, autocomplete, hover, navegação, referências, assinatura de funções e símbolos.
 - Instalação assistida do servidor LSP no próprio ambiente, com confirmação e compilação local via Cargo.
+- Comandos para compilar e interpretar o arquivo `.nbx` ativo usando o CLI oficial da Nebula.
+- Saída de compilação/interpretação no canal “Nebula — Execução” e comando para interromper uma execução.
 - Inicialização automática por stdio, sincronização de arquivos .nbx e comandos de instalação, estado e reinício.
+
+## Compilar e interpretar
+
+A extensão chama o executável CLI oficial `nebula` instalado no sistema. Instale o compilador Nebula e garanta que `nebula` esteja no `PATH`, ou configure `nebula.executablePath` com o caminho absoluto do executável.
+
+- `Nebula: Compilar arquivo atual` executa `nebula compilar <arquivo.nbx>` e gera o `.out` padrão ao lado do fonte.
+- `Nebula: Interpretar arquivo atual` executa `nebula interpretar <arquivo.nbx>` pelo runtime de referência.
+- `Nebula: Interromper execução` encerra o processo iniciado pela extensão.
+
+Os comandos salvam os arquivos antes de executar e exibem stdout/stderr no canal “Nebula — Execução”. A compilação nativa continua sujeita aos alvos suportados pelo compilador (atualmente Linux x86-64). A extensão ainda não oferece depuração passo a passo: o backend não gera informações de depuração e o projeto não possui um adaptador DAP.
 
 ## Requisitos
 

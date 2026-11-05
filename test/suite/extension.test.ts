@@ -34,6 +34,9 @@ suite('Nebula — integração com o VS Code', () => {
     assert.ok(commands.includes('nebula.installLanguageServer'));
     assert.ok(commands.includes('nebula.restartLanguageServer'));
     assert.ok(commands.includes('nebula.languageServerStatus'));
+    assert.ok(commands.includes('nebula.compile'));
+    assert.ok(commands.includes('nebula.interpret'));
+    assert.ok(commands.includes('nebula.stopExecution'));
   });
 
   test('servidor pode ser desativado para ambientes controlados', () => {
