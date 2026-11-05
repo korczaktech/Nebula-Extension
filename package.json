@@ -169,7 +169,46 @@
           "group": "navigation"
         }
       ]
-    }
+    },
+    "debuggers": [
+      {
+        "type": "nebula",
+        "label": "Nebula",
+        "languages": [
+          "nebula"
+        ],
+        "program": "${file}",
+        "runtime": "nebula",
+        "configurationAttributes": {
+          "launch": {
+            "required": [
+              "program"
+            ],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Caminho do arquivo .nbx a depurar.",
+                "default": "${file}"
+              },
+              "stopOnEntry": {
+                "type": "boolean",
+                "description": "Pausar antes da primeira instrução.",
+                "default": true
+              }
+            }
+          }
+        },
+        "initialConfigurations": [
+          {
+            "type": "nebula",
+            "request": "launch",
+            "name": "Depurar arquivo Nebula",
+            "program": "${file}",
+            "stopOnEntry": true
+          }
+        ]
+      }
+    ]
   },
   "scripts": {
     "compile": "tsc -p ./",
