@@ -98,3 +98,17 @@ test('publica executar, compilar e interpretar no editor Nebula', () => {
 test('configura caminho do CLI oficial', () => {
   assert.equal(pkg.contributes.configuration.properties['nebula.executablePath'].default, 'nebula');
 });
+
+test('resolve o compilador empacotado para a plataforma atual', () => {
+  const resolver = read('src/compiler/native.ts');
+  assert.ok(resolver.includes("path.join(extensionPath, 'bin', target)"));
+  assert.ok(resolver.includes('process.platform'));
+  assert.ok(resolver.includes('process.arch'));
+});
+
+test('não exige configuração de executável externo', () => {
+  assert.equal(pkg.contributes.configuration.properties['nebula.executablePath'], undefined);
+  const execution = read('src/commands/execution.ts');
+  assert.ok(execution.includes('getNebulaCompilerPath(context.extensionPath)'));
+  assert.ok(!execution.includes('executablePath()'));
+});

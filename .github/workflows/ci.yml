@@ -24,6 +24,14 @@ jobs:
           node-version: 20
       - name: Instalar Rust
         uses: dtolnay/rust-toolchain@1.85.0
+      - name: Obter fonte oficial do compilador
+        uses: actions/checkout@v4
+        with:
+          repository: korczaktech/Nebula
+          ref: 70dfd84bce104a66464a2c20737052ebde288453
+          path: .nebula-source
+      - name: Compilar e incorporar CLI nativo
+        run: npm run build:native
       - name: Compilar servidor LSP oficial
         run: cargo install --git https://github.com/korczaktech/Nebula --locked --root "$RUNNER_TEMP/nebula-lsp" nebula-lsp
       - name: Testar protocolo real do servidor

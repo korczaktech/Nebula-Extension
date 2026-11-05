@@ -35,6 +35,9 @@ const entries = readEntries(archive);
 const required = [
   'extension/package.json',
   'extension/out/extension.js',
+  'extension/out/compiler/native.js',
+  'extension/bin/linux-x64/nebula',
+  'extension/licenses/NEBULA-LICENSE',
   'extension/out/lsp/client/client.js',
   'extension/syntaxes/nebula.tmLanguage.json',
   'extension/snippets/nebula.json',
@@ -56,4 +59,4 @@ for (const entry of entries) {
   assert.ok(!entry.endsWith('.ts'), 'Arquivo TypeScript incluído: ' + entry);
 }
 
-console.log('VSIX validado: ' + entries.length + ' arquivos; manifesto, runtime, LSP, gramática, snippets e recursos essenciais presentes.');
+console.log('VSIX validado: ' + entries.length + ' arquivos; manifesto, compilador nativo, licença, LSP, gramática e recursos essenciais presentes.');

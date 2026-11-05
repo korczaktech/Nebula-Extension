@@ -117,11 +117,6 @@
           ],
           "default": "off",
           "description": "Nível de rastreamento da comunicação LSP."
-        },
-        "nebula.executablePath": {
-          "type": "string",
-          "default": "nebula",
-          "description": "Caminho do executável CLI da Nebula. Use caminho absoluto se não estiver no PATH."
         }
       }
     },
@@ -179,11 +174,12 @@
     "test": "node --test test/unit/*.test.mjs",
     "vscode:prepublish": "npm run compile",
     "package": "vsce package",
-    "check-output": "node -e \"const fs=require('node:fs'); for (const file of ['out/extension.js','out/commands/execution.js','out/providers/completion/provider.js','out/providers/completion/engine.js','out/providers/intelligence/provider.js','out/providers/intelligence/engine.js','out/lsp/client/client.js','out/lsp/client/installer.js','out/lsp/client/configuration.js','out/lsp/client/state.js','out/lsp/protocol/capabilities.js']) fs.accessSync(file); console.log('Artefatos da extensão e LSP presentes.');\"",
+    "check-output": "node -e \"const fs=require('node:fs'); for (const file of ['out/extension.js','out/compiler/native.js','out/commands/execution.js','out/providers/completion/provider.js','out/providers/completion/engine.js','out/providers/intelligence/provider.js','out/providers/intelligence/engine.js','out/lsp/client/client.js','out/lsp/client/installer.js','out/lsp/client/configuration.js','out/lsp/client/state.js','out/lsp/protocol/capabilities.js']) fs.accessSync(file); console.log('Artefatos da extensão e LSP presentes.');\"",
     "compile-tests": "tsc -p tsconfig.test.json",
     "test:integration": "npm run compile-tests && node out-test/test/runTest.js",
-    "package:ci": "vsce package --out nbx-language.vsix && node scripts/verify-vsix.mjs nbx-language.vsix",
-    "test:lsp": "node scripts/test-lsp.mjs"
+    "package:ci": "vsce package --target linux-x64 --out nbx-language.vsix && node scripts/verify-vsix.mjs nbx-language.vsix",
+    "test:lsp": "node scripts/test-lsp.mjs",
+    "build:native": "bash scripts/build-native.sh"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
