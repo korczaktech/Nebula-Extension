@@ -19,6 +19,11 @@ const child = spawn(executable, ['depurar', '--dap', program], {
   stdio: ['pipe', 'pipe', 'pipe'],
 });
 
+const encerramento = new Promise((resolver, rejeitar) => {
+  child.once('exit', code => code === 0 ? resolver() : rejeitar(new Error('CLI terminou com código ' + code)));
+  child.once('error', rejeitar);
+});
+
 let buffer = Buffer.alloc(0);
 let stderr = '';
 const mensagens = [];
@@ -129,10 +134,7 @@ try {
   assert.match(saida.body.output, /2/);
   await esperar(m => m.type === 'event' && m.event === 'terminated', 'evento terminated');
   child.stdin.end();
-  await new Promise((resolver, rejeitar) => {
-    child.once('exit', code => code === 0 ? resolver() : rejeitar(new Error('CLI terminou com código ' + code + '. ' + stderr)));
-    child.once('error', rejeitar);
-  });
+  await encerramento;
   console.log('DAP: inicialização, breakpoint por linha, pilha, escopos, variáveis e continuação validados.');
 } catch (error) {
   child.kill();
