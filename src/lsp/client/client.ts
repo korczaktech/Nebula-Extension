@@ -9,7 +9,6 @@ let client: LanguageClient | undefined;
 let output: vscode.OutputChannel | undefined;
 let fileWatcher: vscode.FileSystemWatcher | undefined;
 let starting = false;
-let installationPrompted = false;
 
 function log(message: string): void {
   output?.appendLine('[LSP] ' + message);
@@ -127,7 +126,6 @@ export function registerNebulaLanguageClient(context: vscode.ExtensionContext): 
       try {
         await stopNebulaLanguageClient();
         const executable = await installNebulaLanguageServer(context, output!);
-        installationPrompted = true;
         void vscode.window.showInformationMessage('Servidor LSP instalado: ' + executable);
         await restartNebulaLanguageClient(context);
       } catch (error) {
@@ -152,7 +150,6 @@ export function registerNebulaLanguageClient(context: vscode.ExtensionContext): 
   ));
   context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
     if (event.affectsConfiguration('nebula.languageServer')) {
-      installationPrompted = false;
       void restartNebulaLanguageClient(context);
     }
   }));
