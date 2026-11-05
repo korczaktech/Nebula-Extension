@@ -11,6 +11,8 @@ test('configura testes reais no host do VS Code', () => {
   assert.ok(manifest.scripts['test:integration'].includes('out-test/test/runTest.js'));
   assert.ok(manifest.scripts['compile-tests'].includes('tsconfig.test.json'));
   assert.ok(read('test/suite/extension.test.ts').includes('openTextDocument'));
+  assert.ok(read('test/runTest.ts').includes('downloadVSCodeWithRetry'));
+  assert.ok(read('test/runTest.ts').includes('attempt <= 3'));
 });
 
 test('o pipeline valida e publica o VSIX gerado', () => {
