@@ -7,17 +7,22 @@ import { join, resolve } from 'node:path';
 const executable = resolve(process.argv[2] ?? 'bin/linux-x64/nebula');
 const directory = mkdtempSync(join(tmpdir(), 'nebula-dap-'));
 const program = join(directory, 'depuracao.nbx');
-writeFileSync(program, [
-  'funcao somar(valor: inteiro): inteiro {',
+const moduleFile = join(directory, 'Matematica.nbx');
+writeFileSync(moduleFile, [
+  'publico funcao somar(valor: inteiro): inteiro {',
   '    devolver valor + 1',
   '}',
+  '',
+].join('\\n'));
+writeFileSync(program, [
+  'incluir Matematica como Mat',
   'variavel itens = [4, 5, 6]',
   'variavel contador = 1',
-  'contador = somar(contador)',
+  'contador = Mat::somar(contador)',
   'contador = contador + 1',
   'exibir(contador)',
   '',
-].join('\n'));
+].join('\\n'));
 
 const child = spawn(executable, ['depurar', '--dap', program], {
   cwd: directory,
