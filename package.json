@@ -28,7 +28,8 @@
     "language-support"
   ],
   "activationEvents": [
-    "onLanguage:nebula"
+    "onLanguage:nebula",
+    "onDebugResolve:nebula"
   ],
   "main": "./out/extension.js",
   "contributes": {
