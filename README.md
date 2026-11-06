@@ -1,41 +1,126 @@
-# Nebula Language Support
+# Nebula Extension
 
-Extensão oficial da linguagem **Nebula** para Visual Studio Code, com suporte a arquivos `.nbx`.
+Extensão oficial da linguagem **Nebula** para Visual Studio Code. Reconhece arquivos `.nbx` e conecta o editor às ferramentas de desenvolvimento da linguagem.
 
-Desenvolvida pela **Korczak Technologies**. O compilador, o runtime e o servidor de linguagem são construídos a partir do repositório oficial Nebula e incorporados ao pacote da extensão.
+Desenvolvida pela Korczak Technologies. O compilador e o runtime pertencem ao repositório [Nebula](https://github.com/korczaktech/Nebula); esta extensão fornece a integração com o editor.
 
-## Recursos
+| Propriedade | Definição |
+|---|---|
+| Nome | Suporte à Linguagem Nebula |
+| Identificador do pacote | `nbx-language` |
+| Publicador | KorczakTechnologiesBR |
+| Versão atual do manifesto | 0.0.6 |
+| Editor | Visual Studio Code |
+| Linguagem | Nebula |
+| Extensão de arquivo | `.nbx` |
+| Implementação da extensão | TypeScript |
+| Integração de linguagem | LSP |
+| Depuração | DAP |
+| Repositório | [korczaktech/Nebula-Extension](https://github.com/korczaktech/Nebula-Extension) |
 
-- Reconhecimento de arquivos `.nbx`, gramática TextMate, snippets e configuração de edição.
-- Autocomplete contextual, hover e inteligência local.
-- Language Server oficial em Rust, com diagnósticos, autocomplete, hover, navegação para definição, referências, assinatura de funções e símbolos.
-- CLI oficial incorporado para compilar, interpretar, executar e depurar arquivos Nebula.
-- Runtime Rust e interpretador de IR incorporados no executável oficial.
-- Depuração DAP real: breakpoints por linha, continuar, pausar, step-in, step-over, step-out, pilha de chamadas, escopos e variáveis.
-- Execução interpretada em terminal integrado do VS Code, com entrada interativa por `receber()`, saída e interrupção pela extensão.
-- Execução nativa separada para programas compatíveis com o backend ELF atual.
-- A instalação da extensão não exige Rust, Cargo ou downloads adicionais.
+---
 
-## CLI no terminal Linux
+## 1. Objetivo
 
-A extensão incorpora o executável oficial como `nebula-core` e disponibiliza o comando `nebula` como uma pequena camada de compatibilidade. Essa camada transforma a forma curta `nebula arquivo.nbx` em `nebula-core compilar arquivo.nbx`; todos os demais argumentos e subcomandos são encaminhados sem alteração ao CLI oficial.
+Oferecer uma experiência de desenvolvimento Nebula dentro do VS Code, mantendo o compilador e a semântica da linguagem no projeto principal.
 
-Para construir e instalar:
+A extensão não deve criar uma implementação paralela da linguagem. O compilador oficial é a referência para análise, interpretação e geração de código.
 
-```sh
-npm install
-npm run build:native
-bash scripts/install-cli.sh
+## 2. Recursos do editor
+
+### Reconhecimento e edição
+
+- Identificação automática de arquivos `.nbx`.
+- Gramática TextMate e realce de sintaxe.
+- Configuração de indentação e pares de delimitadores.
+- Snippets para estruturas frequentes.
+- Ícones próprios para arquivos Nebula.
+- Tema de cores Nebula Vibrante.
+- Sugestões contextuais e integração com os provedores de linguagem.
+
+### Inteligência de linguagem
+
+Quando disponíveis no servidor ou nos provedores locais:
+
+- Autocomplete de palavras-chave, declarações e funções.
+- Hover com informações de símbolos.
+- Diagnósticos léxicos, sintáticos e semânticos.
+- Navegação para definição.
+- Busca de referências.
+- Ajuda de assinatura.
+- Símbolos do documento.
+- Tokens semânticos, formatação, ações rápidas e renomeação.
+
+A disponibilidade de cada recurso depende da capacidade efetivamente anunciada pelo servidor e da implementação local correspondente.
+
+## 3. Arquitetura
+
+A extensão é organizada por responsabilidades:
+
+```text
+Visual Studio Code
+       |
+       v
+Extensão Nebula (TypeScript)
+       |
+       +----> Configuração e comandos
+       |
+       +----> Provedores locais
+       |
+       +----> Cliente LSP
+       |          |
+       |          v
+       |      nebula-lsp
+       |
+       +----> Integração de execução
+       |          |
+       |          v
+       |      nebula CLI
+       |
+       +----> Adaptador DAP
+                  |
+                  v
+              Depurador
 ```
 
-Abra um novo terminal depois da instalação.
+O código-fonte da linguagem permanece em [Nebula](https://github.com/korczaktech/Nebula). A extensão incorpora ou localiza as ferramentas oficiais conforme o método de distribuição configurado.
 
-### Comandos
+### Linguagem e configuração
+
+- Identificador interno: `nebula`.
+- Alias: `Nebula`.
+- Extensão: `.nbx`.
+- Tabulação recomendada: quatro espaços.
+- Configuração de linguagem: `language-configuration.json`.
+- Gramática: `syntaxes/nebula.tmLanguage.json`.
+- Snippets: `snippets/nebula.json`.
+
+## 4. Comandos
+
+Os comandos registrados no manifesto incluem:
+
+| Comando | Função |
+|---|---|
+| Nebula: Executar arquivo atual (runtime) | Executa pelo runtime interpretado |
+| Nebula: Compilar arquivo atual | Solicita compilação |
+| Nebula: Interpretar arquivo atual | Interpreta o programa |
+| Nebula: Interromper execução | Interrompe sessões iniciadas pela extensão |
+| Nebula: Reiniciar Language Server | Reinicia o servidor de linguagem |
+| Nebula: Estado do Language Server | Consulta a conexão |
+| Nebula: Verificar servidor LSP incorporado | Verifica a ferramenta integrada |
+| Nebula: Executar nativamente (experimental) | Executa o alvo nativo experimental |
+
+Os nomes e os comportamentos efetivos são definidos pelo manifesto e pela implementação em `src/`.
+
+## 5. Terminal e CLI
+
+A extensão pode disponibilizar o CLI oficial Nebula e comandos no terminal integrado.
+
+Exemplos de uso:
 
 ```sh
 nebula arquivo.nbx
 nebula compilar arquivo.nbx
-nebula compilar arquivo.nbx -o programa.out --otimizacao O2
 nebula interpretar arquivo.nbx
 nebula executar arquivo.nbx
 nebula depurar --dap arquivo.nbx
@@ -46,61 +131,135 @@ nebula --help
 nebula --version
 ```
 
-O comando curto `nebula arquivo.nbx` compila e gera o executável `arquivo.out` ao lado do fonte. Ele não executa automaticamente o programa. Para executar, use `nebula executar arquivo.nbx` quando o host e o backend suportarem essa operação.
+O atalho `nebula arquivo.nbx` é uma forma curta de solicitar a compilação conforme o wrapper instalado; não significa necessariamente executar o programa após compilar.
 
-O CLI instalado globalmente usa os binários presentes no diretório `~/.local/bin`. Para removê-lo:
+### Instalação do CLI no Linux
+
+O fluxo de construção e instalação está automatizado pelos scripts do projeto:
+
+```sh
+npm install
+npm run build:native
+bash scripts/install-cli.sh
+```
+
+O build nativo documentado nesta fase tem como alvo Linux x86-64. O suporte de distribuição a outras plataformas depende de binários específicos e validação própria.
+
+Para remover o atalho global instalado:
 
 ```sh
 bash scripts/uninstall-cli.sh
 ```
 
-A instalação automática inicial é destinada a Linux x86-64. O pacote da extensão e o CLI incorporado também são produzidos para esse alvo nesta fase.
+## 6. Execução
 
-## Executar programas no VS Code
+A extensão integra diferentes modos, que não devem ser confundidos:
 
-Abra e salve um arquivo `.nbx`.
+- **Interpretação:** execução da IR pelo runtime de referência.
+- **Execução pelo runtime:** utiliza os recursos de execução implementados na Nebula.
+- **Execução nativa:** utiliza o backend nativo disponível para o alvo. É experimental quando indicado pela extensão.
+- **Compilação:** gera o artefato correspondente ao backend selecionado.
 
-- **Nebula: Executar arquivo atual**: executa pelo runtime da Nebula no terminal integrado. Suporta entrada interativa, saída e chamadas de runtime implementadas pelo interpretador.
-- **Nebula: Interpretar arquivo atual**: mesmo runtime interpretado, disponível como comando explícito.
-- **Nebula: Executar nativamente (experimental)**: compila e inicia um executável ELF. O backend nativo ainda não liga o runtime nem toda a biblioteca padrão; use apenas os recursos atualmente suportados pelo backend.
-- **Nebula: Compilar arquivo atual**: gera o executável nativo `.out` ao lado do arquivo-fonte.
-- **Nebula: Interromper execução**: encerra o processo nativo e fecha os terminais de runtime abertos pela extensão.
+A execução nativa não deve ser considerada equivalente à interpretada quando o backend ainda não integra todo o runtime ou a biblioteca padrão.
 
-A execução interpretada abre um terminal próprio para cada sessão. Programas que chamam `receber()` podem solicitar dados diretamente pelo terminal, sem captura parcial de entrada pela extensão.
+## 7. Language Server Protocol
 
-## Depuração
+A integração LSP utiliza comunicação JSON-RPC 2.0 pelo transporte stdio.
 
-A extensão registra o depurador `Nebula` no VS Code e inicia o adaptador DAP implementado no CLI oficial com `nebula depurar --dap`. Use **Executar e Depurar** e selecione **Depurar arquivo Nebula** (ou crie uma configuração `type: nebula`, `request: launch`, `program: ${file}`).
+Configurações disponíveis:
 
-O protocolo DAP suporta breakpoints por linha, pilha de chamadas, escopos, variáveis, continuar, pausar, entrar em funções, avançar sobre chamadas e sair da função. A entrada interativa por `receber()` não está disponível durante a sessão de depuração. O teste de integração DAP valida a comunicação com o executável real, não um mock.
+| Configuração | Finalidade |
+|---|---|
+| `nebula.languageServer.enabled` | Habilita ou desabilita o servidor |
+| `nebula.languageServer.serverPath` | Define um caminho alternativo |
+| `nebula.languageServer.args` | Argumentos adicionais |
+| `nebula.languageServer.trace` | Define o nível de rastreamento |
 
-## Language Server
+Valores de rastreamento: `off`, `messages` e `verbose`.
 
-O servidor LSP é iniciado automaticamente quando a extensão é ativada e `nebula.languageServer.enabled` está habilitado. O executável vem incorporado no VSIX. Não é necessário instalar Rust/Cargo.
+O ciclo de vida do servidor inclui inicialização, conexão, encerramento, reinício por alteração de configuração e registro de logs no canal **Nebula Language Server**.
 
-- `nebula.languageServer.enabled`: ativa ou desativa a integração.
-- `nebula.languageServer.serverPath`: caminho opcional para substituir o servidor incorporado.
-- `nebula.languageServer.args`: argumentos adicionais.
-- `nebula.languageServer.trace`: rastreamento `off`, `messages` ou `verbose`.
+A instalação e a redistribuição de executáveis devem respeitar a licença do compilador. A extensão não deve baixar ou executar binários sem observar o fluxo de consentimento e a política de distribuição vigente.
 
-## Desenvolvimento e validação
+## 8. Depuração
+
+O adaptador utiliza o Debug Adapter Protocol (DAP) e registra o tipo de depuração `nebula`.
+
+Configuração inicial:
+
+```json
+{
+  "type": "nebula",
+  "request": "launch",
+  "name": "Depurar arquivo Nebula",
+  "program": "${file}",
+  "stopOnEntry": true
+}
+```
+
+Recursos previstos ou integrados conforme a versão do adaptador:
+
+- Breakpoints por linha.
+- Continuar e pausar.
+- Step-in, step-over e step-out.
+- Pilha de chamadas.
+- Escopos e variáveis.
+- Controle do ciclo de execução.
+
+A disponibilidade de entrada interativa durante uma sessão de depuração depende do runtime e do adaptador.
+
+## 9. Estrutura do projeto
+
+| Caminho | Responsabilidade |
+|---|---|
+| `src/activation/` | Ativação da extensão |
+| `src/commands/` | Comandos do editor |
+| `src/compiler/` | Localização e execução do compilador |
+| `src/debug/` | Integração de depuração |
+| `src/lsp/` | Cliente e protocolo LSP |
+| `src/providers/` | Recursos de linguagem locais |
+| `syntaxes/` | Gramática de realce |
+| `snippets/` | Trechos reutilizáveis |
+| `themes/` | Temas |
+| `icons/` | Ícones |
+| `resources/` | Recursos empacotados |
+| `scripts/` | Construção, instalação e validação |
+| `docs/` | Documentação técnica |
+
+## 10. Desenvolvimento
+
+Requisitos para desenvolver a extensão:
+
+- Node.js e npm compatíveis com o projeto.
+- Visual Studio Code para testes de integração.
+- Rust e Cargo apenas quando for necessário construir os binários nativos a partir do código-fonte Nebula.
+- Repositório Nebula disponível para o fluxo de build nativo.
+
+Comandos:
 
 ```sh
 npm install
 npm run compile
-npm test
 npm run check-types
+npm test
 npm run check-output
+npm run test:lsp
 npm run test:debugger -- bin/linux-x64/nebula
-node scripts/test-cli-wrapper.mjs bin/linux-x64/nebula
+npm run package:ci
 ```
 
-Para construir os binários oficiais no Linux x86-64, disponibilize o repositório Nebula em `.nebula-source` e execute `npm run build:native`. O script compila CLI e LSP em modo release, incorpora ambos em `bin/linux-x64` e inclui a licença em `licenses/NEBULA-LICENSE`.
+O script `build:native` constrói os executáveis incorporados para o alvo atualmente configurado. Os testes e a verificação do VSIX devem ser executados antes de uma publicação.
 
-## Empacotamento
+## 11. Distribuição
 
-`npm run package:ci` gera `nbx-language.vsix` para Linux x64 e verifica manifesto, extensão compilada, CLI oficial, atalho global, LSP, licença, gramática, snippets e dependências de execução.
+O pacote VSIX deve conter os arquivos necessários à experiência prometida, respeitar a licença Nebula e preservar as licenças de dependências de terceiros.
 
-## Licença
+A compatibilidade de plataforma deve ser declarada somente quando houver binários e testes para o respectivo sistema e arquitetura.
 
-Software proprietário da Korczak Technologies. Consulte `LICENSE` e a licença Nebula incluída em `licenses/NEBULA-LICENSE`.
+## 12. Licença
+
+Extensão proprietária da Korczak Technologies. Consulte o arquivo `LICENSE` e as licenças dos componentes Nebula incluídos ou distribuídos com o pacote.
+
+---
+
+**Nebula Extension — ambiente de desenvolvimento da linguagem Nebula no Visual Studio Code.**
