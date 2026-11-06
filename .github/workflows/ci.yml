@@ -32,6 +32,8 @@ jobs:
           path: .nebula-source
       - name: Compilar e incorporar CLI nativo
         run: npm run build:native
+      - name: Validar atalho do CLI
+        run: node scripts/test-cli-wrapper.mjs bin/linux-x64/nebula
       - name: Testar runtime interativo incorporado
         run: node scripts/test-runtime.mjs bin/linux-x64/nebula
       - name: Testar protocolo DAP real
