@@ -9,13 +9,54 @@ Desenvolvida pela **Korczak Technologies**. O compilador, o runtime e o servidor
 - Reconhecimento de arquivos `.nbx`, gramática TextMate, snippets e configuração de edição.
 - Autocomplete contextual, hover e inteligência local.
 - Language Server oficial em Rust, com diagnósticos, autocomplete, hover, navegação para definição, referências, assinatura de funções e símbolos.
-- CLI oficial incorporado para compilar, interpretar e executar arquivos Nebula.
+- CLI oficial incorporado para compilar, interpretar, executar e depurar arquivos Nebula.
 - Runtime Rust e interpretador de IR incorporados no executável oficial.
+- Depuração DAP real: breakpoints por linha, continuar, pausar, step-in, step-over, step-out, pilha de chamadas, escopos e variáveis.
 - Execução interpretada em terminal integrado do VS Code, com entrada interativa por `receber()`, saída e interrupção pela extensão.
 - Execução nativa separada para programas compatíveis com o backend ELF atual.
-- A instalação não exige Rust, Cargo ou downloads adicionais.
+- A instalação da extensão não exige Rust, Cargo ou downloads adicionais.
 
-## Executar programas
+## CLI no terminal Linux
+
+A extensão incorpora o executável oficial como `nebula-core` e disponibiliza o comando `nebula` como uma pequena camada de compatibilidade. Essa camada transforma a forma curta `nebula arquivo.nbx` em `nebula-core compilar arquivo.nbx`; todos os demais argumentos e subcomandos são encaminhados sem alteração ao CLI oficial.
+
+Para construir e instalar:
+
+```sh
+npm install
+npm run build:native
+bash scripts/install-cli.sh
+```
+
+Abra um novo terminal depois da instalação.
+
+### Comandos
+
+```sh
+nebula arquivo.nbx
+nebula compilar arquivo.nbx
+nebula compilar arquivo.nbx -o programa.out --otimizacao O2
+nebula interpretar arquivo.nbx
+nebula executar arquivo.nbx
+nebula depurar --dap arquivo.nbx
+nebula analisar arquivo.nbx
+nebula verificar arquivo.nbx
+nebula formatar arquivo.nbx
+nebula --help
+nebula --version
+```
+
+O comando curto `nebula arquivo.nbx` compila e gera o executável `arquivo.out` ao lado do fonte. Ele não executa automaticamente o programa. Para executar, use `nebula executar arquivo.nbx` quando o host e o backend suportarem essa operação.
+
+O CLI instalado globalmente usa os binários presentes no diretório `~/.local/bin`. Para removê-lo:
+
+```sh
+bash scripts/uninstall-cli.sh
+```
+
+A instalação automática inicial é destinada a Linux x86-64. O pacote da extensão e o CLI incorporado também são produzidos para esse alvo nesta fase.
+
+## Executar programas no VS Code
 
 Abra e salve um arquivo `.nbx`.
 
@@ -27,6 +68,12 @@ Abra e salve um arquivo `.nbx`.
 
 A execução interpretada abre um terminal próprio para cada sessão. Programas que chamam `receber()` podem solicitar dados diretamente pelo terminal, sem captura parcial de entrada pela extensão.
 
+## Depuração
+
+A extensão registra o depurador `Nebula` no VS Code e inicia o adaptador DAP implementado no CLI oficial com `nebula depurar --dap`. Use **Executar e Depurar** e selecione **Depurar arquivo Nebula** (ou crie uma configuração `type: nebula`, `request: launch`, `program: ${file}`).
+
+O protocolo DAP suporta breakpoints por linha, pilha de chamadas, escopos, variáveis, continuar, pausar, entrar em funções, avançar sobre chamadas e sair da função. A entrada interativa por `receber()` não está disponível durante a sessão de depuração. O teste de integração DAP valida a comunicação com o executável real, não um mock.
+
 ## Language Server
 
 O servidor LSP é iniciado automaticamente quando a extensão é ativada e `nebula.languageServer.enabled` está habilitado. O executável vem incorporado no VSIX. Não é necessário instalar Rust/Cargo.
@@ -36,7 +83,7 @@ O servidor LSP é iniciado automaticamente quando a extensão é ativada e `nebu
 - `nebula.languageServer.args`: argumentos adicionais.
 - `nebula.languageServer.trace`: rastreamento `off`, `messages` ou `verbose`.
 
-## Desenvolvimento
+## Desenvolvimento e validação
 
 ```sh
 npm install
@@ -44,23 +91,16 @@ npm run compile
 npm test
 npm run check-types
 npm run check-output
+npm run test:debugger -- bin/linux-x64/nebula
+node scripts/test-cli-wrapper.mjs bin/linux-x64/nebula
 ```
 
-Para construir os binários oficiais no Linux x86-64, disponibilize o repositório Nebula em `.nebula-source` e execute `npm run build:native`. O script compila CLI e LSP em modo release, incorpora ambos em `bin/linux-x64` e inclui a licença em `licenses/NEBULA-LICENSE`. O CLI inclui o runtime Rust por meio da dependência do interpretador de IR.
+Para construir os binários oficiais no Linux x86-64, disponibilize o repositório Nebula em `.nebula-source` e execute `npm run build:native`. O script compila CLI e LSP em modo release, incorpora ambos em `bin/linux-x64` e inclui a licença em `licenses/NEBULA-LICENSE`.
 
 ## Empacotamento
 
-`npm run package:ci` gera `nbx-language.vsix` para Linux x64 e verifica manifesto, extensão compilada, CLI, LSP, licença, gramática, snippets e dependências de execução.
-
-## Depuração
-
-A extensão oferece execução interpretada e nativa, compilação e interrupção. O depurador DAP com breakpoints e execução passo a passo será implementado na Fase 3.
+`npm run package:ci` gera `nbx-language.vsix` para Linux x64 e verifica manifesto, extensão compilada, CLI oficial, atalho global, LSP, licença, gramática, snippets e dependências de execução.
 
 ## Licença
 
 Software proprietário da Korczak Technologies. Consulte `LICENSE` e a licença Nebula incluída em `licenses/NEBULA-LICENSE`.
-
-
-## Depuração no VS Code
-
-A extensão registra o depurador `Nebula` no VS Code. Use **Executar e Depurar** e selecione **Depurar arquivo Nebula** (ou crie uma configuração `type: nebula`, `request: launch`, `program: ${file}`). O adaptador inicia o CLI incorporado com `nebula depurar --dap` e oferece breakpoints por linha, pilha de chamadas, escopos, variáveis, continuar, pausar, entrar em funções, avançar sobre chamadas e sair da função. A entrada interativa por `receber()` não está disponível durante a sessão de depuração.
