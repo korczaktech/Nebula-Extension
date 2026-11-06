@@ -21,7 +21,7 @@ for (let i = 0; i < total; i += 1) {
 }
 for (const required of [
   'extension/package.json','extension/out/extension.js','extension/out/compiler/native.js','extension/out/debug/adapter.js',
-  'extension/bin/linux-x64/nebula','extension/bin/linux-x64/nebula-lsp',
+  'extension/bin/linux-x64/nebula','extension/bin/linux-x64/nebula-core','extension/bin/linux-x64/nebula-lsp',
   'extension/licenses/NEBULA-LICENSE','extension/out/lsp/client/client.js',
   'extension/syntaxes/nebula.tmLanguage.json','extension/snippets/nebula.json',
   'extension/language-configuration.json','extension/icons/nebula-file.svg',
