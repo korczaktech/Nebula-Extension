@@ -21,9 +21,11 @@ fi
 cargo build --locked --release --manifest-path "${MANIFEST}" -p nebula-cli --bin nebula
 cargo build --locked --release --manifest-path "${MANIFEST}" -p nebula-lsp --bin nebula-lsp
 mkdir -p "${TARGET_DIR}" licenses
-install -m 0755 "${SOURCE_DIR}/target/release/nebula" "${TARGET_DIR}/nebula"
+install -m 0755 "${SOURCE_DIR}/target/release/nebula" "${TARGET_DIR}/nebula-core"
+install -m 0755 scripts/nebula-wrapper.sh "${TARGET_DIR}/nebula"
 install -m 0755 "${SOURCE_DIR}/target/release/nebula-lsp" "${TARGET_DIR}/nebula-lsp"
 install -m 0644 "${SOURCE_DIR}/LICENSE" licenses/NEBULA-LICENSE
 "${TARGET_DIR}/nebula" --version
-printf 'CLI incorporado: %s bytes\n' "$(stat -c '%s' "${TARGET_DIR}/nebula")"
+printf 'CLI oficial: %s bytes\n' "$(stat -c '%s' "${TARGET_DIR}/nebula-core")"
+printf 'Atalho nebula: %s bytes\n' "$(stat -c '%s' "${TARGET_DIR}/nebula")"
 printf 'LSP incorporado: %s bytes\n' "$(stat -c '%s' "${TARGET_DIR}/nebula-lsp")"
