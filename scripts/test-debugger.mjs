@@ -14,7 +14,7 @@ writeFileSync(program, [
   'contador = contador + 1',
   'exibir(contador)',
   '',
-].join('\\n'));
+].join('\n'));
 
 const child = spawn(executable, ['depurar', '--dap', program], {
   cwd: directory,
@@ -35,10 +35,10 @@ const aguardando = [];
 child.stdout.on('data', chunk => {
   buffer = Buffer.concat([buffer, chunk]);
   while (true) {
-    const separador = buffer.indexOf('\\r\\n\\r\\n');
+    const separador = buffer.indexOf('\r\n\r\n');
     if (separador < 0) break;
     const cabecalho = buffer.subarray(0, separador).toString('ascii');
-    const tamanho = Number(cabecalho.match(/Content-Length:\\s*(\\d+)/i)?.[1]);
+    const tamanho = Number(cabecalho.match(/Content-Length:\s*(\d+)/i)?.[1]);
     if (!Number.isFinite(tamanho)) throw new Error('Cabeçalho DAP sem Content-Length.');
     const inicio = separador + 4;
     if (buffer.length < inicio + tamanho) break;
@@ -84,7 +84,7 @@ async function requisitar(comando, argumentos = {}) {
     command: comando,
     arguments: argumentos,
   }));
-  child.stdin.write('Content-Length: ' + corpo.length + '\\r\\n\\r\\n');
+  child.stdin.write('Content-Length: ' + corpo.length + '\r\n\r\n');
   child.stdin.write(corpo);
   const mensagem = await resposta;
   assert.equal(mensagem.success, true, comando + ': ' + JSON.stringify(mensagem.body));
