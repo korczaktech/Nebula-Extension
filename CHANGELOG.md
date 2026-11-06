@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7] - 2026-11-06
+
+- Atualizada a versão do pacote para 0.0.7.
+- Corrigido o teste de release que ainda fixava a versão anterior 0.0.6.
+- Mantida a validação do pacote VSIX e do adaptador de depuração DAP no pipeline de CI.
+
+
 ## [0.0.4] - 2026-11-04
 
 - Adicionados comandos para compilar e interpretar arquivos `.nbx` pelo CLI oficial.
