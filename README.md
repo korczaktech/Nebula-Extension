@@ -9,7 +9,7 @@ Desenvolvida pela Korczak Technologies. O compilador e o runtime pertencem ao re
 | Nome | Suporte à Linguagem Nebula |
 | Identificador do pacote | `nbx-language` |
 | Publicador | KorczakTechnologiesBR |
-| Versão atual do manifesto | 0.0.6 |
+| Versão atual do manifesto | 0.0.7 |
 | Editor | Visual Studio Code |
 | Linguagem | Nebula |
 | Extensão de arquivo | `.nbx` |
