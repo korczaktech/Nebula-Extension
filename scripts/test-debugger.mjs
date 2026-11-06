@@ -13,7 +13,7 @@ writeFileSync(moduleFile, [
   '    devolver valor + 1',
   '}',
   '',
-].join('\\n'));
+].join('\n'));
 writeFileSync(program, [
   'incluir Matematica como Mat',
   'variavel itens = [4, 5, 6]',
@@ -22,7 +22,7 @@ writeFileSync(program, [
   'contador = contador + 1',
   'exibir(contador)',
   '',
-].join('\\n'));
+].join('\n'));
 
 const child = spawn(executable, ['depurar', '--dap', program], {
   cwd: directory,
