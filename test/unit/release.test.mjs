@@ -69,7 +69,7 @@ test('CI valida o protocolo DAP do compilador incorporado', () => {
   const workflow = read('.github/workflows/ci.yml');
   const smoke = read('scripts/test-debugger.mjs');
   assert.ok(workflow.includes('npm run test:debugger -- bin/linux-x64/nebula'));
-  for (const capability of ['setBreakpoints', 'stackTrace', 'scopes', 'variables', 'continue', 'stepIn', 'stepOut', 'next', 'evaluate']) {
+  for (const capability of ['initialize', 'launch', 'setBreakpoints', 'configurationDone', 'continue', 'stackTrace', 'scopes', 'variables', 'next']) {
     assert.ok(smoke.includes("'" + capability + "'"));
   }
 });
