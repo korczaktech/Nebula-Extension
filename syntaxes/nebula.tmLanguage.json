@@ -313,6 +313,18 @@
     "operators": {
       "patterns": [
         {
+          "name": "keyword.operator.lambda.nebula",
+          "match": "->"
+        },
+        {
+          "name": "keyword.operator.access.nebula",
+          "match": "::|\\?\\.|\\."
+        },
+        {
+          "name": "keyword.operator.range.nebula",
+          "match": "\\.\\."
+        },
+        {
           "name": "keyword.operator.assignment.nebula",
           "match": "(?:=\\*\\*|=\\\\|=\\+|=-|=\\*|=/|=%|\\*\\*=|\\\\=|\\+=|-=|\\*=|/=|%=|\\?\\?=|=|\\+\\+|--)"
         },
@@ -331,18 +343,6 @@
         {
           "name": "keyword.operator.arithmetic.nebula",
           "match": "\\*\\*|[+*/%\\-]|\\\\\\\\"
-        },
-        {
-          "name": "keyword.operator.range.nebula",
-          "match": "\\.\\."
-        },
-        {
-          "name": "keyword.operator.access.nebula",
-          "match": "::|\\?\\.|\\."
-        },
-        {
-          "name": "keyword.operator.lambda.nebula",
-          "match": "->"
         }
       ]
     },
