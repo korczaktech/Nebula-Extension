@@ -4,6 +4,8 @@ export const KEYWORDS:string[];
 export const BUILTINS:string[];
 export const CONSTANTS:string[];
 export const TYPES:string[];
+export const MODULES:string[];
+export const MODULE_MEMBERS:Record<string,string[]>;
 export function maskNonCode(source:string):string;
 export function isCodePosition(source:string,offset:number):boolean;
 export function splitTopLevel(source:string,separator:string):string[];

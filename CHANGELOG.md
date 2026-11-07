@@ -1,3 +1,12 @@
+## [0.0.8] - 2026-11-06
+
+- Atualizado o autocomplete para a sintaxe atual de `NEBULA-SINTAXE.md` e `NEBULA-SINTAXE-2.md`.
+- Removidas sugestões de palavras e aliases antigos; adicionados comandos, literais, tipos e APIs nativas.
+- Adicionada documentação contextual com finalidade, sintaxe e exemplo para cada palavra reservada e função sugerida.
+- Mantido o autocomplete local ativo com o Language Server conectado.
+- Refeitos os snippets com Function Body, `fim`, indentação e exemplos da sintaxe atual.
+- Atualizados testes de conformidade e versão do pacote para 0.0.8.
+
 # Changelog
 
 ## [0.0.7] - 2026-11-06

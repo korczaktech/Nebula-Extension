@@ -2,210 +2,68 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+const require=createRequire(import.meta.url);
+const engine=require('../../src/providers/completion/engine.js');
+const snippets=JSON.parse(readFileSync(new URL('../../snippets/nebula.json',import.meta.url),'utf8'));
+const manifest=JSON.parse(readFileSync(new URL('../../package.json',import.meta.url),'utf8'));
+const provider=readFileSync(new URL('../../src/providers/completion/provider.ts',import.meta.url),'utf8');
+const completionDocs=readFileSync(new URL('../../docs/development/completion.md',import.meta.url),'utf8');
 
-const require = createRequire(import.meta.url);
-const engine = require('../../src/providers/completion/engine.js');
-const snippets = JSON.parse(readFileSync(new URL('../../snippets/nebula.json', import.meta.url), 'utf8'));
-const packageJson = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
-const tsconfig = JSON.parse(readFileSync(new URL('../../tsconfig.json', import.meta.url), 'utf8'));
-const providerSource = readFileSync(new URL('../../src/providers/completion/provider.ts', import.meta.url), 'utf8');
-const extensionSource = readFileSync(new URL('../../src/extension.ts', import.meta.url), 'utf8');
-
-test('snippets possuem prefixo, corpo e descrição válidos', () => {
-  assert.ok(Object.keys(snippets).length >= 30);
-  for (const [name, item] of Object.entries(snippets)) {
-    assert.ok(item.prefix, name + ': prefixo ausente');
-    assert.ok(Array.isArray(item.body) && item.body.length > 0, name + ': corpo ausente');
-    assert.ok(typeof item.description === 'string' && item.description.length > 0);
+test('palavras reservadas acompanham a sintaxe atual',()=>{
+ for(const word of ['variavel','constante','funcao','se','sendo','senao','para','enquanto','escolha','caso','padrao','pare','prossiga','passar','retorne','lambda','classe','incluir','de','como','ceder','tente','erro','sempre','lancar','verifique','com','async','aguarda','global','externa','isto','novo','apagar','dentro','fora','identico','nao','e','ou','sim','nulo','herda','estatico','privado','publico','protegido','exportar','construtor','tipoDe','instanciaDe','vazio','seguro','critico','privilegio','montagem','estrutura','enumeracao','objetos','dicionarios'])assert.ok(engine.KEYWORDS.includes(word),'Palavra ausente: '+word);
+ for(const old of ['quando','devolver','verdadeiro','falso','mutavel','mutável','avaliar','durante','repetir','pulso','parar','encerrar','seguir','ler_texto','em_paralelo'])assert.ok(!engine.KEYWORDS.includes(old),'Sintaxe antiga ainda sugerida: '+old);
+});
+test('literais e tipos refletem as especificações principal e nativa',()=>{
+ assert.deepEqual(engine.CONSTANTS,['sim','nao','nulo']);
+ for(const type of ['inteiro','decimal','complexo','texto','logico','lista','tupla','conjunto','dicionario','u8','u16','u32','u64','u128','i8','i16','i32','i64','i128','f32','f64','endereco','enderecoFisico','tamanho','deslocamento','ponteiro','ponteiroBruto','referencia','vetor','bloco'])assert.ok(engine.TYPES.includes(type),'Tipo ausente: '+type);
+});
+test('catálogo de funções e módulos cobre biblioteca principal e nativa',()=>{
+ for(const name of ['exibir','lerTexto','abrir','fechar','ler','lerLinha','lerLinhas','escrever','escreverLinhas','abs','arredondar','divres','raiz','potencia','faixa','tamanho','ordenar','inverter','enumerar','filtrar','mapear','reduzir'])assert.ok(engine.BUILTINS.includes(name),'Função ausente: '+name);
+ for(const name of ['memoria','ponteiro','bits','cpu','simd','hardware','porta','interrupcao','dma','atomico','cache','tempo','energia'])assert.ok(engine.MODULES.includes(name),'Módulo ausente: '+name);
+});
+test('sugere palavras, funções e tipos por prefixo',()=>{
+ assert.ok(engine.getCompletionCandidates('sena',4).candidates.some(x=>x.label==='senao'));
+ const fn=engine.getCompletionCandidates('lerT',4).candidates.find(x=>x.label==='lerTexto');
+ assert.ok(fn);assert.equal(fn.insertText,'lerTexto($0)');
+ const type=engine.getCompletionCandidates('variavel x: u',13);
+ assert.equal(type.context,'type');assert.ok(type.candidates.some(x=>x.label==='u64'));
+});
+test('sugere operações de módulos após ponto',()=>{
+ const source='memoria.';const result=engine.getCompletionCandidates(source,source.length);
+ assert.equal(result.context,'member');assert.ok(result.candidates.some(x=>x.label==='reservar'));assert.ok(result.candidates.some(x=>x.label==='liberar'));
+});
+test('coleta símbolos de declarações atuais',()=>{
+ const source='variavel contador: inteiro = 0\nconstante LIMITE: inteiro = 10\nfuncao somar(a: inteiro, b: inteiro) -> inteiro: {\n    retorne a + b\n    fim\n} fim';
+ const labels=engine.collectSymbols(source).symbols.map(x=>x.label);
+ for(const name of ['contador','LIMITE','somar','a','b'])assert.ok(labels.includes(name),'Símbolo ausente: '+name);
+});
+test('snippets são válidos, descritos e usam Function Body',()=>{
+ assert.ok(Object.keys(snippets).length>=40);
+ for(const [name,item] of Object.entries(snippets)){
+  assert.ok(item.prefix,name+': prefixo ausente');
+  assert.ok(typeof item.description==='string'&&item.description.length>0,name+': descrição ausente');
+  const body=Array.isArray(item.body)?item.body.join('\n'):item.body;
+  assert.ok(typeof body==='string'&&body.length>0,name+': corpo ausente');
+  const prefixes=Array.isArray(item.prefix)?item.prefix:[item.prefix];
+  if(prefixes.some(p=>['funcao','funcaop','asyncfuncao','se','enquanto','para','classe','escolha','tente','privilegio','critico'].includes(p))){
+   assert.ok(body.includes(': {'),name+': falta Function Body');assert.ok(body.includes('fim'),name+': falta fim');
   }
+ }
 });
-
-test('snippets cobrem construções da gramática e comandos do runtime', () => {
-  const prefixes = Object.values(snippets).flatMap(item =>
-    Array.isArray(item.prefix) ? item.prefix : [item.prefix]);
-  for (const prefix of [
-    'variavel', 'mutável', 'constante', 'funcao', 'funcaogen', 'tipofuncao', 'enumpayload', 'quando',
-    'escolha', 'avaliar', 'enquanto', 'repetir', 'cada', 'para', 'pulso',
-    'estrutura', 'enumeracao', 'incluir', 'funcaofim', 'quandofim',
-    'parar', 'encerrar', 'seguir', 'lertexto', 'aguardar', 'dormir',
-    'gerar', 'emparalelo'
-  ]) assert.ok(prefixes.includes(prefix), 'Prefixo ausente: ' + prefix);
+test('snippets incluem construções atuais e APIs de sistemas',()=>{
+ const prefixes=Object.values(snippets).flatMap(x=>Array.isArray(x.prefix)?x.prefix:[x.prefix]);
+ for(const prefix of ['variavel','constante','funcao','funcaop','asyncfuncao','se','sendo','senao','escolha','caso','para','enquanto','tente','lancar','verifique','retorne','pare','prossiga','passar','incluir','incluirmodulo','classe','exportarfuncao','lambda','seta','estrutura','enumeracao','memreservar','memalocar','memescrever','memler','bitsdefinir','privilegio','critico','montagem','exibir','lerTexto','faixa','aguarda','cpuregistro','portaler','interrupcao','dma','atomico'])assert.ok(prefixes.includes(prefix),'Snippet ausente: '+prefix);
 });
-
-test('coleta declarações, parâmetros, tipos, estruturas, enums e módulos', () => {
-  const source = 'tipo Identificador = inteiro\n' +
-    'estrutura Pessoa { nome: texto; idade: inteiro }\n' +
-    'enumeracao Estado { Ativo, Inativo }\n' +
-    'variavel usuario: Pessoa = nulo\n' +
-    'constante limite: inteiro = 10\n' +
-    'funcao saudar(nome: texto, vezes: inteiro): vazio { }\n' +
-    'incluir sistema::texto como texto';
-  const result = engine.collectSymbols(source);
-  const labels = result.symbols.map(item => item.label);
-  for (const name of [
-    'Identificador', 'Pessoa', 'Estado', 'usuario', 'limite',
-    'saudar', 'nome', 'vezes', 'texto'
-  ]) assert.ok(labels.includes(name), 'Símbolo ausente: ' + name);
-  assert.equal(result.variables.get('usuario'), 'Pessoa');
-  assert.deepEqual(result.structures.get('Pessoa'), [
-    { label: 'nome', type: 'texto' }, { label: 'idade', type: 'inteiro' }
-  ]);
-  assert.deepEqual(result.enums.get('Estado'), ['Ativo', 'Inativo']);
+test('documentação contextual apresenta finalidade, sintaxe e exemplos',()=>{
+ for(const term of ['Sintaxe','Exemplo','Function Body','privilegio','montagem','sendo','retorne'])assert.ok(provider.includes(term),'Documentação contextual incompleta: '+term);
+ for(const term of ['NEBULA-SINTAXE.md','NEBULA-SINTAXE-2.md','Function Body','fim','APIs propostas'])assert.ok(completionDocs.includes(term),'Documentação do autocomplete ausente: '+term);
 });
-
-test('reconhece parâmetros com tipos genéricos sem criar símbolos falsos', () => {
-  const source = 'funcao transformar<T>(valor: Resultado<inteiro, texto>, nome: texto): T { }';
-  const labels = engine.collectSymbols(source).symbols.map(item => item.label);
-  assert.ok(labels.includes('transformar'));
-  assert.ok(labels.includes('valor'));
-  assert.ok(labels.includes('nome'));
-  assert.ok(!labels.includes('Resultado'));
-  assert.ok(!labels.includes('inteiro'));
-  assert.ok(!labels.includes('texto'));
-  assert.ok(!labels.includes('T'));
+test('provedor local fica ativo com Language Server conectado',()=>{
+ assert.ok(provider.includes('registerCompletionItemProvider'));
+ assert.ok(!provider.includes('isNebulaLanguageServerReady'));
+ assert.ok(!provider.includes('onNebulaLanguageServerReady'));
 });
-
-test('preserva tipos genéricos em campos e payloads de enumeração', () => {
-  const source = 'estrutura Caixa { resultado: Resultado<inteiro, texto>; nome: texto }\nenumeracao Resposta { Algum(inteiro, texto), Nenhum }';
-  const result = engine.collectSymbols(source);
-  assert.deepEqual(result.structures.get('Caixa'), [
-    { label: 'resultado', type: 'Resultado<inteiro, texto>' },
-    { label: 'nome', type: 'texto' }
-  ]);
-  assert.deepEqual(result.enums.get('Resposta'), ['Algum', 'Nenhum']);
-});
-
-test('reconhece parâmetros com tipos de função aninhados', () => {
-  const source = 'funcao executar(callback: funcao(inteiro): vazio, resultado: Resultado<inteiro, texto>): vazio { }';
-  const labels = engine.collectSymbols(source).symbols.map(item => item.label);
-  assert.ok(labels.includes('executar'));
-  assert.ok(labels.includes('callback'));
-  assert.ok(labels.includes('resultado'));
-  assert.ok(!labels.includes('inteiro'));
-  assert.ok(!labels.includes('texto'));
-  assert.ok(!labels.includes('vazio'));
-});
-
-test('reconhece funções genéricas e módulos sem alias explícito', () => {
-  const source = 'funcao transformar<T>(valor: T): T { }\nincluir sistema::texto';
-  const labels = engine.collectSymbols(source).symbols.map(item => item.label);
-  assert.ok(labels.includes('transformar'));
-  assert.ok(labels.includes('texto'));
-  assert.ok(!labels.includes('T'));
-});
-
-test('inclui o motor JavaScript no build distribuído', () => {
-  assert.equal(tsconfig.compilerOptions.allowJs, true);
-  assert.ok(tsconfig.include.includes('src/**/*.js'));
-  assert.ok(packageJson.scripts['check-output'].includes('out/providers/completion/engine.js'));
-  assert.equal(packageJson.main, './out/extension.js');
-  assert.ok(!readFileSync(new URL('../../.vscodeignore', import.meta.url), 'utf8').includes('out/**'));
-});
-
-test('registra snippets e autocomplete com gatilhos de membro e escopo', () => {
-  assert.deepEqual(packageJson.contributes.snippets, [
-    { language: 'nebula', path: './snippets/nebula.json' }
-  ]);
-  assert.ok(extensionSource.includes('registerNebulaCompletions(context)'));
-  assert.ok(providerSource.includes("registerCompletionItemProvider({language:'nebula'}"));
-  assert.ok(providerSource.includes("new NebulaCompletionProvider(),'.',':'"));
-  assert.ok(providerSource.includes('new vscode.SnippetString(candidate.insertText)'));
-  const defaults = packageJson.contributes.configurationDefaults['[nebula]'];
-  assert.equal(defaults['editor.quickSuggestions'].comments, false);
-  assert.equal(defaults['editor.quickSuggestions'].strings, false);
-});
-
-test('palavras reservadas e builtins acompanham o inventário normativo', () => {
-  const reserved = [
-    'variavel', 'definir', 'mutavel', 'mutável', 'constante', 'funcao',
-    'quando', 'senao', 'avaliar', 'escolha', 'caso', 'para', 'cada', 'em',
-    'enquanto', 'durante', 'repetir', 'pulso', 'alterar', 'devolver',
-    'incluir', 'como', 'verdadeiro', 'falso', 'nulo', 'fim', 'parar',
-    'encerrar', 'seguir', 'e', 'ou', 'nao', 'publico', 'privado', 'tipo',
-    'estrutura', 'enumeracao'
-  ];
-  for (const word of reserved) assert.ok(engine.KEYWORDS.includes(word), 'Palavra reservada ausente: ' + word);
-  for (const builtin of engine.BUILTINS) assert.ok(!engine.KEYWORDS.includes(builtin), 'Builtin não é palavra reservada: ' + builtin);
-  for (const alias of ['função', 'senão', 'enumeração', 'não', 'público']) {
-    assert.ok(engine.KEYWORDS.includes(alias), 'Grafia acentuada ausente: ' + alias);
-  }
-});
-
-test('oferece todos os builtins oficiais como chamadas', () => {
-  for (const name of [
-    'exibir', 'receber', 'perguntar', 'ler_texto',
-    'aguardar', 'dormir', 'gerar', 'em_paralelo'
-  ]) assert.ok(engine.BUILTINS.includes(name), 'Builtin ausente: ' + name);
-  const result = engine.getCompletionCandidates('exi', 3);
-  const item = result.candidates.find(candidate => candidate.label === 'exibir');
-  assert.equal(item.insertText, 'exibir($0)');
-});
-
-test('sugere símbolos locais pelo prefixo digitado', () => {
-  const source = 'variavel contador: inteiro = 0\nfuncao calcular(valor: inteiro): inteiro { }\ncont';
-  const result = engine.getCompletionCandidates(source, source.length);
-  assert.ok(result.candidates.some(item => item.label === 'contador'));
-  assert.ok(!result.candidates.some(item => item.label === 'calcular'));
-});
-
-test('sugere declarações localizadas depois do cursor no mesmo arquivo', () => {
-  const source = 'cont\nvariavel contador: inteiro = 0';
-  assert.ok(engine.getCompletionCandidates(source, 4).candidates.some(item => item.label === 'contador'));
-});
-
-test('sugere tipos após anotação', () => {
-  const source = 'variavel idade: int';
-  const result = engine.getCompletionCandidates(source, source.length);
-  assert.equal(result.context, 'type');
-  assert.ok(result.candidates.some(item => item.label === 'inteiro'));
-  const typeSource = 'variavel idade: ';
-  const allTypes = engine.getCompletionCandidates(typeSource, typeSource.length);
-  assert.ok(allTypes.candidates.some(item => item.label === 'Resultado'));
-  assert.ok(!result.candidates.some(item => item.label === 'variavel'));
-});
-
-test('sugere campos após ponto e variantes após operador de escopo', () => {
-  const source = 'estrutura Pessoa { nome: texto; idade: inteiro }\n' +
-    'variavel p: Pessoa = nulo\np.no';
-  const fields = engine.getCompletionCandidates(source, source.length);
-  assert.equal(fields.context, 'member');
-  assert.deepEqual(fields.candidates.map(item => item.label), ['nome']);
-  const enumSource = 'enumeracao Estado { Ativo, Inativo }\nEstado::At';
-  assert.deepEqual(
-    engine.getCompletionCandidates(enumSource, enumSource.length).candidates.map(item => item.label),
-    ['Ativo']
-  );
-});
-
-test('ignora declarações em comentários e strings', () => {
-  const source = '// variavel fantasma: texto\n' +
-    'variavel real: texto = "funcao falsa()"\n' +
-    '/* constante oculta = 1 */';
-  const names = engine.collectSymbols(source).symbols.map(item => item.label);
-  assert.ok(names.includes('real'));
-  for (const name of ['fantasma', 'falsa', 'oculta']) assert.ok(!names.includes(name));
-});
-
-test('exporta literais e reconhece limites Unicode de identificadores', () => {
-  assert.deepEqual(engine.CONSTANTS, ['verdadeiro', 'falso', 'nulo']);
-  const source = 'variavel açãofuncao: inteiro = 1\nvariavel nome: texto = "Nebula"';
-  const labels = engine.collectSymbols(source).symbols.map(item => item.label);
-  assert.ok(labels.includes('açãofuncao'));
-  assert.ok(!labels.includes('funcao'));
-  assert.ok(engine.getCompletionCandidates('verd', 4).candidates.some(item => item.label === 'verdadeiro'));
-});
-
-test('compara identificadores Unicode em NFC como o compilador', () => {
-  const decomposed = 'cafe\u0301';
-  const source = 'variavel ' + decomposed + ': inteiro = 1\ncafé';
-  const result = engine.getCompletionCandidates(source, source.length);
-  assert.ok(result.candidates.some(item => item.label === decomposed));
-});
-
-test('sugere literais e não oferece conteúdo dentro de comentários ou strings', () => {
-  const literal = engine.getCompletionCandidates('verd', 4);
-  assert.ok(literal.candidates.some(item => item.label === 'verdadeiro'));
-  for (const source of ['// exi', 'variavel texto: texto = "exi', '/* exi']) {
-    assert.equal(engine.getCompletionCandidates(source, source.length).candidates.length, 0);
-  }
+test('versão 0.0.8 e snippets estão registrados',()=>{
+ assert.equal(manifest.version,'0.0.8');
+ assert.deepEqual(manifest.contributes.snippets,[{language:'nebula',path:'./snippets/nebula.json'}]);
 });

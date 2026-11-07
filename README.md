@@ -9,7 +9,7 @@ Desenvolvida pela Korczak Technologies. O compilador e o runtime pertencem ao re
 | Nome | Suporte à Linguagem Nebula |
 | Identificador do pacote | `nbx-language` |
 | Publicador | KorczakTechnologiesBR |
-| Versão atual do manifesto | 0.0.7 |
+| Versão atual do manifesto | 0.0.8 |
 | Editor | Visual Studio Code |
 | Linguagem | Nebula |
 | Extensão de arquivo | `.nbx` |
@@ -36,7 +36,14 @@ A extensão não deve criar uma implementação paralela da linguagem. O compila
 - Snippets para estruturas frequentes.
 - Ícones próprios para arquivos Nebula.
 - Três temas: Nebula Vibrante, Nebula Clássico e Nebula Claro.
-- Sugestões contextuais e integração com os provedores de linguagem.
+- Autocomplete alinhado às duas especificações, com documentação contextual e exemplos para palavras reservadas, funções nativas, tipos e APIs de sistemas.
+- Snippets com Function Body, indentação e encerramentos `fim` da sintaxe atual.
+
+### Autocomplete e documentação contextual
+
+As sugestões seguem `NEBULA-SINTAXE.md` e `NEBULA-SINTAXE-2.md`. Ao selecionar uma palavra reservada, função, tipo ou membro sugerido, o painel de documentação apresenta finalidade, sintaxe e exemplo em Nebula. As APIs de sistemas e hardware são identificadas como catálogo da especificação; isso não afirma que estejam implementadas no compilador.
+
+O provedor local permanece ativo junto ao Language Server para garantir que as sugestões da sintaxe atual não desapareçam quando o servidor Rust estiver conectado.
 
 ### Inteligência de linguagem
 

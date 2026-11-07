@@ -1,15 +1,37 @@
-# Snippets e autocomplete
+# Autocomplete e snippets Nebula
+
+## Referências normativas
+
+O catálogo do editor acompanha `NEBULA-SINTAXE.md` e `NEBULA-SINTAXE-2.md`. A especificação principal define palavras reservadas, literais, tipos, declarações, funções, classes, controle de fluxo, tratamento de erros, importação, entrada/saída e biblioteca padrão. A especificação complementar acrescenta tipos de largura fixa e APIs propostas para memória, ponteiros, bits, CPU, SIMD, hardware, portas de I/O, interrupções, DMA, operações atômicas, cache, tempo e energia.
+
+A documentação distingue palavras reservadas da linguagem de APIs propostas. Uma sugestão de API não garante que o compilador, runtime, backend ou alvo já a implemente.
+
+## Sugestões
+
+- Palavras reservadas atuais: declarações, modificadores, controle de fluxo, erros, assincronismo, escopo, operações e Function Body.
+- Literais: `sim`, `nao` e `nulo`.
+- Tipos: tipos básicos, coleções e tipos nativos de largura fixa, endereços, ponteiros e vetores.
+- Biblioteca padrão: matemática, conversão, coleções, texto, arquivos e sistema.
+- APIs de sistemas: módulos e membros da especificação complementar.
+- Símbolos locais: variáveis, constantes, funções e parâmetros identificados no arquivo atual.
+- Membros: operações de módulos após `.` e campos/variantes reconhecidos localmente.
+
+## Documentação de cada sugestão
+
+O painel de detalhes de cada comando inclui finalidade, forma sintática e exemplo `.nbx`. Funções recebem chamada-modelo com cursor posicionado nos argumentos. APIs de baixo nível são identificadas como catalogadas/propostas, sem prometer suporte de execução.
 
 ## Snippets
-Os modelos ficam em `snippets/nebula.json` e são registrados pelo VS Code via `contributes.snippets`. Os prefixos abrangem declarações, funções, condicionais, correspondência, laços, estruturas, enumerações, aliases, módulos, tipos de função e enumerações com payload, além de funções internas. Há modelos com chaves e com terminador `fim`. Os marcadores (`$1`, `${1:nome}`, `$0`) permitem navegar pelos campos usando Tab.
 
-## Autocomplete
-O provedor é registrado para documentos Nebula e sugere palavras reservadas, literais (`verdadeiro`, `falso`, `nulo`), tipos, funções internas, variáveis, constantes, parâmetros, funções, aliases, estruturas, enumerações e módulos importados no arquivo atual (com `::` e alias opcional). Após `.`, sugere campos de estruturas quando o tipo da variável está anotado; após `Tipo::`, sugere variantes de enumeração. Caminhos de importação usam `::`, conforme a gramática. Após `:`, prioriza tipos.
+Os modelos estão em `snippets/nebula.json` e usam placeholders do VS Code para navegação por Tab. Blocos gerados usam a abertura `: {`, `fim` interno, chave de fechamento e `fim` externo conforme o Function Body. Há snippets para funções, condicionais, seleção, laços, classes, importações, erros, tipos e operações nativas.
 
-Comentários e strings são mascarados antes da coleta de símbolos. O coletor respeita identificadores Unicode/NFC, parâmetros com tipos genéricos e tipos de função aninhados, campos com tipos compostos e variantes de enumeração com payload. Chamadas de builtins usam inserção em formato snippet para posicionar o cursor no argumento. As sugestões são calculadas sob demanda, sem cache persistente ou acesso à rede.
+## Language Server
+
+O provedor local permanece registrado mesmo quando o Language Server Rust está conectado. Isso garante o catálogo novo no editor enquanto a implementação de completion do servidor evolui. O VS Code pode mesclar resultados semelhantes do LSP e do provedor local.
 
 ## Limites
-A análise é local e heurística. Não resolve símbolos importados de outros arquivos, não infere tipos de expressões, não descobre membros de módulos, não implementa escopos léxicos completos e não consulta o compilador Nebula. Integração LSP/Rust e inteligência semântica ficam fora desta etapa.
+
+A análise de símbolos locais continua heurística e restrita ao arquivo atual. Não há resolução semântica completa de escopos, inferência geral de tipos, busca de símbolos em dependências ou confirmação de disponibilidade de APIs por arquitetura. Para esses recursos, a fonte de verdade deve ser o compilador e o servidor de linguagem.
 
 ## Verificação
-`npm test`, `npm run check-types` e `npm run compile` verificam os recursos. O comportamento interativo deve também ser conferido em uma janela de desenvolvimento do VS Code, especialmente a aceitação de sugestões, a navegação por Tab nos snippets e os gatilhos `.` e `::`.
+
+`npm test`, `npm run check-types`, `npm run compile` e os testes de integração do VS Code validam o catálogo, os snippets e o empacotamento.

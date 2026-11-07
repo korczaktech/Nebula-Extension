@@ -1,402 +1,370 @@
 {
   "Variável": {
-    "prefix": [
-      "variavel",
-      "var"
-    ],
-    "body": [
-      "variavel ${1:nome}: ${2:tipo} = ${3:valor}"
-    ],
-    "description": "Declara uma variável tipada"
-  },
-  "Variável mutável": {
-    "prefix": [
-      "mutavel",
-      "mutável"
-    ],
-    "body": [
-      "mutavel ${1:nome}: ${2:tipo} = ${3:valor}"
-    ],
-    "description": "Declara uma variável mutável"
+    "prefix": "variavel",
+    "body": "variavel ${1:nome}: ${2:tipo} = ${3:valor}",
+    "description": "Declara variável mutável com tipo explícito ou inferido."
   },
   "Constante": {
     "prefix": "constante",
-    "body": [
-      "constante ${1:NOME}: ${2:tipo} = ${3:valor}"
-    ],
-    "description": "Declara uma constante"
-  },
-  "Definir valor": {
-    "prefix": "definir",
-    "body": [
-      "definir ${1:nome} = ${2:valor}"
-    ],
-    "description": "Define um valor"
-  },
-  "Alterar valor": {
-    "prefix": "alterar",
-    "body": [
-      "alterar ${1:nome} <- ${2:valor}"
-    ],
-    "description": "Altera um valor"
+    "body": "constante ${1:NOME}: ${2:tipo} = ${3:valor}",
+    "description": "Declara constante que não pode ser reatribuída."
   },
   "Função": {
-    "prefix": [
-      "funcao",
-      "função",
-      "fn"
-    ],
+    "prefix": "funcao",
     "body": [
-      "funcao ${1:nome}(${2:parametros}): ${3:vazio} {",
-      "\t${0}",
-      "}"
+      "funcao ${1:nome}(${2:parametros}) -> ${3:tipo}: {",
+      "    ${4:passar}",
+      "    fim",
+      "} fim"
     ],
-    "description": "Declara uma função"
+    "description": "Declara função com Function Body, fim interno e fim externo."
   },
   "Função pública": {
     "prefix": "funcaop",
     "body": [
-      "publico funcao ${1:nome}(${2:parametros}): ${3:vazio} {",
-      "\t${0}",
-      "}"
+      "publico funcao ${1:nome}(${2:parametros}) -> ${3:tipo}: {",
+      "    ${4:passar}",
+      "    fim",
+      "} fim"
     ],
-    "description": "Declara uma função pública"
+    "description": "Declara função pública."
   },
-  "Quando": {
-    "prefix": "quando",
+  "Função assíncrona": {
+    "prefix": "asyncfuncao",
     "body": [
-      "quando ${1:condicao} {",
-      "\t${0}",
-      "}"
+      "async funcao ${1:nome}(${2:parametros}): {",
+      "    ${3:variavel resultado = aguarda operacao()}",
+      "    fim",
+      "} fim"
     ],
-    "description": "Estrutura condicional"
+    "description": "Declara função assíncrona."
   },
-  "Quando e senão": {
-    "prefix": "quandosen",
+  "Condicional se": {
+    "prefix": "se",
     "body": [
-      "quando ${1:condicao} {",
-      "\t${2}",
-      "} senao {",
-      "\t${0}",
-      "}"
+      "se ${1:condicao}: {",
+      "    ${2:passar}",
+      "    fim",
+      "} fim"
     ],
-    "description": "Estrutura condicional com alternativa"
+    "description": "Executa bloco quando a condição é verdadeira."
   },
-  "Senão se": {
-    "prefix": "senaose",
+  "Condição sendo": {
+    "prefix": "sendo",
     "body": [
-      "senao quando ${1:condicao} {",
-      "\t${0}",
+      "sendo ${1:condicao}: {",
+      "    ${2:passar}",
+      "    fim",
       "}"
     ],
-    "description": "Condição alternativa"
+    "description": "Adiciona uma condição alternativa à cadeia se/sendo/senao."
+  },
+  "Alternativa senao": {
+    "prefix": "senao",
+    "body": [
+      "senao: {",
+      "    ${1:passar}",
+      "    fim",
+      "}"
+    ],
+    "description": "Executa quando nenhuma condição anterior é satisfeita."
   },
   "Escolha": {
     "prefix": "escolha",
     "body": [
-      "escolha ${1:valor} {",
-      "\tcaso ${2:Tipo::Variante} {",
-      "\t\t${3}",
-      "\t}",
-      "\tcaso _ {",
-      "\t\t${0}",
-      "\t}",
-      "}"
+      "escolha ${1:valor}: {",
+      "    caso ${2:1}: {",
+      "        ${3:passar}",
+      "        fim",
+      "    }",
+      "    padrao: {",
+      "        ${4:passar}",
+      "        fim",
+      "    }",
+      "    fim",
+      "} fim"
     ],
-    "description": "Correspondência de padrões"
+    "description": "Seleciona uma alternativa com caso e padrao."
   },
   "Caso": {
     "prefix": "caso",
     "body": [
-      "caso ${1:padrao} {",
-      "\t${0}",
+      "caso ${1:valor}: {",
+      "    ${2:passar}",
+      "    fim",
       "}"
     ],
-    "description": "Braço de correspondência"
+    "description": "Cria um braço caso dentro de escolha."
   },
-  "Enquanto": {
-    "prefix": "enquanto",
-    "body": [
-      "enquanto ${1:condicao} {",
-      "\t${0}",
-      "}"
-    ],
-    "description": "Laço enquanto"
-  },
-  "Durante": {
-    "prefix": "durante",
-    "body": [
-      "durante ${1:condicao} {",
-      "\t${0}",
-      "}"
-    ],
-    "description": "Laço durante"
-  },
-  "Repetir": {
-    "prefix": "repetir",
-    "body": [
-      "repetir ${1:condicao} {",
-      "\t${0}",
-      "}"
-    ],
-    "description": "Laço de repetição"
-  },
-  "Cada elemento": {
-    "prefix": "cada",
-    "body": [
-      "cada ${1:item} em ${2:colecao} {",
-      "\t${0}",
-      "}"
-    ],
-    "description": "Percorre os elementos de uma coleção"
-  },
-  "Para": {
+  "Laço para": {
     "prefix": "para",
     "body": [
-      "para(${1:indice} = ${2:0}; ${1} < ${3:limite}; ${1} = ${1} + 1) {",
-      "\t${0}",
-      "}"
+      "para ${1:item} dentro ${2:faixa(0, 10)}: {",
+      "    ${3:exibir(item)}",
+      "    fim",
+      "} fim"
     ],
-    "description": "Laço com inicialização, condição e incremento"
+    "description": "Percorre uma sequência com para/dentro."
   },
-  "Pulso": {
-    "prefix": "pulso",
+  "Laço enquanto": {
+    "prefix": "enquanto",
     "body": [
-      "pulso(${1:intervalo}) {",
-      "\t${0}",
-      "}"
+      "enquanto ${1:condicao}: {",
+      "    ${2:passar}",
+      "    fim",
+      "} fim"
     ],
-    "description": "Bloco periódico"
+    "description": "Repete enquanto a condição for verdadeira."
   },
-  "Função terminada em fim": {
-    "prefix": "funcaofim",
+  "Tratamento de erros": {
+    "prefix": "tente",
     "body": [
-      "funcao ${1:nome}(${2:parametros}): ${3:vazio}",
-      "\t${0}",
+      "tente: {",
+      "    ${1:passar}",
+      "    fim",
+      "}",
+      "erro ${2:ErroEsperado}: {",
+      "    ${3:exibir(\"Falha\") }",
+      "    fim",
+      "}",
+      "sempre: {",
+      "    ${4:passar}",
+      "    fim",
+      "}",
       "fim"
     ],
-    "description": "Declara função com terminador fim"
+    "description": "Monta tratamento com tente, erro e sempre."
   },
-  "Quando terminado em fim": {
-    "prefix": "quandofim",
-    "body": [
-      "quando ${1:condicao}",
-      "\t${0}",
-      "fim"
-    ],
-    "description": "Condicional com terminador fim"
+  "Lançar erro": {
+    "prefix": "lancar",
+    "body": "lancar erro ${1:\"Operacao invalida\"}",
+    "description": "Lança um erro."
   },
-  "Enquanto terminado em fim": {
-    "prefix": "enquantofim",
-    "body": [
-      "enquanto ${1:condicao}",
-      "\t${0}",
-      "fim"
-    ],
-    "description": "Laço com terminador fim"
-  },
-  "Estrutura": {
-    "prefix": "estrutura",
-    "body": [
-      "estrutura ${1:Nome} {",
-      "\t${2:campo}: ${3:tipo}",
-      "\t${0}",
-      "}"
-    ],
-    "description": "Declara uma estrutura"
-  },
-  "Enumeração": {
-    "prefix": [
-      "enumeracao",
-      "enumeração"
-    ],
-    "body": [
-      "enumeracao ${1:Nome} {",
-      "\t${2:PrimeiraVariante},",
-      "\t${0:SegundaVariante}",
-      "}"
-    ],
-    "description": "Declara uma enumeração"
-  },
-  "Alias de tipo": {
-    "prefix": "tipo",
-    "body": [
-      "tipo ${1:Nome} = ${2:TipoBase}"
-    ],
-    "description": "Define um alias de tipo"
-  },
-  "Incluir módulo": {
-    "prefix": "incluir",
-    "body": [
-      "incluir ${1:sistema::texto} como ${2:apelido}"
-    ],
-    "description": "Importa um módulo"
+  "Verificação": {
+    "prefix": "verifique",
+    "body": "verifique ${1:condicao}, ${2:\"Mensagem de erro\"}",
+    "description": "Verifica uma condição."
   },
   "Retornar": {
-    "prefix": "devolver",
+    "prefix": "retorne",
+    "body": "retorne ${1:valor}",
+    "description": "Encerra função e devolve um valor."
+  },
+  "Interromper laço": {
+    "prefix": "pare",
+    "body": "pare",
+    "description": "Interrompe o laço atual."
+  },
+  "Próxima iteração": {
+    "prefix": "prossiga",
+    "body": "prossiga",
+    "description": "Pula para a próxima iteração."
+  },
+  "Instrução vazia": {
+    "prefix": "passar",
+    "body": "passar",
+    "description": "Instrução sem operação."
+  },
+  "Importar biblioteca": {
+    "prefix": "incluir",
+    "body": "incluir(biblioteca: ${1:sistema})",
+    "description": "Importa uma biblioteca pela forma canônica."
+  },
+  "Importar módulo": {
+    "prefix": "incluirmodulo",
+    "body": "incluir(modulo: ${1:arquivos}, biblioteca: ${2:sistema})",
+    "description": "Importa módulo de uma biblioteca."
+  },
+  "Importar com apelido": {
+    "prefix": "incluircomo",
+    "body": "incluir(biblioteca: ${1:matematica}) como ${2:mat}",
+    "description": "Importa biblioteca e cria apelido."
+  },
+  "Classe": {
+    "prefix": "classe",
     "body": [
-      "devolver ${1:valor}"
+      "classe ${1:Nome}: {",
+      "    funcao construtor(${2:parametros}): {",
+      "        ${3:passar}",
+      "        fim",
+      "    } fim",
+      "    fim",
+      "} fim"
     ],
-    "description": "Retorna um valor"
+    "description": "Declara classe com corpo estrutural."
+  },
+  "Exportar função": {
+    "prefix": "exportarfuncao",
+    "body": [
+      "exportar funcao ${1:nome}(${2:parametros}): {",
+      "    retorne ${3:valor}",
+      "    fim",
+      "} fim"
+    ],
+    "description": "Exporta uma função."
+  },
+  "Função lambda": {
+    "prefix": "lambda",
+    "body": "variavel ${1:nome} = lambda ${2:parametro}: ${3:expressao}",
+    "description": "Cria uma função anônima."
+  },
+  "Função de seta": {
+    "prefix": "seta",
+    "body": "variavel ${1:nome} = (${2:parametros}) -> ${3:expressao}",
+    "description": "Cria uma função de seta."
+  },
+  "Objeto": {
+    "prefix": [
+      "objetos",
+      "objeto"
+    ],
+    "body": [
+      "objetos ${1:Nome}: {",
+      "    ${2:campo}: ${3:tipo}",
+      "    fim",
+      "} fim"
+    ],
+    "description": "Declara bloco estrutural de objetos conforme a sintaxe complementar."
+  },
+  "Dicionário": {
+    "prefix": "dicionarios",
+    "body": [
+      "dicionarios ${1:Nome}: {",
+      "    ${2:chave}: ${3:valor}",
+      "    fim",
+      "} fim"
+    ],
+    "description": "Declara bloco estrutural de dicionários."
+  },
+  "Tipo estruturado": {
+    "prefix": "estrutura",
+    "body": [
+      "estrutura ${1:Cabecalho}: {",
+      "    codigo: u32",
+      "    tamanho: u16",
+      "    fim",
+      "} fim"
+    ],
+    "description": "Exemplo de estrutura da camada Nebula Nativo; confirme suporte no compilador."
+  },
+  "Enumeração": {
+    "prefix": "enumeracao",
+    "body": [
+      "enumeracao ${1:Estado}: {",
+      "    ${2:Ativo}",
+      "    ${3:Inativo}",
+      "    fim",
+      "} fim"
+    ],
+    "description": "Declara enumeração; confirme suporte no compilador."
+  },
+  "Variável com tipo genérico": {
+    "prefix": "generico",
+    "body": "variavel ${1:itens}: vetor<${2:u8}> = ${3:valor}",
+    "description": "Exemplo de tipo genérico."
+  },
+  "Memória reservar": {
+    "prefix": "memreservar",
+    "body": "variavel ${1:regiao} = memoria.reservar(${2:tamanho}, ${3:alinhamento})",
+    "description": "Reserva região de memória; API de baixo nível."
+  },
+  "Memória alocar": {
+    "prefix": "memalocar",
+    "body": "variavel ${1:itens} = memoria.alocar<${2:u8}>(${3:quantidade})",
+    "description": "Aloca elementos tipados."
+  },
+  "Memória escrever": {
+    "prefix": "memescrever",
+    "body": "memoria.escrever<${1:u32}>(${2:regiao}, ${3:deslocamento}, ${4:valor})",
+    "description": "Escreve valor em região de memória."
+  },
+  "Memória ler": {
+    "prefix": "memler",
+    "body": "variavel ${1:valor} = memoria.ler<${2:u32}>(${3:regiao}, ${4:deslocamento})",
+    "description": "Lê valor de região de memória."
+  },
+  "Operação de bits": {
+    "prefix": "bitsdefinir",
+    "body": "variavel ${1:estado} = bits.definir(${2:valor}, ${3:indice})",
+    "description": "Define um bit."
+  },
+  "Privilégio": {
+    "prefix": "privilegio",
+    "body": [
+      "privilegio sistema: {",
+      "    ${1:cpu.interrupcoes.desabilitar()}",
+      "    fim",
+      "} fim"
+    ],
+    "description": "Abre bloco privilegiado; exige perfil e permissões compatíveis."
+  },
+  "Bloco crítico": {
+    "prefix": "critico",
+    "body": [
+      "critico: {",
+      "    ${1:passar}",
+      "    fim",
+      "} fim"
+    ],
+    "description": "Abre região crítica."
+  },
+  "Assembly embutido": {
+    "prefix": "montagem",
+    "body": "variavel ${1:resultado} = montagem ${2:x86_64}<${3:u64}>(entradas: [${4:10}], saidas: [${5:registrador.rax}], efeitos: [${6:registradores}], instrucoes: [${7:\"nop\"}])",
+    "description": "Expressão de Assembly com arquitetura, tipos, entradas, saídas e efeitos."
   },
   "Exibir": {
     "prefix": "exibir",
-    "body": [
-      "exibir(${1:valor})"
-    ],
-    "description": "Exibe um valor"
+    "body": "exibir(${1:valor})",
+    "description": "Exibe valor."
   },
-  "Receber": {
-    "prefix": "receber",
-    "body": [
-      "receber(${1:mensagem})"
-    ],
-    "description": "Recebe uma entrada"
+  "Ler texto": {
+    "prefix": "lerTexto",
+    "body": "variavel ${1:texto} = lerTexto(${2:\"Mensagem: \"})",
+    "description": "Lê texto do usuário."
   },
-  "Perguntar": {
-    "prefix": "perguntar",
-    "body": [
-      "perguntar(${1:mensagem})"
-    ],
-    "description": "Solicita uma entrada"
+  "Faixa": {
+    "prefix": "faixa",
+    "body": "faixa(${1:inicio}, ${2:fim})",
+    "description": "Gera sequência numérica."
   },
-  "Vetor": {
-    "prefix": "vetor",
+  "Nova linha de arquivo": {
+    "prefix": "lerArquivo",
     "body": [
-      "vetor<${1:tipo}>"
+      "variavel ${1:arquivo} = abrir(${2:\"dados.txt\"}, ${3:\"leitura\"})",
+      "variavel ${4:conteudo} = ler(${1:arquivo})",
+      "fechar(${1:arquivo})"
     ],
-    "description": "Modelo de tipo vetor"
+    "description": "Abre, lê e fecha um arquivo."
   },
-  "Resultado": {
-    "prefix": "resultado",
-    "body": [
-      "Resultado<${1:Sucesso}, ${2:Erro}>"
-    ],
-    "description": "Tipo de resultado"
+  "Async aguarda": {
+    "prefix": "aguarda",
+    "body": "variavel ${1:resultado} = aguarda ${2:operacaoAssincrona}()",
+    "description": "Aguarda operação assíncrona."
   },
-  "Avaliar": {
-    "prefix": "avaliar",
-    "body": [
-      "avaliar ${1:valor} {",
-      "\tcaso ${2:Tipo::Variante} {",
-      "\t\t${3}",
-      "\t}",
-      "\tcaso _ {",
-      "\t\t${0}",
-      "\t}",
-      "}"
-    ],
-    "description": "Correspondência de padrões"
+  "Registrador CPU": {
+    "prefix": "cpuregistro",
+    "body": "variavel ${1:valor} = cpu.registro.ler(${2:cpu.registro.rax})",
+    "description": "Exemplo de leitura de registrador; depende de arquitetura e privilégio."
   },
-  "Lista": {
-    "prefix": "lista",
-    "body": [
-      "[${1:tipo}]"
-    ],
-    "description": "Tipo de lista homogênea"
+  "Porta de I/O": {
+    "prefix": "portaler",
+    "body": "variavel ${1:valor} = porta.ler${2:8}(${3:0x60})",
+    "description": "Lê porta de I/O; disponível apenas em alvos compatíveis."
   },
-  "Matriz": {
-    "prefix": "matriz",
-    "body": [
-      "matriz<${1:tipo}>"
-    ],
-    "description": "Tipo de matriz homogênea"
+  "Registrar interrupção": {
+    "prefix": "interrupcao",
+    "body": "interrupcao.registrar(${1:33}, ${2:tratarInterrupcao})",
+    "description": "Registra manipulador de interrupção."
   },
-  "Tupla": {
-    "prefix": "tupla",
-    "body": [
-      "Tupla<${1:TipoA}, ${2:TipoB}>"
-    ],
-    "description": "Tipo de tupla"
+  "Transferência DMA": {
+    "prefix": "dma",
+    "body": "variavel ${1:transferencia} = dma.criar(${2:configuracao})",
+    "description": "Prepara transferência DMA."
   },
-  "Opcional": {
-    "prefix": "opcional",
-    "body": [
-      "Opcional<${1:tipo}>"
-    ],
-    "description": "Tipo opcional"
-  },
-  "Leitura de texto": {
-    "prefix": "lertexto",
-    "body": [
-      "ler_texto()"
-    ],
-    "description": "Lê uma linha de texto"
-  },
-  "Aguardar": {
-    "prefix": "aguardar",
-    "body": [
-      "aguardar(${1:milissegundos})"
-    ],
-    "description": "Aguarda um intervalo"
-  },
-  "Dormir": {
-    "prefix": "dormir",
-    "body": [
-      "dormir(${1:milissegundos})"
-    ],
-    "description": "Suspende a execução"
-  },
-  "Gerar coleção": {
-    "prefix": "gerar",
-    "body": [
-      "gerar(${1:valor}, ${2:quantidade})"
-    ],
-    "description": "Gera uma coleção com valores repetidos"
-  },
-  "Executar em paralelo": {
-    "prefix": "emparalelo",
-    "body": [
-      "em_paralelo(${1:funcao1}, ${2:funcao2})"
-    ],
-    "description": "Executa funções em paralelo"
-  },
-  "Parar": {
-    "prefix": "parar",
-    "body": [
-      "parar"
-    ],
-    "description": "Interrompe o laço atual"
-  },
-  "Encerrar": {
-    "prefix": "encerrar",
-    "body": [
-      "encerrar"
-    ],
-    "description": "Alias para parar"
-  },
-  "Seguir": {
-    "prefix": "seguir",
-    "body": [
-      "seguir"
-    ],
-    "description": "Avança para a próxima iteração"
-  },
-  "Função genérica": {
-    "prefix": "funcaogen",
-    "body": [
-      "funcao ${1:nome}<${2:T}>(${3:valor}: ${2:T}): ${2:T} {",
-      "\t${0}",
-      "}"
-    ],
-    "description": "Declara uma função genérica"
-  },
-  "Tipo de função": {
-    "prefix": "tipofuncao",
-    "body": [
-      "funcao(${1:TipoParametro}): ${2:TipoRetorno}"
-    ],
-    "description": "Declara um tipo de função"
-  },
-  "Enumeração com payload": {
-    "prefix": "enumpayload",
-    "body": [
-      "enumeracao ${1:Resultado} {",
-      "\t${2:Sucesso}(${3:inteiro}),",
-      "\t${4:Falha}(${5:texto})",
-      "\t${0}",
-      "}"
-    ],
-    "description": "Declara variantes de enumeração com dados associados"
+  "Operação atômica": {
+    "prefix": "atomico",
+    "body": "atomico.somar(${1:contador}, ${2:1}, ordem: ${3:relaxado})",
+    "description": "Soma atomicamente."
   }
 }

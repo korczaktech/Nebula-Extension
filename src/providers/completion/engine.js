@@ -1,8 +1,8 @@
 'use strict';
-const KEYWORDS=['variavel','definir','mutavel','mutável','alterar','constante','funcao','função','quando','senao','senão','avaliar','escolha','caso','para','cada','em','enquanto','durante','repetir','pulso','devolver','incluir','como','fim','parar','encerrar','seguir','e','ou','nao','não','publico','público','privado','tipo','estrutura','enumeracao','enumeração','verdadeiro','falso','nulo'];
-const BUILTINS=['exibir','receber','perguntar','ler_texto','aguardar','dormir','gerar','em_paralelo'];
-const CONSTANTS=['verdadeiro','falso','nulo'];
-const TYPES=['vazio','logico','lógico','inteiro','inteiro8','inteiro16','inteiro32','inteiro64','inteiro128','inteiro_u8','inteiro_u16','inteiro_u32','inteiro_u64','inteiro_u128','decimal','decimal32','decimal64','texto','caractere','byte','vetor','matriz','Tupla','Opcional','Resultado','funcao'];
+const KEYWORDS=['variavel','constante','funcao','fim','se','sendo','senao','para','enquanto','escolha','caso','padrao','pare','prossiga','passar','retorne','lambda','classe','incluir','de','como','ceder','tente','erro','sempre','lancar','verifique','com','async','aguarda','global','externa','isto','novo','apagar','dentro','fora','identico','nao','e','ou','sim','nulo','herda','estatico','privado','publico','protegido','exportar','construtor','tipoDe','instanciaDe','obter','definir','vazio','seguro','critico','privilegio','montagem','estrutura','enumeracao','objetos','dicionarios'];
+const BUILTINS=['exibir','lerTexto','abrir','fechar','ler','lerLinha','lerLinhas','escrever','escreverLinhas','abs','arredondar','divres','raiz','potencia','piso','teto','truncar','minimo','maximo','somar','inteiro','decimal','complexo','texto','logico','lista','tupla','conjunto','conImutavel','dicionario','octetos','vetorOctetos','tipoDe','faixa','tamanho','ordenar','inverter','enumerar','agrupar','filtrar','mapear','reduzir','visualizarMemoria','enderecoDe','tamanhoDe','alinhamentoDe','identidade','dividir','juntar','substituir','maiusculo','minusculo','localizar','contar','diretorioAtual','listarArquivos','criarDiretorio','removerArquivo','existe','executar'];
+const CONSTANTS=['sim','nao','nulo'];
+const TYPES=['inteiro','decimal','complexo','texto','logico','lista','tupla','conjunto','conImutavel','dicionario','octetos','vetorOctetos','bit','vetorBits','vazio','nulo','u8','u16','u32','u64','u128','i8','i16','i32','i64','i128','f32','f64','endereco','enderecoFisico','tamanho','deslocamento','ponteiro','ponteiroBruto','ponteiroVolatil','referencia','vetor','bloco','vetorSimd','atomico','resultado'];
 
 function maskNonCode(source){
  const chars=source.split('');let state='code',quote='';
@@ -75,7 +75,7 @@ function collectSymbols(source){
  }
  return {symbols,variables,structures,enums};
 }
-function getCompletionCandidates(source,cursorOffset){
+function getBaseCompletionCandidates(source,cursorOffset){
  const safeOffset=Math.max(0,Math.min(cursorOffset,source.length)),before=source.slice(0,safeOffset);
  if(!isCodePosition(source,safeOffset))return {candidates:[],wordStart:safeOffset,context:'general'};
  const masked=maskNonCode(before),lineStart=masked.lastIndexOf('\n')+1,line=masked.slice(lineStart);
@@ -105,4 +105,38 @@ function getCompletionCandidates(source,cursorOffset){
  const prefix=current.normalize('NFC').toLocaleLowerCase();
  return {candidates:[...unique.values()].filter(x=>x.label.normalize('NFC').toLocaleLowerCase().startsWith(prefix)),wordStart,context:expectsType?'type':'general'};
 }
-module.exports={KEYWORDS,BUILTINS,CONSTANTS,TYPES,maskNonCode,isCodePosition,splitTopLevel,splitTopLevelBy,collectSymbols,getCompletionCandidates};
+
+const MODULES=['memoria','ponteiro','bits','cpu','simd','hardware','porta','interrupcao','dma','atomico','cache','tempo','energia','registrador','tipo'];
+const MODULE_MEMBERS={
+memoria:['reservar','alocar','realocar','liberar','ler','escrever','copiar','mover','preencher','comparar','mapear','desmapear','proteger','sincronizar'],
+ponteiro:['de','nulo','endereco','avancar','recuar','ler','escrever','validar'],
+bits:['ler','definir','zerar','inverter','extrair','inserir','contar','primeiro','mascarar','rotacionarEsquerda','rotacionarDireita'],
+cpu:['arquitetura','fabricante','identificar','nucleos','capacidades','suporta','cache','simd','registro','nop','pausar','barreira','esperarEvento','parar','tique'],
+'cpu.registro':['ler','escrever','consultar','salvar','restaurar'],
+simd:['somar','subtrair','multiplicar','comparar','carregar','armazenar'],
+hardware:['detectar','consultar','conectar','desconectar','iniciar','parar','estado','capacidades','mapear','lerVolatil','escreverVolatil'],
+porta:['ler8','ler16','ler32','escrever8','escrever16','escrever32'],
+interrupcao:['registrar','remover','habilitar','desabilitar','aguardar','identificar','confirmar','prioridade'],
+dma:['criar','iniciar','parar','estado','aguardar','sincronizar','endereco','liberar'],
+atomico:['ler','escrever','trocar','somar','subtrair','compararTrocar','adquirir','liberar'],
+cache:['linha','precarregar','limpar','invalidar','escreverVolta','sincronizar'],
+tempo:['ciclos','tique','nanosegundos','microssegundos','milissegundos','aguardar','cronometro','frequencia'],
+energia:['estado','dormir','acordar','desligar','reiniciar']
+};
+function getCompletionCandidates(source,cursorOffset){
+ const result=getBaseCompletionCandidates(source,cursorOffset);
+ const before=source.slice(0,Math.max(0,Math.min(cursorOffset,source.length)));
+ const member=before.match(/([\p{XID_Start}_][\p{XID_Continue}_]*(?:\.[\p{XID_Start}_][\p{XID_Continue}_]*)*)\.\s*([\p{XID_Continue}_]*)$/u);
+ if(member&&result.context==='member'){
+  const names=MODULE_MEMBERS[member[1]]||[];
+  const existing=new Set(result.candidates.map(x=>x.label));
+  for(const label of names)if(label.toLocaleLowerCase().startsWith((member[2]||'').toLocaleLowerCase())&&!existing.has(label))result.candidates.push({label,kind:'function',detail:member[1]+' · API nativa',documentation:'Operação catalogada na especificação Nebula Nativo: '+member[1]+'.'+label+'. A presença na lista não garante implementação no compilador.',insertText:label+'($0)'});
+ }
+ if(result.context==='general'){
+  const prefix=before.slice(result.wordStart).normalize('NFC').toLocaleLowerCase();
+  for(const label of MODULES)if(label.normalize('NFC').toLocaleLowerCase().startsWith(prefix)&&!result.candidates.some(x=>x.label===label))result.candidates.push({label,kind:'module',detail:'Módulo Nebula Nativo',documentation:'Módulo de API de sistemas/hardware definido em NEBULA-SINTAXE-2.md.'});
+ }
+ return result;
+}
+
+module.exports={KEYWORDS,BUILTINS,CONSTANTS,TYPES,MODULES,MODULE_MEMBERS,maskNonCode,isCodePosition,splitTopLevel,splitTopLevelBy,collectSymbols,getCompletionCandidates};
