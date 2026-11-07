@@ -68,7 +68,7 @@ test('operadores atuais e delimitadores possuem escopos', () => {
 test('os três temas estão registrados e existem', () => {
   assert.equal(manifest.contributes.themes.length, 3);
   for (const theme of manifest.contributes.themes) {
-    const path = new URL('../../' + theme.path.replace(/^\\.\\//, ''), import.meta.url);
+    const path = new URL('../../' + theme.path.replace(/^\.\//, ''), import.meta.url);
     const data = JSON.parse(readFileSync(path, 'utf8'));
     assert.ok(data.tokenColors.length >= 10);
   }
@@ -80,7 +80,7 @@ test('todos os temas aplicam cores às categorias semânticas', () => {
     'constant.numeric','storage.type.primitive.nebula','variable.other.nebula','string.quoted'
   ];
   for (const theme of manifest.contributes.themes) {
-    const data = JSON.parse(readFileSync(new URL('../../' + theme.path.replace(/^\\.\\//, ''), import.meta.url), 'utf8'));
+    const data = JSON.parse(readFileSync(new URL('../../' + theme.path.replace(/^\.\//, ''), import.meta.url), 'utf8'));
     const entries = data.tokenColors.flatMap(token => Array.isArray(token.scope) ? token.scope : [token.scope]);
     for (const category of categories) assert.ok(entries.includes(category), `Escopo ${category} ausente no tema ${theme.label}`);
   }
