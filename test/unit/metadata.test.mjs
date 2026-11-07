@@ -20,7 +20,7 @@ test('gramática TextMate declarada existe e contém os escopos principais', asy
   const grammarPath = manifest.contributes.grammars[0].path.replace(/^\.\//, '');
   const grammar = await readJson(grammarPath);
   assert.equal(grammar.scopeName, 'source.nebula');
-  for (const section of ['keywords', 'strings', 'numbers', 'comments', 'operators']) {
+  for (const section of ['control', 'strings', 'numbers', 'comments', 'operators']) {
     assert.ok(grammar.repository[section], `Seção ausente: ${section}`);
   }
 });
