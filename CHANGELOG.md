@@ -2,6 +2,15 @@
 
 ## [0.0.7] - 2026-11-06
 
+- Refeito o TextMate grammar para acompanhar `NEBULA-SINTAXE.md` e `NEBULA-SINTAXE-2.md`.
+- Adicionados escopos distintos para fluxo de controle, declarações, funções, builtins, módulos, tipos, argumentos, membros, operadores, números, strings e comentários.
+- Corrigidas as palavras reservadas antigas e reconhecidos os delimitadores e operadores atuais, incluindo Function Body e `fim`.
+- Adicionados os temas Nebula Clássico e Nebula Claro; Nebula Vibrante atualizado. Total: três temas.
+- Ampliados os testes de gramática e tokenização TextMate.
+
+
+## [0.0.7] - 2026-11-06
+
 - Atualizada a versão do pacote para 0.0.7.
 - Corrigido o teste de release que ainda fixava a versão anterior 0.0.6.
 - Mantida a validação do pacote VSIX e do adaptador de depuração DAP no pipeline de CI.
