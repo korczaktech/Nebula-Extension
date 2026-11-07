@@ -3,86 +3,73 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 const grammar = JSON.parse(readFileSync(new URL('../../syntaxes/nebula.tmLanguage.json', import.meta.url), 'utf8'));
-const fixture = readFileSync(new URL('../fixtures/basic.nbx', import.meta.url), 'utf8');
+const manifest = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
 
 function collectPatterns(value, result = []) {
   if (!value || typeof value !== 'object') return result;
-  if (Array.isArray(value)) {
-    for (const item of value) collectPatterns(item, result);
-    return result;
-  }
-  if (typeof value.match === 'string') result.push({ kind: 'match', value: value.match });
-  if (typeof value.begin === 'string') result.push({ kind: 'begin', value: value.begin });
-  if (typeof value.end === 'string') result.push({ kind: 'end', value: value.end });
+  if (Array.isArray(value)) { for (const item of value) collectPatterns(item, result); return result; }
+  for (const key of ['match', 'begin', 'end']) if (typeof value[key] === 'string') result.push({ kind: key, value: value[key] });
   for (const child of Object.values(value)) collectPatterns(child, result);
   return result;
 }
 
-test('a gramática declara o escopo source.nebula', () => {
+test('a gramática registra o escopo Nebula e todas as categorias', () => {
   assert.equal(grammar.scopeName, 'source.nebula');
-  assert.ok(grammar.patterns.length >= 10);
+  for (const section of ['comments','strings','numbers','constants','declarations','control','modifiers','builtins','types','typeAnnotations','functionCalls','namedArguments','operators','punctuation','identifiers']) {
+    assert.ok(grammar.repository[section], `Seção ausente: ${section}`);
+  }
 });
 
 test('todas as expressões regulares da gramática são compiláveis', () => {
   const patterns = collectPatterns(grammar);
-  assert.ok(patterns.length >= 25);
-  for (const pattern of patterns) {
-    assert.doesNotThrow(() => new RegExp(pattern.value, 'u'), `${pattern.kind}: ${pattern.value}`);
-  }
+  assert.ok(patterns.length >= 35);
+  for (const pattern of patterns) assert.doesNotThrow(() => new RegExp(pattern.value, 'u'), `${pattern.kind}: ${pattern.value}`);
 });
 
-test('todas as palavras reservadas cadastradas na extensão estão contempladas', () => {
-  const source = grammar.repository.keywords.patterns.map(pattern => pattern.match).join('|');
-  const declarations = grammar.repository.declarations.patterns.map(pattern => pattern.match).join('|');
-  const constants = grammar.repository.constants.patterns.map(pattern => pattern.match).join('|');
-  const all = source + '|' + declarations + '|' + constants;
+test('palavras reservadas da sintaxe principal recebem escopo de controle', () => {
+  const source = grammar.repository.control.patterns.map(pattern => pattern.match).join('|');
   const words = [
-    'variavel', 'definir', 'mutavel', 'mutável', 'alterar', 'constante',
-    'funcao', 'função', 'quando', 'senao', 'senão', 'avaliar', 'escolha',
-    'caso', 'para', 'cada', 'em', 'enquanto', 'durante', 'repetir', 'pulso',
-    'devolver', 'incluir', 'como', 'verdadeiro', 'falso', 'nulo', 'fim',
-    'parar', 'encerrar', 'seguir', 'e', 'ou', 'nao', 'não', 'publico',
-    'público', 'privado', 'tipo', 'estrutura', 'enumeracao', 'enumeração'
+    'se','sendo','senao','para','enquanto','escolha','caso','padrao','pare','prossiga','passar','retorne',
+    'funcao','lambda','classe','incluir','de','como','ceder','tente','erro','sempre','lancar','verifique',
+    'com','async','aguarda','global','externa','isto','novo','apagar','dentro','fora','identico','nao',
+    'e','ou','variavel','constante','herda','estatico','privado','publico','protegido','construtor',
+    'tipoDe','instanciaDe','obter','definir','vazio','seguro','critico','privilegio','montagem','fim','exportar'
   ];
-  for (const word of words) assert.ok(all.includes(word), `Palavra ausente: ${word}`);
+  for (const word of words) assert.ok(source.includes(word), `Palavra reservada ausente: ${word}`);
+  for (const obsolete of ['quando','avaliar','devolver','parar','encerrar','seguir','assinc','mutavel','estrutura','enumeracao']) {
+    assert.ok(!source.includes(obsolete), `Palavra antiga ainda presente: ${obsolete}`);
+  }
 });
 
-test('nomes de builtins são realçados como funções, não como palavras reservadas', () => {
+test('tipos de dados da sintaxe principal e nativa estão cobertos', () => {
+  const types = grammar.repository.types.patterns.map(pattern => pattern.match).join('|');
+  for (const word of ['inteiro','decimal','complexo','texto','logico','vazio','lista','tupla','conjunto','conImutavel','dicionario','octetos','vetorOctetos','bit','vetorBits','u8','u16','u32','u64','u128','i8','i16','i32','i64','i128','f32','f64','endereco','enderecoFisico','tamanho','deslocamento','ponteiro','ponteiroBruto']) {
+    assert.ok(types.includes(word), `Tipo ausente: ${word}`);
+  }
+});
+
+test('funções nativas e módulos do catálogo recebem escopos próprios', () => {
   const builtins = grammar.repository.builtins.patterns.map(pattern => pattern.match).join('|');
-  for (const name of ['exibir', 'receber', 'perguntar', 'ler_texto', 'aguardar', 'dormir', 'gerar', 'em_paralelo']) {
-    assert.ok(builtins.includes(name), `Builtin ausente: ${name}`);
+  for (const word of ['exibir','lerTexto','abrir','fechar','ler','escrever','abs','arredondar','divres','raiz','potencia','faixa','tamanho','ordenar','enumerar','filtrar','mapear','reduzir','visualizarMemoria','enderecoDe','diretorioAtual','listarArquivos','criarDiretorio','removerArquivo']) {
+    assert.ok(builtins.includes(word), `Builtin ausente: ${word}`);
   }
-  assert.ok(!grammar.repository.keywords.patterns.some(pattern => /exibir|receber|perguntar|aguardar|dormir|gerar|em_paralelo/.test(pattern.match)));
+  const modules = grammar.repository.builtins.patterns[1].match;
+  for (const word of ['bits','cpu','hardware','memoria','ponteiro','simd','porta','interrupcao','dma']) assert.ok(modules.includes(word));
 });
 
-test('a gramática diferencia tipos primitivos e tipos de coleção', () => {
-  const primitive = grammar.repository.types.patterns[0].match;
-  const containers = grammar.repository.types.patterns[1].match;
-  for (const name of ['vazio', 'logico', 'lógico', 'inteiro', 'inteiro128', 'inteiro_u64', 'decimal', 'decimal32', 'texto', 'caractere', 'byte']) {
-    assert.ok(new RegExp(primitive, 'u').test(name), `Tipo primitivo ausente: ${name}`);
+test('operadores atuais e delimitadores possuem escopos', () => {
+  const operators = grammar.repository.operators.patterns.map(pattern => pattern.match).join('|');
+  for (const op of ['=\\\\+','\\\\+=','\\\\?\\\\?','->','>>>','<<','>>','\\\\.\\\\.','\\\\?\\\\.','\\\\\\\\\\\\\\\\']) {
+    assert.ok(operators.includes(op), `Operador ausente: ${op}`);
   }
-  for (const name of ['vetor', 'matriz', 'Tupla', 'Opcional', 'Resultado']) {
-    assert.ok(new RegExp(containers, 'u').test(name), `Tipo composto ausente: ${name}`);
+  assert.ok(grammar.repository.punctuation.patterns.some(pattern => pattern.match.includes('<')));
+});
+
+test('os três temas estão registrados e existem', () => {
+  assert.equal(manifest.contributes.themes.length, 3);
+  for (const theme of manifest.contributes.themes) {
+    const path = new URL('../../' + theme.path.replace(/^\\.\\//, ''), import.meta.url);
+    const data = JSON.parse(readFileSync(path, 'utf8'));
+    assert.ok(data.tokenColors.length >= 10);
   }
-});
-
-test('tipos definidos pelo usuário recebem escopo em anotações', () => {
-  const annotation = grammar.repository.typeAnnotations;
-  assert.equal(annotation.name, 'meta.type.annotation.nebula');
-  assert.ok(annotation.patterns.some(pattern => pattern.name === 'entity.name.type.reference.nebula'));
-});
-
-test('a gramática identifica recursos futuros como inválidos', () => {
-  const future = grammar.repository.reservedFuture.patterns[0];
-  assert.match(future.name, /^invalid\.illegal/);
-  for (const word of ['tentar', 'capturar', 'finalmente', 'assinc']) assert.ok(future.match.includes(word));
-});
-
-test('o fixture cobre as principais construções léxicas e sintáticas', () => {
-  for (const sample of [
-    '/* comentário de bloco */', 'variavel nome: texto', "'N'", '0x2A', '0b1010', '0o17',
-    'verdadeiro', 'falso', 'nulo', 'variavel', 'constante', 'funcao',
-    'quando', 'senao', 'escolha', 'caso', 'enquanto', 'cada', 'pulso',
-    'estrutura', 'enumeracao', 'incluir', 'exibir(', 'receber(', '<-', '**', '..', '::'
-  ]) assert.ok(fixture.includes(sample), `Fixture sem: ${sample}`);
 });
