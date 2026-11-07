@@ -292,6 +292,15 @@
     "namedArguments": {
       "patterns": [
         {
+          "name": "meta.member-access.nebula",
+          "match": "(?:\\\\.|::)\\\\s*([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
+          "captures": {
+            "1": {
+              "name": "variable.other.member.nebula"
+            }
+          }
+        },
+        {
           "name": "variable.parameter.argument.nebula",
           "match": "([\\p{XID_Start}_][\\p{XID_Continue}_]*)(?=\\s*=\\s*[^=])"
         },
@@ -317,7 +326,7 @@
         },
         {
           "name": "keyword.operator.bitwise.nebula",
-          "match": ">>>|<<|>>|\\&|\\||\\^|~"
+          "match": ">>>|<<|>>|[&|^~]"
         },
         {
           "name": "keyword.operator.arithmetic.nebula",
