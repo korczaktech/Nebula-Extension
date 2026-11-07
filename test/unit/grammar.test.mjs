@@ -73,3 +73,12 @@ test('os três temas estão registrados e existem', () => {
     assert.ok(data.tokenColors.length >= 10);
   }
 });
+
+test('todos os temas aplicam a paleta semântica solicitada', () => {
+  const required = ['#FF5C5C','#69A7FF','#B58CFF','#FF9F43','#FFD166','#FFFFFF','#55C878'];
+  for (const theme of manifest.contributes.themes) {
+    const data = JSON.parse(readFileSync(new URL('../../' + theme.path.replace(/^\\.\\//, ''), import.meta.url), 'utf8'));
+    const colors = data.tokenColors.map(token => token.settings.foreground);
+    for (const color of required) assert.ok(colors.includes(color), `Cor ${color} ausente no tema ${theme.label}`);
+  }
+});
