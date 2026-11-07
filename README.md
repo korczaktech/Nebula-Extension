@@ -95,6 +95,12 @@ O código-fonte da linguagem permanece em [Nebula](https://github.com/korczaktec
 - Gramática: `syntaxes/nebula.tmLanguage.json`.
 - Snippets: `snippets/nebula.json`.
 
+## 3.1. Temas e syntax highlighting
+
+O realce de sintaxe segue `NEBULA-SINTAXE.md` e `NEBULA-SINTAXE-2.md`: palavras de controle, declarações, modificadores, tipos, funções nativas, módulos de hardware, argumentos nomeados, operadores, números, strings, comentários e delimitadores recebem escopos separados. Os temas aplicam uma paleta consistente inspirada na legibilidade do Python: vermelho para fluxo de controle, roxo para declarações, azul para funções, laranja para números, amarelo para tipos e constantes, verde para strings e branco para identificadores comuns.
+
+Temas incluídos: **Nebula Vibrante** (escuro), **Nebula Clássico** (escuro) e **Nebula Claro** (claro). Selecione-os em `Preferências: Tema de Cores` no VS Code.
+
 ## 4. Comandos
 
 Os comandos registrados no manifesto incluem:
