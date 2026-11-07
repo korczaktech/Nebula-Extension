@@ -160,6 +160,16 @@
         "label": "Nebula Vibrante",
         "uiTheme": "vs-dark",
         "path": "./themes/nebula-vibrante-color-theme.json"
+      },
+      {
+        "label": "Nebula Clássico",
+        "uiTheme": "vs-dark",
+        "path": "./themes/nebula-classico-color-theme.json"
+      },
+      {
+        "label": "Nebula Claro",
+        "uiTheme": "vs",
+        "path": "./themes/nebula-claro-color-theme.json"
       }
     ],
     "menus": {
