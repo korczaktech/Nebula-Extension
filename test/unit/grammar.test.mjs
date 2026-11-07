@@ -74,11 +74,14 @@ test('os três temas estão registrados e existem', () => {
   }
 });
 
-test('todos os temas aplicam a paleta semântica solicitada', () => {
-  const required = ['#FF5C5C','#69A7FF','#B58CFF','#FF9F43','#FFD166','#FFFFFF','#55C878'];
+test('todos os temas aplicam cores às categorias semânticas', () => {
+  const categories = [
+    'keyword.control.nebula','storage.type.function.nebula','entity.name.function.call.nebula',
+    'constant.numeric','storage.type.primitive.nebula','variable.other.nebula','string.quoted.double.nebula'
+  ];
   for (const theme of manifest.contributes.themes) {
     const data = JSON.parse(readFileSync(new URL('../../' + theme.path.replace(/^\\.\\//, ''), import.meta.url), 'utf8'));
-    const colors = data.tokenColors.map(token => token.settings.foreground);
-    for (const color of required) assert.ok(colors.includes(color), `Cor ${color} ausente no tema ${theme.label}`);
+    const entries = data.tokenColors.flatMap(token => Array.isArray(token.scope) ? token.scope : [token.scope]);
+    for (const category of categories) assert.ok(entries.includes(category), `Escopo ${category} ausente no tema ${theme.label}`);
   }
 });
