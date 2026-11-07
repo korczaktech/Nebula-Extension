@@ -77,7 +77,7 @@ test('os três temas estão registrados e existem', () => {
 test('todos os temas aplicam cores às categorias semânticas', () => {
   const categories = [
     'keyword.control.nebula','storage.type.function.nebula','entity.name.function.call.nebula',
-    'constant.numeric','storage.type.primitive.nebula','variable.other.nebula','string.quoted.double.nebula'
+    'constant.numeric','storage.type.primitive.nebula','variable.other.nebula','string.quoted'
   ];
   for (const theme of manifest.contributes.themes) {
     const data = JSON.parse(readFileSync(new URL('../../' + theme.path.replace(/^\\.\\//, ''), import.meta.url), 'utf8'));
