@@ -293,7 +293,7 @@
       "patterns": [
         {
           "name": "meta.member-access.nebula",
-          "match": "(?:\\\\.|::)\\\\s*([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
+          "match": "(?:\\.|::)\\s*([\\p{XID_Start}_][\\p{XID_Continue}_]*)",
           "captures": {
             "1": {
               "name": "variable.other.member.nebula"
