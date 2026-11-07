@@ -35,7 +35,7 @@ A extensão não deve criar uma implementação paralela da linguagem. O compila
 - Configuração de indentação e pares de delimitadores.
 - Snippets para estruturas frequentes.
 - Ícones próprios para arquivos Nebula.
-- Tema de cores Nebula Vibrante.
+- Três temas: Nebula Vibrante, Nebula Clássico e Nebula Claro.
 - Sugestões contextuais e integração com os provedores de linguagem.
 
 ### Inteligência de linguagem
