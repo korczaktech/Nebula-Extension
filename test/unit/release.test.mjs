@@ -79,7 +79,7 @@ test('CI valida o protocolo DAP do compilador incorporado', () => {
 
 test('inclui adaptador DAP no pacote final', () => {
   const manifest = JSON.parse(read('package.json'));
-  assert.match(manifest.version, /^\\d+\\.\\d+\\.\\d+$/);
+  assert.match(manifest.version, /^\d+\.\d+\.\d+$/);
   assert.ok(manifest.scripts['check-output'].includes('out/debug/adapter.js'));
   assert.ok(read('scripts/verify-vsix.mjs').includes('extension/out/debug/adapter.js'));
 });
