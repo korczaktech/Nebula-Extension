@@ -151,17 +151,17 @@
   },
   "Importar biblioteca": {
     "prefix": "incluir",
-    "body": "incluir(biblioteca: ${1:sistema})",
+    "body": "incluir biblioteca ${1:sistema}",
     "description": "Importa uma biblioteca pela forma canônica."
   },
   "Importar módulo": {
     "prefix": "incluirmodulo",
-    "body": "incluir(modulo: ${1:arquivos}, biblioteca: ${2:sistema})",
+    "body": "incluir modulo ${1:arquivos} de ${2:sistema}",
     "description": "Importa módulo de uma biblioteca."
   },
   "Importar com apelido": {
     "prefix": "incluircomo",
-    "body": "incluir(biblioteca: ${1:matematica}) como ${2:mat}",
+    "body": "incluir biblioteca ${1:matematica} como ${2:mat}",
     "description": "Importa biblioteca e cria apelido."
   },
   "Classe": {
