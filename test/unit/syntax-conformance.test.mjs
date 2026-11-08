@@ -28,5 +28,5 @@ test('indentação depende de delimitadores e não de palavras de fechamento',()
 test('documentação e exemplos não ensinam o terminador antigo',()=>{
  assert.ok(!/\bfim\b/.test(provider));
  assert.ok(!docs.includes('fim interno'));
- assert.ok(docs.includes('chave \`}\`'));
+ assert.ok(docs.includes('correspondente'));
 });
