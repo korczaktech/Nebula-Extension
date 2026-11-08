@@ -54,8 +54,8 @@
     "comments": {
       "patterns": [
         {
-          "name": "comment.line.number-sign.nebula",
-          "match": "#[^\\r\\n]*"
+          "name": "comment.line.double-slash.nebula",
+          "match": "//[^\\r\\n]*"
         },
         {
           "name": "comment.block.nebula",
@@ -148,7 +148,7 @@
       "patterns": [
         {
           "name": "constant.language.boolean.nebula",
-          "match": "(?<![\\p{XID_Continue}_])(?:sim|nao)(?![\\p{XID_Continue}_])"
+          "match": "(?<![\\\\p{XID_Continue}_])(?:sim|verdadeiro|falso)(?![\\\\p{XID_Continue}_])"
         },
         {
           "name": "constant.language.null.nebula",
@@ -211,7 +211,7 @@
       "patterns": [
         {
           "name": "keyword.control.nebula",
-          "match": "(?<![\\p{XID_Continue}_])(?:instanciaDe|construtor|privilegio|verifique|constante|protegido|enquanto|prossiga|identico|variavel|estatico|montagem|exportar|escolha|retorne|incluir|aguarda|externa|privado|publico|definir|critico|padrao|passar|funcao|lambda|classe|sempre|lancar|global|apagar|dentro|tipoDe|seguro|sendo|senao|ceder|tente|async|herda|obter|vazio|caso|para|pare|como|erro|isto|novo|fora|com|nao|fim|se|de|ou|e)(?![\\p{XID_Continue}_])"
+          "match": "(?<![\\\\p{XID_Continue}_])(?:instanciaDe|construtor|privilegio|verifique|constante|protegido|enquanto|prossiga|identico|variavel|estatico|montagem|exportar|escolha|retorne|incluir|aguarda|externa|privado|publico|definir|critico|padrao|passar|funcao|lambda|classe|sempre|lancar|global|apagar|dentro|tipoDe|seguro|sendo|senao|ceder|tente|async|herda|obter|vazio|caso|para|pare|como|erro|isto|novo|fora|com|nao|de|ou|e|tipo)(?![\\\\p{XID_Continue}_])"
         },
         {
           "name": "keyword.operator.word.logical.nebula",
@@ -223,7 +223,7 @@
       "patterns": [
         {
           "name": "storage.modifier.nebula",
-          "match": "(?<![\\p{XID_Continue}_])(?:protegido|estatico|publico|privado|externa|global|async)(?![\\p{XID_Continue}_])"
+          "match": "(?<![\\\\p{XID_Continue}_])(?:protegido|estatico|publico|privado|externa|global|async)(?![\\\\p{XID_Continue}_])"
         }
       ]
     },
@@ -243,7 +243,7 @@
       "patterns": [
         {
           "name": "storage.type.primitive.nebula",
-          "match": "(?<![\\p{XID_Continue}_])(?:enderecoFisico|vetorOctetos|deslocamento|vetorBits|complexo|endereco|inteiro|decimal|octetos|tamanho|logico|texto|vazio|u128|i128|bit|u16|u32|u64|i16|i32|i64|f32|f64|u24|u48|u8|i8)(?![\\p{XID_Continue}_])"
+          "match": "(?<![\\\\p{XID_Continue}_])(?:inteiro_u128|inteiro_u64|inteiro_u32|inteiro_u16|inteiro_u8|inteiro128|inteiro64|inteiro32|inteiro16|inteiro8|decimal64|decimal32|enderecoFisico|deslocamento|caractere|complexo|endereco|inteiro|decimal|logico|texto|vazio|tamanho|byte|u128|u64|u32|u16|u8|i128|i64|i32|i16|i8|f64|f32)(?![\\\\p{XID_Continue}_])"
         },
         {
           "name": "support.type.container.nebula",
@@ -326,7 +326,7 @@
         },
         {
           "name": "keyword.operator.assignment.nebula",
-          "match": "(?:=\\*\\*|=\\\\|=\\+|=-|=\\*|=/|=%|\\*\\*=|\\\\=|\\+=|-=|\\*=|/=|%=|\\?\\?=|=|\\+\\+|--)"
+          "match": "(?:\\\\*\\\\*=|//=|\\\\?\\\\?=|\\\\+=|-=|\\\\*=|/=|%=|=|\\\\+\\\\+|--)"
         },
         {
           "name": "keyword.operator.comparison.nebula",
@@ -342,7 +342,7 @@
         },
         {
           "name": "keyword.operator.arithmetic.nebula",
-          "match": "\\*\\*|[+*/%\\-]|\\\\\\\\"
+          "match": "\\\\*\\\\*|//|[+*/%\\\\-]|\\\\\\\\"
         }
       ]
     },
@@ -355,10 +355,6 @@
         {
           "name": "punctuation.separator.colon.nebula",
           "match": ":"
-        },
-        {
-          "name": "punctuation.section.group.begin.nebula",
-          "match": "[({\\[<]"
         },
         {
           "name": "punctuation.section.group.end.nebula",
