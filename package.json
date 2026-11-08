@@ -2,7 +2,7 @@
   "name": "nbx-language",
   "displayName": "Suporte à Linguagem Nebula",
   "description": "Suporte oficial à linguagem Nebula no Visual Studio Code.",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "publisher": "KorczakTechnologiesBR",
   "author": "Korczak Technologies",
   "license": "SEE LICENSE IN LICENSE",
