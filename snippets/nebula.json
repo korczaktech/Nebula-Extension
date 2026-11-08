@@ -16,7 +16,7 @@
       "    ${4:passar}",
       "}"
     ],
-    "description": "Declara função com Function Body e."
+    "description": "Declara função com Function Body e fechamento pela chave correspondente."
   },
   "Função pública": {
     "prefix": "funcaop",
@@ -338,5 +338,44 @@
       "}"
     ],
     "description": "Laço tradicional com inicialização, condição e atualização."
+  },
+  "Alias de tipo": {
+    "prefix": "tipo",
+    "body": "tipo ${1:Nome} = ${2:Tipo}",
+    "description": "Declara um alias transparente de tipo."
+  },
+  "Definir variável": {
+    "prefix": "definir",
+    "body": "definir ${1:nome} = ${2:valor}",
+    "description": "Declara ou define uma variável."
+  },
+  "Variável mutável": {
+    "prefix": "mutavel",
+    "body": "mutavel ${1:nome}: ${2:tipo} = ${3:valor}",
+    "description": "Declara uma variável mutável com tipo explícito."
+  },
+  "Alterar valor": {
+    "prefix": "alterar",
+    "body": "alterar ${1:nome} = ${2:valor}",
+    "description": "Altera um valor por meio de atribuição."
+  },
+  "Contexto com": {
+    "prefix": "com",
+    "body": [
+      "com ${1:recurso} como ${2:nome}: {",
+      "    ${3:passar}",
+      "}"
+    ],
+    "description": "Executa um bloco associado a um recurso."
+  },
+  "Variável global": {
+    "prefix": "global",
+    "body": "global ${1:nome}",
+    "description": "Declara referência a uma variável global."
+  },
+  "Referência externa": {
+    "prefix": "externa",
+    "body": "externa ${1:nome}",
+    "description": "Declara referência a uma variável externa."
   }
 }
