@@ -22,6 +22,7 @@ test('completion filtra palavras, funções e tipos',()=>{
  assert.ok(fn);assert.equal(fn.insertText,'lerTexto($0)');
  const source='variavel x: u';const type=engine.getCompletionCandidates(source,source.length);
  assert.equal(type.context,'type');assert.ok(type.candidates.some(x=>x.label==='u64'));
+ const block='se idade: ';assert.notEqual(engine.getCompletionCandidates(block,block.length).context,'type');
 });
 test('reconhece função com retorno por seta e modificadores',()=>{
  const source='async publico funcao consultar<T>(valor: Resultado<inteiro, texto>) -> Resultado<T, texto>: {\n    retorne valor\n}';
