@@ -20,18 +20,6 @@ jobs:
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
-      - name: Incrementar versão patch da extensão
-        if: github.event_name != 'pull_request'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          npm version patch --no-git-tag-version
-          VERSION="$(node -p "require('./package.json').version")"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json
-          git commit -m "chore: bump extension version to ${VERSION} [skip ci]"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -69,6 +57,18 @@ jobs:
         run: npm run check-output
       - name: Testes de integração no VS Code
         run: xvfb-run -a npm run test:integration
+      - name: Incrementar versão patch da extensão
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          npm version patch --no-git-tag-version
+          VERSION="$(node -p "require('./package.json').version")"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump extension version to ${VERSION} [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
       - name: Empacotar e validar VSIX
         run: npm run package:ci
       - name: Publicar artefato VSIX
