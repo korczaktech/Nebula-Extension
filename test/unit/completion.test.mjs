@@ -20,7 +20,7 @@ test('completion filtra palavras, funções e tipos',()=>{
  assert.ok(engine.getCompletionCandidates('sena',4).candidates.some(x=>x.label==='senao'));
  const fn=engine.getCompletionCandidates('lerT',4).candidates.find(x=>x.label==='lerTexto');
  assert.ok(fn);assert.equal(fn.insertText,'lerTexto($0)');
- const type=engine.getCompletionCandidates('variavel x: u',13);
+ const source='variavel x: u';const type=engine.getCompletionCandidates(source,source.length);
  assert.equal(type.context,'type');assert.ok(type.candidates.some(x=>x.label==='u64'));
 });
 test('reconhece função com retorno por seta e modificadores',()=>{
@@ -53,8 +53,8 @@ test('snippets têm estrutura válida e não usam fim como terminador',()=>{
   assert.ok(typeof item.description==='string'&&item.description.length>0,name+': descrição ausente');
   const body=Array.isArray(item.body)?item.body.join('\n'):item.body;
   assert.ok(typeof body==='string'&&body.length>0,name+': corpo ausente');
-  assert.ok(!/(^|\\n)\\s*fim\\s*(?=\\n|$)/m.test(body),name+': terminador fim indevido');
-  assert.ok(!/}\\s*fim\\b/.test(body),name+': fechamento antigo');
+  assert.ok(!/(^|\n)\s*fim\s*(?=\n|$)/m.test(body),name+': terminador fim indevido');
+  assert.ok(!/}\s*fim\b/.test(body),name+': fechamento antigo');
  }
 });
 test('manifesto registra os snippets e a versão corrigida',()=>{
