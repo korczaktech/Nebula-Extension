@@ -216,7 +216,7 @@
   },
   "Variável com tipo genérico": {
     "prefix": "generico",
-    "body": "variavel ${1:itens}: vetor<${2:u8}> = ${3:valor}",
+    "body": "variavel ${1:itens}: Vetor<${2:u8}> = ${3:valor}",
     "description": "Exemplo de tipo genérico."
   },
   "Memória reservar": {
