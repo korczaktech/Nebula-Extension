@@ -57,6 +57,8 @@ jobs:
         run: npm run check-output
       - name: Testes de integração no VS Code
         run: xvfb-run -a npm run test:integration
+      - name: Empacotar e validar VSIX
+        run: npm run package:ci
       - name: Incrementar versão patch da extensão
         if: github.event_name != 'pull_request'
         env:
@@ -69,7 +71,7 @@ jobs:
           git add package.json
           git commit -m "chore: bump extension version to ${VERSION} [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"
-      - name: Empacotar e validar VSIX
+      - name: Empacotar VSIX com a nova versão
         run: npm run package:ci
       - name: Publicar artefato VSIX
         uses: actions/upload-artifact@v4
