@@ -35,6 +35,16 @@ child.stdout.on('data', chunk => {
 child.stderr.on('data', chunk => { stderr += chunk.toString(); });
 
 const uri = 'file:///nebula-lsp-smoke.nbx';
+const codigoSemFim = [
+  'funcao principal(): {',
+  '    quando verdadeiro: {',
+  '        passar',
+  '    }',
+  '    variavel fim = 42',
+  '}'
+].join('\n');
+const codigoLegado = 'funcao principal()\n    passar\n';
+const codigoSemChaveFinal = 'funcao principal(): {\n    passar\n';
 const requests = [
   { jsonrpc: '2.0', id: 1, method: 'initialize', params: { capabilities: {} } },
   { jsonrpc: '2.0', method: 'initialized', params: {} },
@@ -50,6 +60,11 @@ const requests = [
   },
   {
     jsonrpc: '2.0',
+    method: 'textDocument/didChange',
+    params: { textDocument: { uri, version: 3 }, contentChanges: [{ text: codigoSemFim }] }
+  },
+  {
+    jsonrpc: '2.0',
     id: 3,
     method: 'textDocument/completion',
     params: { textDocument: { uri }, position: { line: 0, character: 3 } }
@@ -59,6 +74,16 @@ const requests = [
     id: 4,
     method: 'textDocument/documentSymbol',
     params: { textDocument: { uri } }
+  },
+  {
+    jsonrpc: '2.0',
+    method: 'textDocument/didChange',
+    params: { textDocument: { uri, version: 4 }, contentChanges: [{ text: codigoLegado }] }
+  },
+  {
+    jsonrpc: '2.0',
+    method: 'textDocument/didChange',
+    params: { textDocument: { uri, version: 5 }, contentChanges: [{ text: codigoSemChaveFinal }] }
   },
   { jsonrpc: '2.0', id: 2, method: 'shutdown', params: null },
   { jsonrpc: '2.0', method: 'exit', params: null }
@@ -85,12 +110,27 @@ for (const capability of [
   'documentSymbolProvider'
 ]) assert.ok(capability in initialized.result.capabilities, 'Capacidade ausente: ' + capability);
 
+const diagnosticsByVersion = new Map(
+  messages
+    .filter(message => message.method === 'textDocument/publishDiagnostics')
+    .map(message => [message.params?.version, message.params?.diagnostics ?? []])
+);
+assert.ok(diagnosticsByVersion.has(2), 'O servidor não publicou diagnósticos após didChange.');
+assert.deepEqual(
+  diagnosticsByVersion.get(3),
+  [],
+  'O LSP deve aceitar blocos aninhados fechados por chaves, sem exigir fim; fim também deve ser identificador comum.'
+);
 assert.ok(
-  messages.some(message => message.method === 'textDocument/publishDiagnostics' && message.params?.version === 2),
-  'O servidor não publicou diagnósticos após didChange.'
+  diagnosticsByVersion.get(4)?.length > 0,
+  'O LSP deve continuar rejeitando a sintaxe antiga sem Function Body explícito.'
+);
+assert.ok(
+  diagnosticsByVersion.get(5)?.length > 0,
+  'O LSP deve sinalizar bloco aberto sem chave de fechamento.'
 );
 assert.ok(messages.some(message => message.id === 3 && message.result?.items), 'O servidor não respondeu à conclusão.');
 assert.ok(messages.some(message => message.id === 4 && Array.isArray(message.result)), 'O servidor não respondeu aos símbolos do documento.');
 assert.ok(messages.some(message => message.id === 2 && message.result === null), 'O servidor não respondeu ao shutdown.');
 
-console.log('Nebula LSP validado: inicialização, sincronização, diagnósticos, conclusão, símbolos e encerramento.');
+console.log('Nebula LSP validado: protocolo, blocos aninhados sem fim, identificador fim, rejeição da sintaxe antiga, fechamento obrigatório, conclusão, símbolos e encerramento.');
