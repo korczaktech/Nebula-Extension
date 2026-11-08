@@ -16,3 +16,5 @@ coverage/**
 package-lock.json
 tsconfig*.json
 *.vsix
+.nebula-source/**
+out-test/**
