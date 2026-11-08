@@ -377,5 +377,14 @@
     "prefix": "externa",
     "body": "externa ${1:nome}",
     "description": "Declara referência a uma variável externa."
+  },
+  "Pulso": {
+    "prefix": "pulso",
+    "body": [
+      "pulso(${1:intervalo}): {",
+      "    ${2:passar}",
+      "}"
+    ],
+    "description": "Executa um bloco periódico com Function Body."
   }
 }
