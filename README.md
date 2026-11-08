@@ -36,7 +36,7 @@ A extensão não deve criar uma implementação paralela da linguagem. O compila
 - Snippets para estruturas frequentes.
 - Ícones próprios para arquivos Nebula.
 - Três temas: Nebula Vibrante, Nebula Clássico e Nebula Claro.
-- Autocomplete alinhado às duas especificações, com documentação contextual e exemplos para palavras reservadas, funções nativas, tipos e APIs de sistemas.
+- Autocomplete alinhado aos documentos normativos, com documentação contextual e exemplos para palavras reservadas, funções nativas, tipos e APIs de sistemas.
 - Snippets com Function Body, indentação e fechamento exclusivo por chaves.
 
 ### Autocomplete e documentação contextual
