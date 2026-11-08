@@ -108,8 +108,8 @@
   ],
   "autoCloseBefore": ";:.,=}])> \n\t",
   "indentationRules": {
-    "increaseIndentPattern": "^\\s*(?:(?:publico|público|privado)\\s+)?(?:(?:funcao|função)\\s+.*|(?:quando|senao|senão|enquanto|durante|repetir|cada|caso)(?:\\s|$).*|(?:pulso|para)(?:\\s|\\().*)$|^.*(\\{[^}]*|\\([^)]*|\\[[^\\]]*)$",
-    "decreaseIndentPattern": "^\\s*(?:[}\\])]|(?:fim|senao|senão)(?=\\s|$))(?:\\s*(?://.*)?)?$"
+    "increaseIndentPattern": "^\\s*(?:.*:\\s*\\{\\s*|.*\\{[^}]*|.*\\([^)]*|.*\\[[^\\]]*)$",
+    "decreaseIndentPattern": "^\\s*[}\\])](?:\\s*(?://.*)?)?$"
   },
   "onEnterRules": [
     {
@@ -121,12 +121,6 @@
     },
     {
       "beforeText": "^.*\\{[^}]*$",
-      "action": {
-        "indent": "indent"
-      }
-    },
-    {
-      "beforeText": "^\\s*(?:(?:publico|público|privado)\\s+)?(?:(?:funcao|função)\\s+.*|(?:quando|senao|senão|enquanto|durante|repetir|cada|caso)(?:\\s|$).*|(?:pulso|para)(?:\\s|\\().*)$",
       "action": {
         "indent": "indent"
       }
