@@ -39,7 +39,7 @@ const commandHelp: Record<string, CommandHelp> = {
   dentro:{description:'Operador de pertencimento.',syntax:'valor dentro sequencia',example:'para item dentro faixa(0, 10): { ... } '},
   fora:{description:'Operador de não pertencimento.',syntax:'valor fora sequencia',example:'se nome fora nomesPermitidos: { ... } '},
   identico:{description:'Compara identidade conforme a semântica dos tipos.',syntax:'valor identico outro',example:'se referencia identico outraReferencia: { ... } '},
-  nao:{description:'Negação lógica; também representa o literal falso conforme o contexto.',syntax:'nao condicao',example:'se nao autorizado: { ... } '},
+  nao:{description:'Operador de negação lógica.',syntax:'nao condicao',example:'se nao autorizado: { ... } '},
   e:{description:'Combina condições com E lógico.',syntax:'condicao e outraCondicao',example:'se idade >= 18 e autorizado == sim: { ... } '},
   ou:{description:'Combina condições com OU lógico.',syntax:'condicao ou outraCondicao',example:'se admin == sim ou proprietario == sim: { ... } '},
   sim:{description:'Literal lógico verdadeiro.',syntax:'sim',example:'variavel ativo: logico = sim'},
@@ -62,9 +62,7 @@ const commandHelp: Record<string, CommandHelp> = {
   montagem:{description:'Declara expressão ou bloco Assembly dependente da arquitetura.',syntax:'montagem arquitetura<T>(argumentos)',example:'variavel resultado = montagem x86_64<u64>(entradas: [10, 20], saidas: [registrador.rax], efeitos: [registradores, flags], instrucoes: ["add rax, rbx"])'},
   estrutura:{description:'Declara tipo estruturado na camada nativa; suporte depende do compilador.',syntax:'estrutura Nome: { campos ... } ',example:'estrutura Cabecalho: {\n    codigo: u32\n    tamanho: u16\n} '},
   enumeracao:{description:'Declara enumeração; suporte depende do compilador.',syntax:'enumeracao Nome: { variantes ... } ',example:'enumeracao Estado: {\n    Ativo\n    Inativo\n} '},
-  objetos:{description:'Inicia declaração de bloco estrutural de objetos.',syntax:'objetos Nome: { ... } ',example:'objetos Pessoa: {\n    nome: texto\n} '},
-  dicionarios:{description:'Inicia declaração de bloco estrutural de dicionários.',syntax:'dicionarios Nome: { ... } ',example:'dicionarios Configuracao: {\n    idioma: texto\n} '},
-  de:{description:'Palavra reservada usada em construções de origem definidas pela gramática.',syntax:'de caminho',example:'incluir modulo arquivos de sistema'}
+  de:{description:'Indica a origem de um módulo incluído.',syntax:'de caminho',example:'incluir modulo arquivos de sistema'}
 };
 
 const builtinDescriptions: Record<string, string> = {
