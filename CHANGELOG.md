@@ -1,4 +1,4 @@
-## [0.0.10] - 2026-11-08
+## [0.0.11] - 2026-11-08\n\n- Auditadas as regras de sintaxe, Lexer/Parser, LSP incorporado, gramática TextMate, snippets, configuração do editor e inteligência local: `fim` não é palavra reservada nem terminador de bloco.\n- Fixada a compilação do LSP incorporado no commit atual do compilador Nebula e validados blocos aninhados sem `fim`, `fim` como identificador, rejeição da sintaxe antiga e fechamento ausente.\n- Adicionado teste de regressão para impedir que recursos do editor voltem a classificar `fim` como palavra-chave ou fechamento.\n- Atualizado o pacote para 0.0.11.\n\n## [0.0.10] - 2026-11-08
 
 - Corrigida a gramática TextMate para reconhecer explicitamente a palavra reservada normativa `se`.
 - Atualizados os testes de editor para validar Function Body com `: {` e fechamento por `}`, sem exigir o terminador antigo `fim`.
