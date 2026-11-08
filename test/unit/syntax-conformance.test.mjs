@@ -12,6 +12,8 @@ test('gramática TextMate reconhece comentários oficiais e não trata # como co
  assert.ok(comments.some(x=>x.match==='//[^\\r\\n]*'));
  assert.ok(comments.some(x=>x.begin==='/\\*'&&x.end==='\\*/'));
  assert.ok(!comments.some(x=>String(x.match||'').startsWith('#')));
+ const controls=grammar.repository.control.patterns[0].match;
+ for(const alias of ['quando','devolver','durante','repetir','avaliar','parar','encerrar','seguir','mutável'])assert.ok(controls.includes(alias)||grammar.repository.declarations.patterns[0].match.includes(alias),'Alias aceito não colorizado: '+alias);
 });
 test('chaves, parênteses e colchetes são os únicos pares de agrupamento',()=>{
  assert.deepEqual(language.brackets,[['{','}'],['[',']'],['(',')']]);
