@@ -16,15 +16,17 @@ test('gramática TextMate reconhece comentários oficiais e não trata # como co
 test('chaves, parênteses e colchetes são os únicos pares de agrupamento',()=>{
  assert.deepEqual(language.brackets,[['{','}'],['[',']'],['(',')']]);
  const punctuation=grammar.repository.punctuation.patterns;
+ assert.ok(punctuation.some(x=>x.match==='[({\\[]'));
+ assert.ok(punctuation.some(x=>x.match==='[)}\\]]'));
  assert.ok(!punctuation.some(x=>String(x.match||'').includes('<')));
 });
 test('indentação depende de delimitadores e não de palavras de fechamento',()=>{
- assert.ok(language.indentationRules.increaseIndentPattern.includes('\\\\{'));
+ assert.ok(language.indentationRules.increaseIndentPattern.includes('\\{'));
  assert.ok(!language.indentationRules.decreaseIndentPattern.includes('fim'));
  assert.ok(!language.indentationRules.decreaseIndentPattern.includes('senao'));
 });
 test('documentação e exemplos não ensinam o terminador antigo',()=>{
- assert.ok(!/\\bfim\\b/.test(provider));
+ assert.ok(!/\bfim\b/.test(provider));
  assert.ok(!docs.includes('fim interno'));
- assert.ok(docs.includes('chave `}`'));
+ assert.ok(docs.includes('chave \`}\`'));
 });
