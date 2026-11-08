@@ -20,9 +20,9 @@ Aspas simples e duplas são fechadas automaticamente, exceto quando o cursor est
 
 ## Indentação
 
-A configuração reconhece abertura de blocos com chaves, colchetes e parênteses. Também reconhece cabeçalhos de blocos encerrados por `fim`, incluindo `funcao`/`função`, `quando`, `senao`/`senão`, `enquanto`, `durante`, `repetir`, `cada`, `pulso`, `para` e `caso`. O recuo diminui ao iniciar uma linha com `fim`, `senao`/`senão` ou um delimitador de fechamento. Regras de Enter tratam blocos com chaves, blocos terminados por `fim` e continuação de comentários de linha e bloco.
+Os corpos executáveis e estruturais da Nebula começam com `: {` e terminam com a chave correspondente `}`. O editor aumenta o recuo após uma linha que abre chaves, colchetes ou parênteses e diminui o recuo quando a linha começa com o delimitador de fechamento correspondente. Não há regra de recuo para uma palavra de encerramento de bloco.
 
-A indentação é apenas uma convenção visual: na Nebula, ela não cria nem fecha blocos. O escopo é determinado pela sintaxe com chaves ou pelo terminador `fim`, conforme a gramática oficial. As regras do editor são heurísticas baseadas no texto da linha e não substituem o parser.
+A indentação é obrigatória na linguagem e deve refletir o aninhamento das chaves. Ela é validada pelo Lexer/Parser, mas não substitui os delimitadores sintáticos. A palavra `fim` é um identificador comum: não é palavra reservada, não fecha blocos e não deve alterar o recuo. As regras nativas do VS Code são heurísticas editoriais; a validação sintática definitiva pertence ao compilador e ao LSP.
 
 ## Padrões do editor
 
