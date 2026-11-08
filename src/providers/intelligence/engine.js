@@ -1,5 +1,5 @@
 'use strict';
-const KEYWORDS=new Set(['variavel','definir','mutavel','mutável','alterar','constante','funcao','função','quando','senao','senão','avaliar','escolha','caso','para','cada','em','enquanto','durante','repetir','pulso','devolver','incluir','como','fim','parar','encerrar','seguir','e','ou','nao','não','publico','público','privado','tipo','estrutura','enumeracao','enumeração','verdadeiro','falso','nulo']);
+const KEYWORDS=new Set(['variavel','definir','mutavel','mutável','alterar','constante','funcao','função','quando','senao','senão','avaliar','escolha','caso','para','cada','em','enquanto','durante','repetir','pulso','devolver','incluir','como','parar','encerrar','seguir','e','ou','nao','não','publico','público','privado','tipo','estrutura','enumeracao','enumeração','verdadeiro','falso','nulo']);
 const TYPES=new Set(['vazio','logico','lógico','inteiro','inteiro8','inteiro16','inteiro32','inteiro64','inteiro128','inteiro_u8','inteiro_u16','inteiro_u32','inteiro_u64','inteiro_u128','decimal','decimal32','decimal64','texto','caractere','byte','vetor','matriz','Tupla','Opcional','Resultado']);
 const BUILTINS=new Set(['exibir','receber','perguntar','ler_texto','aguardar','dormir','gerar','em_paralelo']);
 const ID='[\\p{XID_Start}_][\\p{XID_Continue}_]*';
@@ -60,11 +60,10 @@ function formatDocument(source,tabSize=4,insertSpaces=true){
   const trimmed=line.trim(),lineStart=offset,lineEnd=offset+line.length;offset=lineEnd+1;
   const lineTokens=[];while(index<tokens.length&&tokens[index].start<lineStart)index++;while(index<tokens.length&&tokens[index].start<=lineEnd){lineTokens.push(tokens[index]);index++;}
   if(!trimmed)return '';
-  const significant=lineTokens.filter(t=>t.type==='punctuation'),startsWithClose=/^[}\])]/u.test(trimmed),isEnd=/^fim\b/u.test(trimmed),isElse=/^(?:senao|senão)\b/u.test(trimmed);
-  const dedent=startsWithClose||isEnd||isElse?1:0,formatted=unit.repeat(Math.max(0,depth-dedent))+trimmed;
+  const significant=lineTokens.filter(t=>t.type==='punctuation'),startsWithClose=/^[}\])]/u.test(trimmed),isElse=/^(?:senao|senão)\b/u.test(trimmed);
+  const dedent=startsWithClose||isElse?1:0,formatted=unit.repeat(Math.max(0,depth-dedent))+trimmed;
   const opens=significant.filter(t=>['{','[','('].includes(t.text)).length,closes=significant.filter(t=>['}',']',')'].includes(t.text)).length;
   depth=Math.max(0,depth+opens-closes);
-  if(!startsWithClose&&isEnd)depth=Math.max(0,depth-1);
   if(!startsWithClose&&isElse)depth=Math.max(0,depth-1);
   if(/^(?:funcao|função|quando|senao|senão|enquanto|durante|repetir|cada|para|pulso|caso)\b/u.test(trimmed)&&!trimmed.includes('{')&&!/;\s*$/u.test(trimmed))depth++;
   return formatted;
