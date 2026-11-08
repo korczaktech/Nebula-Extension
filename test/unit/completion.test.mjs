@@ -37,6 +37,11 @@ test('reconhece estruturas, enumerações e campos na sintaxe atual',()=>{
  const fields=engine.getCompletionCandidates(source,source.length);
  assert.equal(fields.context,'member');assert.ok(fields.candidates.some(x=>x.label==='nome'));
 });
+test('reconhece inclusões com módulo, biblioteca e alias',()=>{
+ const source='incluir modulo arquivos de sistema como arq';
+ const labels=engine.collectSymbols(source).symbols.map(x=>x.label);
+ assert.ok(labels.includes('arq'));
+});
 test('sugere operações de módulos depois de ponto',()=>{
  const source='memoria.';const result=engine.getCompletionCandidates(source,source.length);
  assert.equal(result.context,'member');assert.ok(result.candidates.some(x=>x.label==='reservar'));assert.ok(result.candidates.some(x=>x.label==='liberar'));
