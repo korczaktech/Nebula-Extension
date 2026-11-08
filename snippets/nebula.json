@@ -320,5 +320,23 @@
     "prefix": "atomico",
     "body": "atomico.somar(${1:contador}, ${2:1}, ordem: ${3:relaxado})",
     "description": "Soma atomicamente."
+  },
+  "Cada elemento": {
+    "prefix": "cada",
+    "body": [
+      "cada ${1:item} em ${2:colecao}: {",
+      "    ${3:exibir(item)}",
+      "}"
+    ],
+    "description": "Percorre uma coleção com cada/em e Function Body."
+  },
+  "Laço para clássico": {
+    "prefix": "paraclassico",
+    "body": [
+      "para (${1:variavel indice = 0}; ${2:indice < limite}; ${3:indice += 1}): {",
+      "    ${4:passar}",
+      "}"
+    ],
+    "description": "Laço tradicional com inicialização, condição e atualização."
   }
 }
