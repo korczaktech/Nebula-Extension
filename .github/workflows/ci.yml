@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -28,7 +29,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: korczaktech/Nebula
-          ref: 874d5c719b8ca9d80ed507968c76ddef6506f573
+          ref: f25765a2cacbc5e9c7835a59f98b35114a459087
           path: .nebula-source
       - name: Testar Parser e servidor LSP oficiais
         run: cargo test --locked --manifest-path .nebula-source/Cargo.toml -p nebula-sintaxe -p nebula-lsp
