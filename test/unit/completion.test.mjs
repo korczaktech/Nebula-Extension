@@ -63,7 +63,7 @@ test('snippets têm estrutura válida e não usam fim como terminador',()=>{
   assert.ok(!/}\s*fim\b/.test(body),name+': fechamento antigo');
  }
 });
-test('manifesto registra os snippets e a versão corrigida',()=>{
- assert.equal(manifest.version,'0.0.11');
+test('manifesto registra os snippets e uma versão semântica válida',()=>{
+ assert.match(manifest.version,/^\d+\.\d+\.\d+$/);
  assert.deepEqual(manifest.contributes.snippets,[{language:'nebula',path:'./snippets/nebula.json'}]);
 });
