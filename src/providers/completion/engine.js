@@ -77,7 +77,7 @@ function collectSymbols(source){
 }
 function getBaseCompletionCandidates(source,cursorOffset){
  const safeOffset=Math.max(0,Math.min(cursorOffset,source.length)),before=source.slice(0,safeOffset);
- if(!isCodePosition(source,safeOffset))return {candidates:[],wordStart:safeOffset,context:'general'};
+ if(!isCodePosition(source,safeOffset))return {candidates:[],wordStart:safeOffset,context:'blocked'};
  const masked=maskNonCode(before),lineStart=masked.lastIndexOf('\n')+1,line=masked.slice(lineStart);
  const current=line.match(/[\p{XID_Start}_][\p{XID_Continue}_]*$/u)?.[0]||'',wordStart=safeOffset-current.length;
  const symbols=collectSymbols(source),trimmed=line.trimEnd();
