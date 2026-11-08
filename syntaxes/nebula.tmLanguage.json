@@ -234,7 +234,7 @@
         },
         {
           "name": "support.type.container.nebula",
-          "match": "(?<![\\p{XID_Continue}_])(?:ponteiroBruto|conImutavel|dicionario|conjunto|ponteiro|lista|tupla|vetor|bloco)(?![\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])(?:Resultado|Opcional|Intervalo|Matriz|Vetor|ponteiroBruto|conImutavel|dicionario|conjunto|ponteiro|lista|tupla|vetor|bloco)(?![\\p{XID_Continue}_])"
         }
       ]
     },
