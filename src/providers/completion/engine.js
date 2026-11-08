@@ -89,7 +89,7 @@ function getBaseCompletionCandidates(source,cursorOffset){
   const prefix=current.normalize('NFC').toLocaleLowerCase();
   return {candidates:items.filter(x=>x.label.normalize('NFC').toLocaleLowerCase().startsWith(prefix)),wordStart,context:'member'};
  }
- const typeAnnotation=trimmed.match(/:\s*([^=;{}]*)$/u),expectsType=Boolean(typeAnnotation),items=[];
+ const expectsType=/^\s*(?:variavel|definir|mutavel|mutável|constante)\b.*:\s*[^=;{}]*$/u.test(trimmed)||/(?:\(|,)\s*[\p{XID_Start}_][\p{XID_Continue}_]*\s*:\s*[^=;{}]*$/u.test(trimmed)||/->\s*[^=;{}]*$/u.test(trimmed),items=[];
  const add=(label,kind,detail,documentation,extra={})=>items.push({label,kind,detail,documentation,...extra});
  if(expectsType){
   for(const t of TYPES)add(t,'type','Tipo Nebula','Tipo primitivo ou composto da linguagem.');
