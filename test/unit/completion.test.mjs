@@ -14,7 +14,7 @@ test('palavras sugeridas correspondem à gramática normativa',()=>{
 });
 test('literais e tipos seguem o contrato de linguagem e tipos',()=>{
  assert.deepEqual(engine.CONSTANTS,['sim','verdadeiro','falso','nulo']);
- for(const type of ['vazio','logico','inteiro','inteiro8','inteiro16','inteiro32','inteiro64','inteiro128','inteiro_u8','inteiro_u16','inteiro_u32','inteiro_u64','inteiro_u128','decimal','decimal32','decimal64','byte','caractere','texto','u8','u16','u32','u64','u128','i8','i16','i32','i64','i128','f32','f64'])assert.ok(engine.TYPES.includes(type),'Tipo ausente: '+type);
+ for(const type of ['vazio','logico','inteiro','inteiro8','inteiro16','inteiro32','inteiro64','inteiro128','inteiro_u8','inteiro_u16','inteiro_u32','inteiro_u64','inteiro_u128','decimal','decimal32','decimal64','byte','caractere','texto','u8','u16','u32','u64','u128','i8','i16','i32','i64','i128','f32','f64','Resultado','Opcional','Vetor','Matriz','Intervalo'])assert.ok(engine.TYPES.includes(type),'Tipo ausente: '+type);
 });
 test('completion filtra palavras, funções e tipos',()=>{
  assert.ok(engine.getCompletionCandidates('sena',4).candidates.some(x=>x.label==='senao'));
