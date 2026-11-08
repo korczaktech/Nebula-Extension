@@ -14,18 +14,16 @@
     "body": [
       "funcao ${1:nome}(${2:parametros}) -> ${3:tipo}: {",
       "    ${4:passar}",
-      "    fim",
-      "} fim"
+      "}"
     ],
-    "description": "Declara função com Function Body, fim interno e fim externo."
+    "description": "Declara função com Function Body e."
   },
   "Função pública": {
     "prefix": "funcaop",
     "body": [
       "publico funcao ${1:nome}(${2:parametros}) -> ${3:tipo}: {",
       "    ${4:passar}",
-      "    fim",
-      "} fim"
+      "}"
     ],
     "description": "Declara função pública."
   },
@@ -34,8 +32,7 @@
     "body": [
       "async funcao ${1:nome}(${2:parametros}): {",
       "    ${3:variavel resultado = aguarda operacao()}",
-      "    fim",
-      "} fim"
+      "}"
     ],
     "description": "Declara função assíncrona."
   },
@@ -44,8 +41,7 @@
     "body": [
       "se ${1:condicao}: {",
       "    ${2:passar}",
-      "    fim",
-      "} fim"
+      "}"
     ],
     "description": "Executa bloco quando a condição é verdadeira."
   },
@@ -54,7 +50,6 @@
     "body": [
       "sendo ${1:condicao}: {",
       "    ${2:passar}",
-      "    fim",
       "}"
     ],
     "description": "Adiciona uma condição alternativa à cadeia se/sendo/senao."
@@ -64,7 +59,6 @@
     "body": [
       "senao: {",
       "    ${1:passar}",
-      "    fim",
       "}"
     ],
     "description": "Executa quando nenhuma condição anterior é satisfeita."
@@ -75,14 +69,11 @@
       "escolha ${1:valor}: {",
       "    caso ${2:1}: {",
       "        ${3:passar}",
-      "        fim",
       "    }",
       "    padrao: {",
       "        ${4:passar}",
-      "        fim",
       "    }",
-      "    fim",
-      "} fim"
+      "}"
     ],
     "description": "Seleciona uma alternativa com caso e padrao."
   },
@@ -91,7 +82,6 @@
     "body": [
       "caso ${1:valor}: {",
       "    ${2:passar}",
-      "    fim",
       "}"
     ],
     "description": "Cria um braço caso dentro de escolha."
@@ -101,8 +91,7 @@
     "body": [
       "para ${1:item} dentro ${2:faixa(0, 10)}: {",
       "    ${3:exibir(item)}",
-      "    fim",
-      "} fim"
+      "}"
     ],
     "description": "Percorre uma sequência com para/dentro."
   },
@@ -111,8 +100,7 @@
     "body": [
       "enquanto ${1:condicao}: {",
       "    ${2:passar}",
-      "    fim",
-      "} fim"
+      "}"
     ],
     "description": "Repete enquanto a condição for verdadeira."
   },
@@ -121,17 +109,13 @@
     "body": [
       "tente: {",
       "    ${1:passar}",
-      "    fim",
       "}",
       "erro ${2:ErroEsperado}: {",
       "    ${3:exibir(\"Falha\") }",
-      "    fim",
       "}",
       "sempre: {",
       "    ${4:passar}",
-      "    fim",
-      "}",
-      "fim"
+      "}"
     ],
     "description": "Monta tratamento com tente, erro e sempre."
   },
@@ -186,10 +170,8 @@
       "classe ${1:Nome}: {",
       "    funcao construtor(${2:parametros}): {",
       "        ${3:passar}",
-      "        fim",
-      "    } fim",
-      "    fim",
-      "} fim"
+      "    }",
+      "}"
     ],
     "description": "Declara classe com corpo estrutural."
   },
@@ -198,8 +180,7 @@
     "body": [
       "exportar funcao ${1:nome}(${2:parametros}): {",
       "    retorne ${3:valor}",
-      "    fim",
-      "} fim"
+      "}"
     ],
     "description": "Exporta uma função."
   },
@@ -213,37 +194,13 @@
     "body": "variavel ${1:nome} = (${2:parametros}) -> ${3:expressao}",
     "description": "Cria uma função de seta."
   },
-  "Objeto": {
-    "prefix": [
-      "objetos",
-      "objeto"
-    ],
-    "body": [
-      "objetos ${1:Nome}: {",
-      "    ${2:campo}: ${3:tipo}",
-      "    fim",
-      "} fim"
-    ],
-    "description": "Declara bloco estrutural de objetos conforme a sintaxe complementar."
-  },
-  "Dicionário": {
-    "prefix": "dicionarios",
-    "body": [
-      "dicionarios ${1:Nome}: {",
-      "    ${2:chave}: ${3:valor}",
-      "    fim",
-      "} fim"
-    ],
-    "description": "Declara bloco estrutural de dicionários."
-  },
   "Tipo estruturado": {
     "prefix": "estrutura",
     "body": [
       "estrutura ${1:Cabecalho}: {",
       "    codigo: u32",
       "    tamanho: u16",
-      "    fim",
-      "} fim"
+      "}"
     ],
     "description": "Exemplo de estrutura da camada Nebula Nativo; confirme suporte no compilador."
   },
@@ -253,8 +210,7 @@
       "enumeracao ${1:Estado}: {",
       "    ${2:Ativo}",
       "    ${3:Inativo}",
-      "    fim",
-      "} fim"
+      "}"
     ],
     "description": "Declara enumeração; confirme suporte no compilador."
   },
@@ -293,8 +249,7 @@
     "body": [
       "privilegio sistema: {",
       "    ${1:cpu.interrupcoes.desabilitar()}",
-      "    fim",
-      "} fim"
+      "}"
     ],
     "description": "Abre bloco privilegiado; exige perfil e permissões compatíveis."
   },
@@ -303,8 +258,7 @@
     "body": [
       "critico: {",
       "    ${1:passar}",
-      "    fim",
-      "} fim"
+      "}"
     ],
     "description": "Abre região crítica."
   },
@@ -325,7 +279,7 @@
   },
   "Faixa": {
     "prefix": "faixa",
-    "body": "faixa(${1:inicio}, ${2:fim})",
+    "body": "faixa(${1:inicio}, ${2:limite})",
     "description": "Gera sequência numérica."
   },
   "Nova linha de arquivo": {
