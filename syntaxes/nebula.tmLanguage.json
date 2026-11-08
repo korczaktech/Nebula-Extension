@@ -67,17 +67,6 @@
     "strings": {
       "patterns": [
         {
-          "name": "string.quoted.triple.double.nebula",
-          "begin": "\"\"\"",
-          "end": "\"\"\"",
-          "patterns": [
-            {
-              "name": "constant.character.escape.nebula",
-              "match": "\\\\(?:[\\\\'\\\"nrt0]|u\\{[0-9A-Fa-f]+\\})"
-            }
-          ]
-        },
-        {
           "name": "string.quoted.double.nebula",
           "begin": "\"",
           "end": "\"|(?=\\r?$)",
@@ -96,29 +85,6 @@
             {
               "name": "constant.character.escape.nebula",
               "match": "\\\\(?:[\\\\'\\\"nrt0]|u\\{[0-9A-Fa-f]+\\})"
-            }
-          ]
-        },
-        {
-          "name": "string.template.nebula",
-          "begin": "`",
-          "end": "`|(?=\\r?$)",
-          "patterns": [
-            {
-              "name": "meta.interpolation.nebula",
-              "begin": "\\$\\{",
-              "end": "\\}",
-              "patterns": [
-                {
-                  "include": "#identifiers"
-                },
-                {
-                  "include": "#operators"
-                },
-                {
-                  "include": "#functionCalls"
-                }
-              ]
             }
           ]
         }
@@ -168,7 +134,7 @@
       "patterns": [
         {
           "name": "meta.declaration.variable.nebula",
-          "match": "((?<![\\p{XID_Continue}_])(?:constante|variavel)(?![\\p{XID_Continue}_]))\\s+([\\p{XID_Start}_][\\p{XID_Continue}_]*)",
+          "match": "((?<![\\\\p{XID_Continue}_])(?:constante|variavel|definir|mutavel)(?![\\\\p{XID_Continue}_]))\\\\s+([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
           "captures": {
             "1": {
               "name": "storage.type.variable.nebula"
@@ -180,15 +146,12 @@
         },
         {
           "name": "meta.declaration.function.nebula",
-          "match": "(?:(publico|privado|protegido|estatico|async)\\s+)*(funcao)\\s+([\\p{XID_Start}_][\\p{XID_Continue}_]*)",
+          "match": "(?:(?:async|publico|privado|protegido|estatico|exportar|externa)\\\\s+)*(funcao)\\\\s+([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)",
           "captures": {
             "1": {
-              "name": "storage.modifier.nebula"
-            },
-            "2": {
               "name": "storage.type.function.nebula"
             },
-            "3": {
+            "2": {
               "name": "entity.name.function.nebula"
             }
           }
@@ -202,6 +165,30 @@
             },
             "2": {
               "name": "entity.name.type.class.nebula"
+            }
+          }
+        },
+        {
+          "name": "meta.declaration.structure.nebula",
+          "match": "(estrutura)\\\\s+([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)\\\\s*:",
+          "captures": {
+            "1": {
+              "name": "storage.type.structure.nebula"
+            },
+            "2": {
+              "name": "entity.name.type.structure.nebula"
+            }
+          }
+        },
+        {
+          "name": "meta.declaration.enum.nebula",
+          "match": "(enumeracao)\\\\s+([\\\\p{XID_Start}_][\\\\p{XID_Continue}_]*)\\\\s*:",
+          "captures": {
+            "1": {
+              "name": "storage.type.enum.nebula"
+            },
+            "2": {
+              "name": "entity.name.type.enum.nebula"
             }
           }
         }
@@ -357,8 +344,12 @@
           "match": ":"
         },
         {
+          "name": "punctuation.section.group.begin.nebula",
+          "match": "[({\\\\[]"
+        },
+        {
           "name": "punctuation.section.group.end.nebula",
-          "match": "[)}\\]>]"
+          "match": "[)}\\\\]]"
         }
       ]
     },
