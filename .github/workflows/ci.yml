@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: korczaktech/Nebula
-          ref: caa1612002adb5b2cbb540e4ed48ea308394d68e
+          ref: 252d69ec2aa575fdca083271f282909f4f7f4e13
           path: .nebula-source
       - name: Testar Parser e servidor LSP oficiais
         run: cargo test --locked --manifest-path .nebula-source/Cargo.toml -p nebula-sintaxe -p nebula-lsp
