@@ -28,8 +28,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: korczaktech/Nebula
-          ref: 697120bab1d701ddf004ddc3a55951a72585ff7d
+          ref: 5f63d2b2d10d0202a352bc036ae8b1c770a84221
           path: .nebula-source
+      - name: Testar Parser e servidor LSP oficiais
+        run: cargo test --locked --manifest-path .nebula-source/Cargo.toml -p nebula-sintaxe -p nebula-lsp
       - name: Compilar e incorporar CLI nativo
         run: npm run build:native
       - name: Validar atalho do CLI
