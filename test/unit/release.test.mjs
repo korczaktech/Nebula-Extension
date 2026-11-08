@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import test from 'node:test';
 
+const require = createRequire(import.meta.url);
 const read = (file) => readFileSync(new URL('../../' + file, import.meta.url), 'utf8');
 const manifest = JSON.parse(read('package.json'));
 
