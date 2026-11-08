@@ -88,7 +88,7 @@ test('nenhum recurso do editor trata fim como palavra-chave ou fechamento de blo
   const languageConfiguration = read('language-configuration.json');
   const engine = require('../../src/providers/intelligence/engine.js');
   for (const [name, content] of [['gramática TextMate', grammar], ['snippets', snippets], ['configuração do editor', languageConfiguration]]) {
-    assert.ok(!/\\bfim\\b/u.test(content), name + ' ainda contém uma regra textual para fim.');
+    assert.ok(!/\bfim\b/u.test(content), name + ' ainda contém uma regra textual para fim.');
   }
   const token = engine.scan('fim');
   assert.equal(token.length, 1);
