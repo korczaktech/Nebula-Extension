@@ -38,14 +38,15 @@ test('declarações, nomes, tipos e constantes usam escopos distintos', () => {
   assert.ok(scopesAt(line, 'sim').includes('constant.language.boolean.nebula'));
 });
 
-test('palavras de fluxo e encerramento da sintaxe atual são reconhecidas', () => {
-  for (const word of ['se','sendo','senao','para','enquanto','escolha','caso','padrao','pare','prossiga','passar','retorne','fim','tente','erro','sempre','async','aguarda','critico','privilegio']) {
+test('palavras de fluxo da sintaxe atual são reconhecidas', () => {
+  for (const word of ['se','sendo','senao','para','enquanto','escolha','caso','padrao','pare','prossiga','passar','retorne','tente','erro','sempre','aguarda','critico','privilegio']) {
     assert.ok(scopesAt(`${word} condicao`, word).includes('keyword.control.nebula') || scopesAt(`${word} condicao`, word).includes('storage.modifier.nebula'), `Palavra não colorida: ${word}`);
   }
+  assert.ok(!scopesAt('fim = 1', 'fim').includes('keyword.control.nebula'), 'fim deve ser identificador comum');
 });
 
 test('nomes de função e builtins são diferenciados', () => {
-  assert.ok(scopesAt('funcao principal(): {', 'principal').includes('entity.name.function.nebula'));
+  assert.ok(scopesAt('funcao principal() -> vazio: {', 'principal').includes('entity.name.function.nebula'));
   assert.ok(scopesAt('exibir("Olá")', 'exibir').includes('support.function.builtin.nebula'));
   assert.ok(scopesAt('hardware.detectar()', 'hardware').includes('support.module.nebula'));
 });
@@ -58,11 +59,10 @@ test('argumentos nomeados, parâmetros, campos e operadores são reconhecidos', 
   assert.ok(scopesAt('x -> x ** 2', '->').includes('keyword.operator.lambda.nebula'));
 });
 
-test('comentários, strings multilinha, template, caracteres e números são reconhecidos', () => {
-  assert.ok(scopesAt('# comentario', 'comentario').includes('comment.line.number-sign.nebula'));
+test('comentários oficiais, strings e números são reconhecidos', () => {
+  assert.ok(scopesAt('// comentario', 'comentario').includes('comment.line.double-slash.nebula'));
   assert.ok(scopesAt('/* comentario */', 'comentario').includes('comment.block.nebula'));
   assert.ok(scopesAt('"texto"', 'texto').includes('string.quoted.double.nebula'));
   assert.ok(scopesAt("'A'", 'A').includes('string.quoted.single.nebula'));
-  assert.ok(scopesAt('`${nome}`', 'nome').includes('variable.other.nebula') || scopesAt('`${nome}`', 'nome').some(scope => scope.includes('meta.interpolation')));
   assert.ok(scopesAt('0x2A', '0x2A').includes('constant.numeric.hex.nebula'));
 });
