@@ -1,13 +1,10 @@
-## [0.0.9] - 2026-11-07
+## [0.0.10] - 2026-11-08
 
-- Corrigidos os snippets: blocos agora fecham exclusivamente com chaves, sem `fim`.
-- Corrigidos comentários TextMate para `//` e `/* ... */`; removido `#` como comentário.
-- Corrigidos pares de agrupamento: somente parênteses, colchetes e chaves.
-- Alinhada a indentação automática aos delimitadores reais do Function Body.
-- Atualizado autocomplete para os tokens, tipos, funções, modificadores e formas de declaração da gramática normativa.
-- Corrigida a extração heurística de funções com retorno `->`, modificadores, estruturas e enumerações.
-- Adicionados testes de conformidade para gramática, snippets, comentários e documentação.
-- Atualizado o pacote para 0.0.9.
+- Corrigida a gramática TextMate para reconhecer explicitamente a palavra reservada normativa `se`.
+- Atualizados os testes de editor para validar Function Body com `: {` e fechamento por `}`, sem exigir o terminador antigo `fim`.
+- Atualizados os testes de conformidade para refletir os tokens, tipos, comentários e delimitadores da gramática normativa.
+- Mantida a distinção entre operadores relacionais `<` e `>` e os delimitadores de agrupamento.
+- Atualizado o pacote para 0.0.10.
 
 ## [0.0.8] - 2026-11-06
 
@@ -48,3 +45,4 @@
 - Configuração inicial do editor e gramática TextMate.
 - Snippets iniciais e estrutura de desenvolvimento.
 - Preparação de testes e empacotamento VSIX.
+
