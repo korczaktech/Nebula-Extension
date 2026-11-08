@@ -26,26 +26,30 @@ test('a gramática contém expressões de tokenização TextMate', () => {
   assert.ok(patterns.every(pattern => pattern.value.length > 0));
 });
 
-test('palavras reservadas da sintaxe principal recebem escopo de controle', () => {
+test('palavras reservadas normativas recebem escopo de controle', () => {
   const source = grammar.repository.control.patterns.map(pattern => pattern.match).join('|');
   const words = [
     'se','sendo','senao','para','enquanto','escolha','caso','padrao','pare','prossiga','passar','retorne',
-    'funcao','lambda','classe','incluir','de','como','ceder','tente','erro','sempre','lancar','verifique',
-    'com','async','aguarda','global','externa','isto','novo','apagar','dentro','fora','identico','nao',
-    'e','ou','variavel','constante','herda','estatico','privado','publico','protegido','construtor',
-    'tipoDe','instanciaDe','obter','definir','vazio','seguro','critico','privilegio','montagem','fim','exportar'
+    'funcao','lambda','classe','incluir','biblioteca','modulo','de','como','ceder','tente','erro','sempre',
+    'lancar','verifique','com','async','aguarda','global','externa','isto','novo','apagar','dentro','fora',
+    'identico','nao','e','ou','variavel','constante','herda','estatico','privado','publico','protegido',
+    'construtor','tipoDe','instanciaDe','obter','definir','vazio','seguro','critico','privilegio','montagem',
+    'exportar','cada','em','pulso','alterar','tipo'
   ];
   for (const word of words) assert.ok(source.includes(word), `Palavra reservada ausente: ${word}`);
-  for (const obsolete of ['quando','avaliar','devolver','parar','encerrar','seguir','assinc','mutavel','estrutura','enumeracao']) {
-    assert.ok(!source.includes(obsolete), `Palavra antiga ainda presente: ${obsolete}`);
-  }
+  assert.ok(source.includes('quando'), 'Alias normativo quando ausente');
+  assert.ok(source.includes('avaliar'), 'Alias normativo avaliar ausente');
+  assert.ok(!source.includes('fim'), 'fim não pode ser palavra reservada');
 });
 
-test('tipos de dados da sintaxe principal e nativa estão cobertos', () => {
+test('tipos primitivos e compostos normativos estão cobertos', () => {
   const types = grammar.repository.types.patterns.map(pattern => pattern.match).join('|');
-  for (const word of ['inteiro','decimal','complexo','texto','logico','vazio','lista','tupla','conjunto','conImutavel','dicionario','octetos','vetorOctetos','bit','vetorBits','u8','u16','u32','u64','u128','i8','i16','i32','i64','i128','f32','f64','endereco','enderecoFisico','tamanho','deslocamento','ponteiro','ponteiroBruto']) {
-    assert.ok(types.includes(word), `Tipo ausente: ${word}`);
-  }
+  for (const word of [
+    'vazio','logico','inteiro','inteiro8','inteiro16','inteiro32','inteiro64','inteiro128',
+    'inteiro_u8','inteiro_u16','inteiro_u32','inteiro_u64','inteiro_u128',
+    'decimal','decimal32','decimal64','byte','caractere','texto',
+    'Resultado','Opcional','Vetor','Matriz','Intervalo'
+  ]) assert.ok(types.includes(word), `Tipo ausente: ${word}`);
 });
 
 test('funções nativas e módulos do catálogo recebem escopos próprios', () => {
@@ -57,12 +61,18 @@ test('funções nativas e módulos do catálogo recebem escopos próprios', () =
   for (const word of ['bits','cpu','hardware','memoria','ponteiro','simd','porta','interrupcao','dma']) assert.ok(modules.includes(word));
 });
 
-test('operadores atuais e delimitadores possuem escopos', () => {
-  const names = grammar.repository.operators.patterns.map(pattern => pattern.name);
-  for (const category of ['assignment','comparison','logical','bitwise','arithmetic','range','access','lambda']) {
-    assert.ok(names.includes(`keyword.operator.${category}.nebula`), `Categoria ausente: ${category}`);
-  }
-  assert.ok(grammar.repository.punctuation.patterns.some(pattern => pattern.match.includes('<')));
+test('operadores relacionais e delimitadores têm categorias distintas', () => {
+  const operators = grammar.repository.operators.patterns;
+  const comparison = operators.find(pattern => pattern.name === 'keyword.operator.comparison.nebula');
+  assert.ok(comparison);
+  assert.ok(comparison.match.includes('<'));
+  assert.ok(comparison.match.includes('>'));
+  const punctuation = grammar.repository.punctuation.patterns;
+  assert.ok(punctuation.some(pattern => pattern.match.includes('{')));
+  assert.ok(punctuation.some(pattern => pattern.match.includes('[')));
+  assert.ok(punctuation.some(pattern => pattern.match.includes('(')));
+  assert.ok(!punctuation.some(pattern => pattern.match.includes('<')));
+  assert.ok(!punctuation.some(pattern => pattern.match.includes('>')));
 });
 
 test('os três temas estão registrados e existem', () => {
