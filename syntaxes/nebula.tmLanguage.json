@@ -114,7 +114,7 @@
       "patterns": [
         {
           "name": "constant.language.boolean.nebula",
-          "match": "(?<![\\p{XID_Continue}_])(?:sim|verdadeiro|falso)(?![\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])(?:sim|verdadeiro|falso|nulo)(?![\\p{XID_Continue}_])"
         },
         {
           "name": "constant.language.null.nebula",
