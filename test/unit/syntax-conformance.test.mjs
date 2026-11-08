@@ -12,6 +12,8 @@ test('gramática TextMate reconhece comentários oficiais e não trata # como co
  assert.ok(comments.some(x=>x.match==='//[^\\r\\n]*'));
  assert.ok(comments.some(x=>x.begin==='/\\*'&&x.end==='\\*/'));
  assert.ok(!comments.some(x=>String(x.match||'').startsWith('#')));
+ const constants=grammar.repository.constants.patterns[0].match;
+ for(const literal of ['sim','verdadeiro','falso','nulo'])assert.ok(constants.includes(literal),'Literal não colorizado: '+literal);
  const controls=grammar.repository.control.patterns[0].match;
  for(const alias of ['quando','devolver','durante','repetir','avaliar','parar','encerrar','seguir','mutável'])assert.ok(controls.includes(alias)||grammar.repository.declarations.patterns[0].match.includes(alias),'Alias aceito não colorizado: '+alias);
 });
