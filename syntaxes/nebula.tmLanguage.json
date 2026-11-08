@@ -198,7 +198,7 @@
       "patterns": [
         {
           "name": "keyword.control.nebula",
-          "match": "(?<![\\p{XID_Continue}_])(?:instanciaDe|construtor|privilegio|verifique|constante|protegido|enquanto|prossiga|identico|variavel|estatico|montagem|exportar|escolha|retorne|incluir|aguarda|externa|privado|publico|definir|critico|padrao|passar|funcao|lambda|classe|sempre|lancar|global|apagar|dentro|tipoDe|seguro|sendo|senao|ceder|tente|async|herda|obter|vazio|caso|cada|para|pare|como|erro|isto|novo|fora|com|nao|de|ou|e|tipo|alterar|mutavel)(?![\\p{XID_Continue}_])"
+          "match": "(?<![\\p{XID_Continue}_])(?:instanciaDe|construtor|privilegio|verifique|constante|protegido|enquanto|prossiga|identico|variavel|estatico|montagem|exportar|escolha|retorne|incluir|aguarda|externa|privado|publico|definir|critico|padrao|passar|funcao|lambda|classe|sempre|lancar|global|apagar|dentro|tipoDe|seguro|sendo|senao|ceder|tente|async|herda|obter|vazio|caso|cada|para|pulso|pare|como|erro|isto|novo|fora|com|nao|de|ou|e|tipo|alterar|mutavel)(?![\\p{XID_Continue}_])"
         },
         {
           "name": "keyword.operator.word.logical.nebula",
