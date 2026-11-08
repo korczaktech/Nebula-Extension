@@ -23,47 +23,34 @@ test('pares automáticos incluem delimitadores, aspas e comentário de bloco', (
   for (const [open, close] of [['{', '}'], ['[', ']'], ['(', ')'], ['"', '"'], ["'", "'"], ['/*', '*/']]) {
     assert.ok(pairs.some(pair => pair.open === open && pair.close === close), 'Par ausente: ' + open + close);
   }
-  for (const pair of pairs) {
-    assert.deepEqual(pair.notIn, ['string', 'comment']);
-  }
+  for (const pair of pairs) assert.deepEqual(pair.notIn, ['string', 'comment']);
 });
 
-test('regras de indentação reconhecem blocos com delimitadores e terminador fim', () => {
+test('regras de indentação reconhecem Function Body e delimitadores abertos', () => {
   const rules = configuration.indentationRules;
   const increase = new RegExp(rules.increaseIndentPattern);
   const decrease = new RegExp(rules.decreaseIndentPattern);
 
   for (const line of [
-    'funcao principal(): vazio {',
-    'quando ativo {',
-    'estrutura Pessoa {',
-    'cada item em itens {',
+    'funcao principal() -> vazio: {',
+    'se ativo: {',
+    'estrutura Pessoa: {',
+    'cada item em itens: {',
+    'escolha estado: {',
+    'tente: {',
     'chamar( ',
-    'valores = [',
-    'funcao principal()',
-    'função principal()',
-    'publico funcao principal()',
-    'público função principal()',
-    'quando ativo',
-    'senao',
-    'senão quando ativo',
-    'enquanto ativo',
-    'durante ativo',
-    'repetir ativo',
-    'cada item em itens',
-    'pulso(10)',
-    'para(i = 0; i < 10; i = i + 1)',
-    'caso Resultado::Ok'
+    'valores = ['
   ]) assert.ok(increase.test(line), 'Não aumenta indentação: ' + line);
 
-  for (const line of ['}', '    }', '    )', '    ]', 'fim', '    fim', 'senao', 'senão']) {
+  for (const line of ['}', '    }', '    )', '    ]']) {
     assert.ok(decrease.test(line), 'Não reduz indentação: ' + line);
   }
+  assert.equal(decrease.test('fim'), false, 'fim não pode fechar blocos');
 });
 
 test('regras ao pressionar Enter possuem padrões válidos e ações reconhecidas', () => {
   assert.ok(Array.isArray(configuration.onEnterRules));
-  assert.ok(configuration.onEnterRules.length >= 6);
+  assert.ok(configuration.onEnterRules.length >= 5);
   const allowedIndentActions = new Set(['none', 'indent', 'outdent', 'indentOutdent']);
 
   for (const rule of configuration.onEnterRules) {
@@ -75,26 +62,11 @@ test('regras ao pressionar Enter possuem padrões válidos e ações reconhecida
   }
 });
 
-test('regras de Enter indentam blocos terminados por fim e continuam comentários', () => {
+test('Enter cria indentação após abertura de Function Body e continua comentários', () => {
   const rules = configuration.onEnterRules;
-  const headers = rules.find(rule => rule.beforeText.includes('funcao|função'));
-  assert.ok(headers);
-  const pattern = new RegExp(headers.beforeText);
-
-  for (const line of [
-    'funcao principal()',
-    'função principal()',
-    'quando ativo',
-    'senão',
-    'enquanto ativo',
-    'durante ativo',
-    'repetir ativo',
-    'cada item em itens',
-    'pulso(10)',
-    'para(i = 0; i < 10; i = i + 1)',
-    'caso Resultado::Ok'
-  ]) assert.ok(pattern.test(line), 'Não indentou bloco encerrado por fim: ' + line);
-  assert.equal(headers.action.indent, 'indent');
+  const bodyRule = rules.find(rule => new RegExp(rule.beforeText).test('funcao principal() -> vazio: {'));
+  assert.ok(bodyRule);
+  assert.equal(bodyRule.action.indent, 'indentOutdent');
 
   const blockComment = rules.find(rule => rule.action.appendText === ' * ');
   assert.ok(blockComment);
