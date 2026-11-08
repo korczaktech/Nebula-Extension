@@ -67,8 +67,12 @@ test('formatador preserva CRLF e ignora delimitadores em strings',()=>{
  assert.equal(engine.formatDocument(source,4,true),expected);
 });
 
-test('formata blocos encerrados por fim com níveis aninhados',()=>{
- const source=['funcao teste()','quando verdadeiro','exibir(1)','fim','fim'].join(nl);
- const expected=['funcao teste()','    quando verdadeiro','        exibir(1)','    fim','fim'].join(nl);
+test('nao trata fim como palavra-chave nem como terminador de bloco',()=>{
+ const legacy=engine.scan('fim');
+ assert.equal(legacy.length,1);
+ assert.equal(legacy[0].type,'identifier');
+ const source=['funcao teste() {','se verdadeiro: {','exibir(1)','}','}'].join(nl);
+ const expected=['funcao teste() {','    se verdadeiro: {','        exibir(1)','    }','}'].join(nl);
  assert.equal(engine.formatDocument(source,4,true),expected);
+ assert.deepEqual(engine.getDiagnostics('fim'),[]);
 });
