@@ -21,7 +21,7 @@ const commandHelp: Record<string, CommandHelp> = {
   retorne:{description:'Encerra a função e devolve o valor indicado.',syntax:'retorne expressao',example:'retorne a + b'},
   lambda:{description:'Cria uma função anônima em uma expressão.',syntax:'lambda parametro: expressao',example:'variavel dobrar = lambda x: x * 2'},
   classe:{description:'Declara uma classe com corpo estrutural.',syntax:'classe Nome: { ... } ',example:'classe Pessoa: {\n    funcao apresentar(): {\n        exibir(isto.nome)\n    } \n} '},
-  incluir:{description:'Importa uma biblioteca e, opcionalmente, um módulo.',syntax:'incluir biblioteca nome de modulo',example:'incluir modulo arquivos de sistema'},
+  incluir:{description:'Importa uma biblioteca e, opcionalmente, um módulo.',syntax:'incluir modulo nome de biblioteca',example:'incluir modulo arquivos de sistema'},
   como:{description:'Define um apelido para a biblioteca importada.',syntax:'incluir biblioteca nome como apelido',example:'incluir biblioteca matematica como mat'},
   ceder:{description:'Produz valores incrementalmente em uma função geradora.',syntax:'ceder expressao',example:'ceder numero'},
   tente:{description:'Inicia um bloco de tratamento de erros.',syntax:'tente: { ... } erro Tipo: { ... } sempre: { ... } ',example:'tente: {\n    variavel numero = inteiro("abc")\n}\nerro ValorInvalido: {\n    exibir("Valor incorreto")\n}\nsempre: {\n    exibir("Finalizado")\n}\n'},
